@@ -86,7 +86,10 @@ public class RenderSystem {
                     drawCoinFlipIcon(gc, p, AssetManager.spriteIcon(), Color.MEDIUMPURPLE, "S", phase);
                 }
                 case REVIVAL_CAPSULE -> drawIconOrPickup(gc, p, AssetManager.revivalIcon(), Color.CRIMSON, "+");
-                case TREADMILL -> drawIconOrPickup(gc, p, AssetManager.treadmillIcon(), Color.DARKORANGE, "x2");
+                case TREADMILL -> {
+                    double phase = ((AnimatedObject) obj).animationTime() * 4.0;
+                    drawCoinFlipIcon(gc, p, AssetManager.treadmillIcon(), Color.DARKORANGE, "x2", phase);
+                }
                 case RANDOM_ITEM -> drawIconOrPickup(gc, p, AssetManager.randomIcon(), Color.DARKSLATEGRAY, "?");
                 case OBSTACLE -> drawObstacle(gc, (Obstacle) obj, p);
             }
