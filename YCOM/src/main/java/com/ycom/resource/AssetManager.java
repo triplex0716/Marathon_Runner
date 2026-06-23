@@ -17,7 +17,7 @@ public class AssetManager {
         loadImage("run", "run.jpg");
         loadImage("magnet", "magnet.png");
         loadImage("sprite", "energy_drink.png");
-        loadImage("revival", "revival.png");
+        loadImage("revival", "capsule.png");
         loadImage("treadmill", "book.png");
         loadImage("random", "random_box.png");
         loadImage("coin","coin.png");

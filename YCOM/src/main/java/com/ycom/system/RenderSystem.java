@@ -85,12 +85,18 @@ public class RenderSystem {
                     double phase = ((AnimatedObject) obj).animationTime() * 4.0;
                     drawCoinFlipIcon(gc, p, AssetManager.spriteIcon(), Color.MEDIUMPURPLE, "S", phase);
                 }
-                case REVIVAL_CAPSULE -> drawIconOrPickup(gc, p, AssetManager.revivalIcon(), Color.CRIMSON, "+");
+                case REVIVAL_CAPSULE -> {
+                    double phase = ((AnimatedObject) obj).animationTime() * 6.0;
+                    drawBobbingIcon(gc, p, AssetManager.revivalIcon(), Color.CRIMSON, "+", phase);
+                }
                 case TREADMILL -> {
                     double phase = ((AnimatedObject) obj).animationTime() * 4.0;
                     drawCoinFlipIcon(gc, p, AssetManager.treadmillIcon(), Color.DARKORANGE, "x2", phase);
                 }
-                case RANDOM_ITEM -> drawIconOrPickup(gc, p, AssetManager.randomIcon(), Color.DARKSLATEGRAY, "?");
+                case RANDOM_ITEM -> {
+                    double phase = ((AnimatedObject) obj).animationTime() * 6.0;
+                    drawBobbingIcon(gc, p, AssetManager.randomIcon(), Color.DARKSLATEGRAY, "?", phase);
+                }
                 case OBSTACLE -> drawObstacle(gc, (Obstacle) obj, p);
             }
         }
@@ -154,7 +160,7 @@ public class RenderSystem {
     private void drawBobbingIcon(GraphicsContext gc, Projection p, Image icon, Color color, String label, double phase) {
         double w = Math.max(12.0, p.width);
         double h = Math.max(12.0, p.height);
-        double yOffset = -h * 0.30 + Math.sin(phase) * h * 0.12;
+        double yOffset = -h * 0.45 + Math.sin(phase) * h * 0.22;
         if (icon != null && icon.getWidth() > 0.0) {
             gc.drawImage(icon, p.x - w / 2.0, p.y - h / 2.0 + yOffset, w, h);
             return;
