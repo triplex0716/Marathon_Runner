@@ -151,6 +151,23 @@ public class RenderSystem {
         gc.drawImage(icon, p.x - w / 2.0, p.y - h / 2.0, w, h);
     }
 
+    private void drawBobbingIcon(GraphicsContext gc, Projection p, Image icon, Color color, String label, double phase) {
+        double w = Math.max(12.0, p.width);
+        double h = Math.max(12.0, p.height);
+        double yOffset = -h * 0.30 + Math.sin(phase) * h * 0.12;
+        if (icon != null && icon.getWidth() > 0.0) {
+            gc.drawImage(icon, p.x - w / 2.0, p.y - h / 2.0 + yOffset, w, h);
+            return;
+        }
+        gc.setFill(color);
+        gc.fillOval(p.x - w / 2.0, p.y - h / 2.0 + yOffset, w, h);
+        gc.setFill(Color.WHITE);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, Math.max(10.0, h * 0.48)));
+        gc.fillText(label, p.x, p.y + h * 0.16 + yOffset);
+        gc.setTextAlign(TextAlignment.LEFT);
+    }
+
     private void drawIconOrPickup(GraphicsContext gc, Projection p, Image icon, Color color, String label) {
         if (icon != null && icon.getWidth() > 0.0) {
             double w = Math.max(12.0, p.width);
