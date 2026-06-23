@@ -9,7 +9,10 @@ public abstract class GameObject {
         OBSTACLE,
         COIN,
         MAGNET,
-        ENERGY_DRINK
+        ENERGY_DRINK,
+        REVIVAL_CAPSULE,
+        TREADMILL,
+        RANDOM_ITEM
     }
 
     private static final AtomicLong IDS = new AtomicLong(1L);

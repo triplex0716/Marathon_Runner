@@ -17,6 +17,10 @@ public class Player extends Actor {
     private double slideTimer;
     private double magnetTimer;
     private double boostTimer;
+    private double scoreMultiplierTimer;
+    private double scoreMultiplier = 1.0;
+    private int revivalCount;
+    private int coinRevivesUsed;
 
     public Player() {
         super("player", 0.0, 0.0, 0.0, 1.25, Config.PLAYER_STANDING_HEIGHT, 1.0, Color.CORNFLOWERBLUE);
@@ -96,6 +100,14 @@ public class Player extends Actor {
                 state = y > 0.0 ? PlayerState.JUMPING : PlayerState.RUNNING;
             }
         }
+
+        if (scoreMultiplierTimer > 0.0) {
+            scoreMultiplierTimer -= realDt;
+            if (scoreMultiplierTimer <= 0.0) {
+                scoreMultiplierTimer = 0.0;
+                scoreMultiplier = 1.0;
+            }
+        }
     }
 
     private void clearSlide() {
@@ -139,5 +151,57 @@ public class Player extends Actor {
 
     public PlayerState state() {
         return state;
+    }
+
+    public void activateScoreMultiplier(double duration, double multiplier) {
+        scoreMultiplierTimer = Math.max(scoreMultiplierTimer, duration);
+        scoreMultiplier = Math.max(scoreMultiplier, multiplier);
+    }
+
+    public boolean hasScoreMultiplier() {
+        return scoreMultiplierTimer > 0.0;
+    }
+
+    public double scoreMultiplierTimer() {
+        return scoreMultiplierTimer;
+    }
+
+    public double currentScoreMultiplier() {
+        return scoreMultiplier;
+    }
+
+    public void addRevival() {
+        revivalCount++;
+    }
+
+    public boolean hasRevival() {
+        return revivalCount > 0;
+    }
+
+    public int revivalCount() {
+        return revivalCount;
+    }
+
+    public void consumeRevival() {
+        if (revivalCount > 0) {
+            revivalCount--;
+        }
+    }
+
+    public int coinRevivesUsed() {
+        return coinRevivesUsed;
+    }
+
+    public void onCoinRevive() {
+        coinRevivesUsed++;
+    }
+
+    public void revive() {
+        velocityY = 0.0;
+        y = 0.0;
+        slideTimer = 0.0;
+        height = Config.PLAYER_STANDING_HEIGHT;
+        state = PlayerState.RUNNING;
+        activateBoost(Config.REVIVE_INVINCIBLE_DURATION);
     }
 }

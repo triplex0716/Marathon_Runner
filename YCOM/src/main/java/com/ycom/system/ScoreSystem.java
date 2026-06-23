@@ -1,5 +1,6 @@
 package com.ycom.system;
 
+import com.ycom.entity.Player;
 import com.ycom.event.CoinCollectedEvent;
 import com.ycom.event.EventBus;
 import com.ycom.event.ScoreAddEvent;
@@ -7,11 +8,14 @@ import com.ycom.event.ScoreAddEvent;
 public class ScoreSystem {
     private static int highScore = 0;
 
+    private final Player player;
     private double distance = 0.0;
+    private double lastPlayerZ = 0.0;
     private int coinCount = 0;
     private int bonusScore = 0;
 
-    public ScoreSystem(EventBus eventBus) {
+    public ScoreSystem(EventBus eventBus, Player player) {
+        this.player = player;
         eventBus.subscribe(CoinCollectedEvent.class, event -> {
             coinCount++;
             bonusScore += event.value();
@@ -20,8 +24,18 @@ public class ScoreSystem {
     }
 
     public void update(double dt, double playerZ) {
-        distance = playerZ;
+        double delta = Math.max(0.0, playerZ - lastPlayerZ);
+        distance += delta * player.currentScoreMultiplier();
+        lastPlayerZ = playerZ;
         highScore = Math.max(highScore, getScore());
+    }
+
+    public boolean trySpendCoins(int amount) {
+        if (coinCount < amount) {
+            return false;
+        }
+        coinCount -= amount;
+        return true;
     }
 
     public int getCoins() {

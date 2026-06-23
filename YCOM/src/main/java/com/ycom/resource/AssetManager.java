@@ -15,6 +15,11 @@ public class AssetManager {
         loadImage("background", "T-Pose.jpg");
         loadImage("player", "zxf.png");
         loadImage("run", "run.jpg");
+        loadImage("magnet", "magnet.png");
+        loadImage("sprite", "sprite.png");
+        loadImage("revival", "revival.png");
+        loadImage("treadmill", "treadmill.png");
+        loadImage("random", "random.png");
     }
 
     public static Image getImage(String key) {
@@ -35,6 +40,26 @@ public class AssetManager {
 
     public static int runFrameCount() {
         return RUN_FRAME_COUNT;
+    }
+
+    public static Image magnetIcon() {
+        return getImage("magnet");
+    }
+
+    public static Image spriteIcon() {
+        return getImage("sprite");
+    }
+
+    public static Image revivalIcon() {
+        return getImage("revival");
+    }
+
+    public static Image treadmillIcon() {
+        return getImage("treadmill");
+    }
+
+    public static Image randomIcon() {
+        return getImage("random");
     }
 
     private static void loadImage(String key, String fileName) {

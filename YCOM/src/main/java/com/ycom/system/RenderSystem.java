@@ -77,8 +77,14 @@ public class RenderSystem {
             switch (obj.kind()) {
                 case PLAYER -> drawPlayer(gc, (Player) obj, p);
                 case COIN -> drawCoin(gc, p);
-                case MAGNET -> drawPickup(gc, p, Color.MEDIUMPURPLE, "M");
-                case ENERGY_DRINK -> drawPickup(gc, p, Color.DEEPSKYBLUE, "E");
+                case MAGNET -> {
+                    double phase = ((AnimatedObject) obj).animationTime() * 4.0;
+                    drawCoinFlipIcon(gc, p, AssetManager.magnetIcon(), Color.MEDIUMPURPLE, "M", phase);
+                }
+                case ENERGY_DRINK -> drawIconOrPickup(gc, p, AssetManager.spriteIcon(), Color.DEEPSKYBLUE, "S");
+                case REVIVAL_CAPSULE -> drawIconOrPickup(gc, p, AssetManager.revivalIcon(), Color.CRIMSON, "+");
+                case TREADMILL -> drawIconOrPickup(gc, p, AssetManager.treadmillIcon(), Color.DARKORANGE, "x2");
+                case RANDOM_ITEM -> drawIconOrPickup(gc, p, AssetManager.randomIcon(), Color.DARKSLATEGRAY, "?");
                 case OBSTACLE -> drawObstacle(gc, (Obstacle) obj, p);
             }
         }
@@ -124,6 +130,27 @@ public class RenderSystem {
         gc.setStroke(Color.rgb(105, 72, 10));
         gc.setLineWidth(Math.max(1.0, size * 0.08));
         gc.strokeOval(p.x - size / 2.0, p.y - size / 2.0, size, size);
+    }
+
+    private void drawCoinFlipIcon(GraphicsContext gc, Projection p, Image icon, Color color, String label, double phase) {
+        if (icon == null || icon.getWidth() <= 0.0) {
+            drawPickup(gc, p, color, label);
+            return;
+        }
+        double widthScale = Math.max(0.1, Math.abs(Math.cos(phase)));
+        double h = Math.max(12.0, p.height);
+        double w = Math.max(12.0, p.width) * widthScale;
+        gc.drawImage(icon, p.x - w / 2.0, p.y - h / 2.0, w, h);
+    }
+
+    private void drawIconOrPickup(GraphicsContext gc, Projection p, Image icon, Color color, String label) {
+        if (icon != null && icon.getWidth() > 0.0) {
+            double w = Math.max(12.0, p.width);
+            double h = Math.max(12.0, p.height);
+            gc.drawImage(icon, p.x - w / 2.0, p.y - h / 2.0, w, h);
+            return;
+        }
+        drawPickup(gc, p, color, label);
     }
 
     private void drawPickup(GraphicsContext gc, Projection p, Color color, String label) {
@@ -185,7 +212,7 @@ public class RenderSystem {
     private void drawHud(GraphicsContext gc, Player player, ScoreSystem scoreSystem) {
         gc.setTextAlign(TextAlignment.LEFT);
         gc.setFill(Color.rgb(0, 0, 0, 0.45));
-        gc.fillRoundRect(24.0, 24.0, 392.0, 210.0, 10.0, 10.0);
+        gc.fillRoundRect(24.0, 24.0, 392.0, 250.0, 10.0, 10.0);
 
         gc.setFill(Color.WHITE);
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 34.0));
@@ -194,6 +221,7 @@ public class RenderSystem {
         gc.fillText("Coins " + scoreSystem.getCoins(), 48.0, 114.0);
         gc.fillText("Best " + scoreSystem.getHighScore(), 48.0, 156.0);
         gc.fillText("Speed " + String.format("%.2fx", TimeManager.getWorldRate()), 48.0, 198.0);
+        gc.fillText("Revives " + player.revivalCount(), 48.0, 240.0);
 
         double y = 82.0;
         if (player.hasMagnet()) {
@@ -201,7 +229,11 @@ public class RenderSystem {
             y += 48.0;
         }
         if (player.isBoosted()) {
-            drawStatus(gc, "BOOST", player.boostTimer(), y);
+            drawStatus(gc, "INVINCIBLE", player.boostTimer(), y);
+            y += 48.0;
+        }
+        if (player.hasScoreMultiplier()) {
+            drawStatus(gc, "SCORE x2", player.scoreMultiplierTimer(), y);
         }
     }
 

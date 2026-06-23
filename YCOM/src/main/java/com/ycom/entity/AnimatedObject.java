@@ -22,6 +22,10 @@ public abstract class AnimatedObject extends RenderableObject {
         return (int) Math.floor(animationTime * framesPerSecond) % frameCount;
     }
 
+    public double animationTime() {
+        return animationTime;
+    }
+
     public void setFramesPerSecond(double framesPerSecond) {
         this.framesPerSecond = Math.max(1.0, framesPerSecond);
     }

@@ -13,6 +13,11 @@ public class Config {
     public static final double BOOST_BGM_RATE = 1.8;
     public static final double BOOST_DURATION = 3.0;
     public static final double MAGNET_DURATION = 10.0;
+    public static final double TREADMILL_DURATION = 10.0;
+    public static final double SCORE_MULTIPLIER = 2.0;
+    public static final double REVIVE_INVINCIBLE_DURATION = 1.5;
+    public static final double REVIVE_CLEAR_RADIUS = 8.0;
+    public static final int[] COIN_REVIVE_COSTS = {200, 300, 500, 800, 1500};
     public static final double BGM_VOLUME = 0.85;
     public static final double SFX_VOLUME = 0.38;
 
@@ -29,9 +34,9 @@ public class Config {
     public static final double PLAYER_SLIDING_HEIGHT = 1.0;
 
     public enum Difficulty {
-        EASY("Easy", 0.90, 15.5, 5.5, 0.16, 0.12, 0.06, 0.12, 0.12, 0.10, 45.0),
-        MEDIUM("Medium", 1.00, 14.0, 5.0, 0.24, 0.18, 0.14, 0.08, 0.08, 0.22, 25.0),
-        HARD("Hard", 1.15, 12.0, 4.0, 0.30, 0.24, 0.22, 0.05, 0.05, 0.36, 8.0);
+        EASY("Easy", 0.90, 15.5, 5.5, 0.16, 0.12, 0.06, 0.05, 0.05, 0.10, 45.0, 0.05, 0.02, 0.04),
+        MEDIUM("Medium", 1.00, 14.0, 5.0, 0.24, 0.18, 0.14, 0.04, 0.04, 0.22, 25.0, 0.04, 0.015, 0.03),
+        HARD("Hard", 1.15, 12.0, 4.0, 0.30, 0.24, 0.22, 0.03, 0.03, 0.36, 8.0, 0.03, 0.01, 0.02);
 
         public final String label;
         public final double initialTimeScale;
@@ -44,6 +49,9 @@ public class Config {
         public final double energyDrinkChance;
         public final double lateExtraObstacleChance;
         public final double laneBlockUnlockSeconds;
+        public final double treadmillChance;
+        public final double revivalChance;
+        public final double randomItemChance;
 
         Difficulty(
                 String label,
@@ -56,7 +64,10 @@ public class Config {
                 double magnetChance,
                 double energyDrinkChance,
                 double lateExtraObstacleChance,
-                double laneBlockUnlockSeconds
+                double laneBlockUnlockSeconds,
+                double treadmillChance,
+                double revivalChance,
+                double randomItemChance
         ) {
             this.label = label;
             this.initialTimeScale = initialTimeScale;
@@ -69,6 +80,9 @@ public class Config {
             this.energyDrinkChance = energyDrinkChance;
             this.lateExtraObstacleChance = lateExtraObstacleChance;
             this.laneBlockUnlockSeconds = laneBlockUnlockSeconds;
+            this.treadmillChance = treadmillChance;
+            this.revivalChance = revivalChance;
+            this.randomItemChance = randomItemChance;
         }
     }
 

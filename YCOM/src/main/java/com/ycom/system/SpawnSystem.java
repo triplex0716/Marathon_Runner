@@ -6,6 +6,9 @@ import com.ycom.entity.Coin;
 import com.ycom.entity.EnergyDrink;
 import com.ycom.entity.Magnet;
 import com.ycom.entity.Obstacle;
+import com.ycom.entity.RandomItem;
+import com.ycom.entity.RevivalCapsule;
+import com.ycom.entity.Treadmill;
 import com.ycom.world.GameWorld;
 import javafx.scene.paint.Color;
 import java.util.Random;
@@ -42,6 +45,9 @@ public class SpawnSystem {
         double blockThreshold = slideThreshold + laneBlockChance;
         double magnetThreshold = blockThreshold + difficulty.magnetChance;
         double energyThreshold = magnetThreshold + difficulty.energyDrinkChance;
+        double treadmillThreshold = energyThreshold + difficulty.treadmillChance;
+        double revivalThreshold = treadmillThreshold + difficulty.revivalChance;
+        double randomItemThreshold = revivalThreshold + difficulty.randomItemChance;
 
         if (roll < jumpThreshold) {
             world.addObject(new Obstacle(x, 0.0, z, 2.1, 1.0, 1.2, Color.ORANGE, Obstacle.AvoidMethod.JUMP));
@@ -53,6 +59,12 @@ public class SpawnSystem {
             world.addObject(new Magnet(x, 0.6, z));
         } else if (roll < energyThreshold) {
             world.addObject(new EnergyDrink(x, 0.4, z));
+        } else if (roll < treadmillThreshold) {
+            world.addObject(new Treadmill(x, 0.45, z));
+        } else if (roll < revivalThreshold) {
+            world.addObject(new RevivalCapsule(x, 0.55, z));
+        } else if (roll < randomItemThreshold) {
+            world.addObject(new RandomItem(x, 0.5, z));
         } else {
             spawnCoinLine(lane, z);
         }
