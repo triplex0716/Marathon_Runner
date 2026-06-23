@@ -81,7 +81,10 @@ public class RenderSystem {
                     double phase = ((AnimatedObject) obj).animationTime() * 4.0;
                     drawCoinFlipIcon(gc, p, AssetManager.magnetIcon(), Color.MEDIUMPURPLE, "M", phase);
                 }
-                case ENERGY_DRINK -> drawIconOrPickup(gc, p, AssetManager.spriteIcon(), Color.DEEPSKYBLUE, "S");
+                case ENERGY_DRINK -> {
+                    double phase = ((AnimatedObject) obj).animationTime() * 4.0;
+                    drawCoinFlipIcon(gc, p, AssetManager.spriteIcon(), Color.MEDIUMPURPLE, "S", phase);
+                }
                 case REVIVAL_CAPSULE -> drawIconOrPickup(gc, p, AssetManager.revivalIcon(), Color.CRIMSON, "+");
                 case TREADMILL -> drawIconOrPickup(gc, p, AssetManager.treadmillIcon(), Color.DARKORANGE, "x2");
                 case RANDOM_ITEM -> drawIconOrPickup(gc, p, AssetManager.randomIcon(), Color.DARKSLATEGRAY, "?");
@@ -100,7 +103,7 @@ public class RenderSystem {
 
     private void drawPlayer(GraphicsContext gc, Player player, Projection p) {
         if (player.isBoosted()) {
-            gc.setFill(Color.rgb(58, 205, 255, 0.25));
+            gc.setFill(Color.rgb(155, 89, 182, 0.25));
             gc.fillOval(p.x - p.width * 0.95, p.y - p.height * 0.9, p.width * 1.9, p.height * 1.8);
         }
 
