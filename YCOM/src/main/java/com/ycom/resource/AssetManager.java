@@ -20,6 +20,7 @@ public class AssetManager {
         loadImage("revival", "revival.png");
         loadImage("treadmill", "treadmill.png");
         loadImage("random", "random.png");
+        loadImage("coin","coin.png");
     }
 
     public static Image getImage(String key) {
@@ -60,6 +61,10 @@ public class AssetManager {
 
     public static Image randomIcon() {
         return getImage("random");
+    }
+
+    public static Image coinIcon() {
+        return getImage("coin");
     }
 
     private static void loadImage(String key, String fileName) {

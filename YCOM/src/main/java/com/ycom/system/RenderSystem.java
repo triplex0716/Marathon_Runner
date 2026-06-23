@@ -125,11 +125,13 @@ public class RenderSystem {
 
     private void drawCoin(GraphicsContext gc, Projection p) {
         double size = Math.max(6.0, Math.min(p.width, p.height));
-        gc.setFill(Color.GOLD);
-        gc.fillOval(p.x - size / 2.0, p.y - size / 2.0, size, size);
-        gc.setStroke(Color.rgb(105, 72, 10));
-        gc.setLineWidth(Math.max(1.0, size * 0.08));
-        gc.strokeOval(p.x - size / 2.0, p.y - size / 2.0, size, size);
+        Image coinImage = AssetManager.getImage("coin");
+
+        if (coinImage != null && coinImage.getWidth() > 0.0) {
+            gc.drawImage(coinImage, p.x - size / 2.0, p.y - size / 2.0, size, size);
+            return;
+        }
+
     }
 
     private void drawCoinFlipIcon(GraphicsContext gc, Projection p, Image icon, Color color, String label, double phase) {
