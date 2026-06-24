@@ -22,6 +22,7 @@ import com.ycom.event.ScoreMultiplierActivatedEvent;
 import com.ycom.core.TimeManager;
 import com.ycom.system.InputSystem;
 import com.ycom.world.GameWorld;
+import com.ycom.system.ParticleSystem;
 import com.ycom.system.RenderSystem;
 import com.ycom.system.SpawnSystem;
 import com.ycom.system.CollisionSystem;
@@ -39,6 +40,7 @@ public class PlayingState implements GameState {
     private SpawnSystem spawnSystem;
     private CollisionSystem collisionSystem;
     private ScoreSystem scoreSystem;
+    private ParticleSystem particleSystem;
     private Config.Difficulty currentDifficulty = Config.DEFAULT_DIFFICULTY;
     private boolean awaitingRevival = false;
 
@@ -61,6 +63,7 @@ public class PlayingState implements GameState {
         spawnSystem = new SpawnSystem(world, currentDifficulty);
         scoreSystem = new ScoreSystem(eventBus, world.getPlayer());
         collisionSystem = new CollisionSystem(world, eventBus);
+        particleSystem = new ParticleSystem();
         awaitingRevival = false;
         registerEventHandlers();
     }
@@ -97,13 +100,14 @@ public class PlayingState implements GameState {
         spawnSystem.update(world.getPlayer().z);
         collisionSystem.update();
         scoreSystem.update(worldDt, world.getPlayer().z);
+        particleSystem.update(worldDt, world.getPlayer().z);
         AudioManager.setBgmRate(TimeManager.getAudioRate());
     }
 
     @Override
     public void render() {
         if (renderSystem != null && world != null && scoreSystem != null) {
-            renderSystem.render(world, scoreSystem);
+            renderSystem.render(world, scoreSystem, particleSystem);
         }
         if (awaitingRevival) {
             drawRevivalPrompt();
@@ -130,7 +134,16 @@ public class PlayingState implements GameState {
         });
         eventBus.subscribe(ObstacleDestroyedEvent.class, event -> {
             eventBus.publish(new ScoreAddEvent(25, "BOOST_BREAK"));
-            AudioManager.playSfx("win");
+            particleSystem.spawnBreak(
+                    event.x(), event.y(), event.z(),
+                    event.width(), event.height(), event.depth(),
+                    Color.color(event.red(), event.green(), event.blue())
+            );
+            if (AudioManager.hasSfx("obstacle_break")) {
+                AudioManager.playSfx("obstacle_break");
+            } else {
+                AudioManager.playSfx("win");
+            }
         });
         eventBus.subscribe(PlayerHitEvent.class, event -> eventBus.publish(new GameOverEvent(event.hitType())));
         eventBus.subscribe(GameOverEvent.class, event -> {

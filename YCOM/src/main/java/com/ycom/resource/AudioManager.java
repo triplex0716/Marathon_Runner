@@ -31,6 +31,7 @@ public class AudioManager {
         loadSfx("fail", "fail.wav", "fail.mp3");
         loadSfx("invincible", "invincible.wav", "invincible.mp3");
         loadSfx("win", "win.wav", "win.mp3");
+        loadSfx("obstacle_break", "obstacle_break.wav", "obstacle_break.mp3");
     }
 
     public static void playBGM() {
@@ -75,6 +76,10 @@ public class AudioManager {
         if (bgmPlayer != null) {
             runOnFxThread(() -> bgmPlayer.setRate(currentRate));
         }
+    }
+
+    public static boolean hasSfx(String key) {
+        return SFX.containsKey(key);
     }
 
     public static void playSfx(String key) {

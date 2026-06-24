@@ -29,7 +29,7 @@ public class RenderSystem {
         this.horizonY = Config.LOGICAL_HEIGHT * 0.38;
     }
 
-    public void render(GameWorld world, ScoreSystem scoreSystem) {
+    public void render(GameWorld world, ScoreSystem scoreSystem, ParticleSystem particles) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         Player player = world.getPlayer();
 
@@ -41,6 +41,7 @@ public class RenderSystem {
 
         drawTrack(gc, camX, camY, camZ);
         drawObjects(gc, world, player, camX, camY, camZ);
+        particles.draw(gc, camX, camY, camZ);
         drawHud(gc, player, scoreSystem);
     }
 

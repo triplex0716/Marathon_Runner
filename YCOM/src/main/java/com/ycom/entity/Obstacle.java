@@ -23,7 +23,11 @@ public class Obstacle extends RenderableObject {
         if (event.other() instanceof Player player) {
             if (player.isBoosted()) {
                 active = false;
-                context.eventBus().publish(new ObstacleDestroyedEvent(id, player.id));
+                context.eventBus().publish(new ObstacleDestroyedEvent(
+                        id, player.id,
+                        x, y, z, width, height, depth,
+                        color.getRed(), color.getGreen(), color.getBlue()
+                ));
             } else {
                 context.eventBus().publish(new PlayerHitEvent(player.id, id, avoidMethod.name()));
             }
