@@ -146,20 +146,22 @@ public class RenderSystem {
 
     }
 
+    private static final double POWERUP_ICON_SCALE = 1.3;
+
     private void drawCoinFlipIcon(GraphicsContext gc, Projection p, Image icon, Color color, String label, double phase) {
         if (icon == null || icon.getWidth() <= 0.0) {
             drawPickup(gc, p, color, label);
             return;
         }
         double widthScale = Math.max(0.1, Math.abs(Math.cos(phase)));
-        double h = Math.max(12.0, p.height);
-        double w = Math.max(12.0, p.width) * widthScale;
+        double h = Math.max(12.0, p.height) * POWERUP_ICON_SCALE;
+        double w = Math.max(12.0, p.width) * POWERUP_ICON_SCALE * widthScale;
         gc.drawImage(icon, p.x - w / 2.0, p.y - h / 2.0, w, h);
     }
 
     private void drawBobbingIcon(GraphicsContext gc, Projection p, Image icon, Color color, String label, double phase) {
-        double w = Math.max(12.0, p.width);
-        double h = Math.max(12.0, p.height);
+        double w = Math.max(12.0, p.width) * POWERUP_ICON_SCALE;
+        double h = Math.max(12.0, p.height) * POWERUP_ICON_SCALE;
         double yOffset = -h * 0.45 + Math.sin(phase) * h * 0.22;
         if (icon != null && icon.getWidth() > 0.0) {
             gc.drawImage(icon, p.x - w / 2.0, p.y - h / 2.0 + yOffset, w, h);

@@ -41,8 +41,14 @@ public class GameWorld {
                     obj.active = false;
                 }
 
-                if (obj.active && player.hasMagnet() && obj instanceof Coin) {
-                    attractToPlayer(obj, worldDt);
+                if (obj.active && obj instanceof Coin) {
+                    Coin coin = (Coin) obj;
+                    if (!coin.attracted && player.hasMagnet() && isInMagnetRange(coin)) {
+                        coin.attracted = true;
+                    }
+                    if (coin.attracted) {
+                        pullTowardPlayer(coin, worldDt);
+                    }
                 }
             } else {
                 it.remove();
@@ -50,24 +56,26 @@ public class GameWorld {
         }
     }
 
-    private void attractToPlayer(GameObject obj, double worldDt) {
+    private boolean isInMagnetRange(GameObject obj) {
         double dz = obj.z - player.z;
         if (dz < -1.0 || dz > 38.0) {
-            return;
+            return false;
         }
-
         double dx = player.x - obj.x;
         double dy = player.y + 0.8 - obj.y;
         double distSq = dx * dx + dy * dy + dz * dz;
-        if (distSq > 45.0 * 45.0) {
-            return;
-        }
+        return distSq <= 45.0 * 45.0;
+    }
 
-        double dist = Math.max(0.001, Math.sqrt(distSq));
+    private void pullTowardPlayer(GameObject obj, double worldDt) {
+        double dx = player.x - obj.x;
+        double dy = player.y + 0.8 - obj.y;
+        double dz = player.z - obj.z;
+        double dist = Math.max(0.001, Math.sqrt(dx * dx + dy * dy + dz * dz));
         double speed = Math.max(36.0, Config.BASE_SPEED * 2.0);
         obj.x += (dx / dist) * speed * worldDt;
         obj.y += (dy / dist) * speed * worldDt;
-        obj.z += ((player.z - obj.z) / dist) * speed * worldDt;
+        obj.z += (dz / dist) * speed * worldDt;
     }
 
     public Player getPlayer() {

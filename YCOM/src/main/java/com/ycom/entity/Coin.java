@@ -4,6 +4,8 @@ import com.ycom.event.CoinCollectedEvent;
 import javafx.scene.paint.Color;
 
 public final class Coin extends Collectible {
+    public boolean attracted = false;
+
     public Coin(double x, double y, double z) {
         super(ObjectKind.COIN, x, y, z, 0.7, 0.7, 0.7, Color.GOLD, 10);
     }
