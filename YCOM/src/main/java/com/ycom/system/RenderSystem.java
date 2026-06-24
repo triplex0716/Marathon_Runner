@@ -14,6 +14,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
@@ -257,26 +258,52 @@ public class RenderSystem {
         gc.fillText("Speed " + String.format("%.2fx", TimeManager.getWorldRate()), 48.0, 198.0);
         gc.fillText("Revives " + player.revivalCount(), 48.0, 240.0);
 
-        double y = 82.0;
+        double size = 84.0;
+        double stride = 104.0;
+        double bcx = 32.0 + size / 2.0;
+        double bcy = Config.LOGICAL_HEIGHT - 32.0 - size / 2.0;
+
         if (player.hasMagnet()) {
-            drawStatus(gc, "MAGNET", player.magnetTimer(), y);
-            y += 48.0;
+            drawBuffTimer(gc, AssetManager.magnetIcon(), player.magnetTimer(), player.magnetMaxDuration(),
+                    Color.rgb(155, 89, 182), bcx, bcy, size);
+            bcy -= stride;
         }
         if (player.isBoosted()) {
-            drawStatus(gc, "INVINCIBLE", player.boostTimer(), y);
-            y += 48.0;
+            drawBuffTimer(gc, AssetManager.spriteIcon(), player.boostTimer(), player.boostMaxDuration(),
+                    Color.rgb(155, 89, 182), bcx, bcy, size);
+            bcy -= stride;
         }
         if (player.hasScoreMultiplier()) {
-            drawStatus(gc, "SCORE x2", player.scoreMultiplierTimer(), y);
+            drawBuffTimer(gc, AssetManager.treadmillIcon(), player.scoreMultiplierTimer(), player.scoreMultiplierMaxDuration(),
+                    Color.rgb(255, 170, 60), bcx, bcy, size);
         }
     }
 
-    private void drawStatus(GraphicsContext gc, String name, double seconds, double y) {
-        gc.setFill(Color.rgb(0, 0, 0, 0.45));
-        gc.fillRoundRect(Config.LOGICAL_WIDTH - 286.0, y - 34.0, 238.0, 42.0, 8.0, 8.0);
+    private void drawBuffTimer(GraphicsContext gc, Image icon, double timer, double max, Color ringColor, double cx, double cy, double size) {
+        double r = size / 2.0;
+
+        gc.setFill(Color.rgb(0, 0, 0, 0.55));
+        gc.fillOval(cx - r, cy - r, size, size);
+
+        if (icon != null && icon.getWidth() > 0.0) {
+            double iconSize = size * 0.66;
+            gc.drawImage(icon, cx - iconSize / 2.0, cy - iconSize / 2.0, iconSize, iconSize);
+        }
+
+        double ratio = max <= 0.0 ? 0.0 : Math.max(0.0, Math.min(1.0, timer / max));
+        double ringR = r - 3.0;
+        gc.setStroke(Color.rgb(255, 255, 255, 0.25));
+        gc.setLineWidth(5.0);
+        gc.strokeOval(cx - ringR, cy - ringR, ringR * 2.0, ringR * 2.0);
+        gc.setStroke(ringColor);
+        gc.setLineWidth(5.0);
+        gc.strokeArc(cx - ringR, cy - ringR, ringR * 2.0, ringR * 2.0, 90.0, -ratio * 360.0, ArcType.OPEN);
+
         gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 24.0));
-        gc.fillText(name + " " + String.format("%.1fs", seconds), Config.LOGICAL_WIDTH - 264.0, y - 6.0);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 18.0));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText(String.format("%.1fs", timer), cx, cy + r + 20.0);
+        gc.setTextAlign(TextAlignment.LEFT);
     }
 
     private void drawCover(GraphicsContext gc, Image image, double x, double y, double w, double h) {

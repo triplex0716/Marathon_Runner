@@ -16,8 +16,11 @@ public class Player extends Actor {
     private double velocityY;
     private double slideTimer;
     private double magnetTimer;
+    private double magnetMax;
     private double boostTimer;
+    private double boostMax;
     private double scoreMultiplierTimer;
+    private double scoreMultiplierMax;
     private double scoreMultiplier = 1.0;
     private int revivalCount;
     private int coinRevivesUsed;
@@ -87,8 +90,9 @@ public class Player extends Actor {
 
         if (magnetTimer > 0.0) {
             magnetTimer -= realDt;
-            if (magnetTimer < 0.0) {
+            if (magnetTimer <= 0.0) {
                 magnetTimer = 0.0;
+                magnetMax = 0.0;
             }
         }
 
@@ -97,6 +101,7 @@ public class Player extends Actor {
             state = PlayerState.BOOSTED_INVINCIBLE;
             if (boostTimer <= 0.0) {
                 boostTimer = 0.0;
+                boostMax = 0.0;
                 state = y > 0.0 ? PlayerState.JUMPING : PlayerState.RUNNING;
             }
         }
@@ -105,6 +110,7 @@ public class Player extends Actor {
             scoreMultiplierTimer -= realDt;
             if (scoreMultiplierTimer <= 0.0) {
                 scoreMultiplierTimer = 0.0;
+                scoreMultiplierMax = 0.0;
                 scoreMultiplier = 1.0;
             }
         }
@@ -122,10 +128,12 @@ public class Player extends Actor {
 
     public void activateMagnet(double duration) {
         magnetTimer = Math.max(magnetTimer, duration);
+        magnetMax = Math.max(magnetMax, duration);
     }
 
     public void activateBoost(double duration) {
         boostTimer = Math.max(boostTimer, duration);
+        boostMax = Math.max(boostMax, duration);
         state = PlayerState.BOOSTED_INVINCIBLE;
     }
 
@@ -135,6 +143,18 @@ public class Player extends Actor {
 
     public double magnetTimer() {
         return magnetTimer;
+    }
+
+    public double magnetMaxDuration() {
+        return magnetMax;
+    }
+
+    public double boostMaxDuration() {
+        return boostMax;
+    }
+
+    public double scoreMultiplierMaxDuration() {
+        return scoreMultiplierMax;
     }
 
     public boolean isBoosted() {
@@ -155,6 +175,7 @@ public class Player extends Actor {
 
     public void activateScoreMultiplier(double duration, double multiplier) {
         scoreMultiplierTimer = Math.max(scoreMultiplierTimer, duration);
+        scoreMultiplierMax = Math.max(scoreMultiplierMax, duration);
         scoreMultiplier = Math.max(scoreMultiplier, multiplier);
     }
 
