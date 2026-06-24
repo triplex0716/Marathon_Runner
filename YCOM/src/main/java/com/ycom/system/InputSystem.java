@@ -20,12 +20,13 @@ public class InputSystem {
         this.scene = scene;
         scene.setOnKeyPressed(e -> activeKeys.add(e.getCode()));
         scene.setOnKeyReleased(e -> activeKeys.remove(e.getCode()));
+        scene.setOnMouseMoved(e -> updateMousePosition(e.getSceneX(), e.getSceneY()));
+        scene.setOnMouseDragged(e -> updateMousePosition(e.getSceneX(), e.getSceneY()));
+
+
+
         scene.setOnMouseClicked(e -> {
-            double scale = Math.min(scene.getWidth() / Config.LOGICAL_WIDTH, scene.getHeight() / Config.LOGICAL_HEIGHT);
-            double offsetX = (scene.getWidth() - Config.LOGICAL_WIDTH * scale) / 2.0;
-            double offsetY = (scene.getHeight() - Config.LOGICAL_HEIGHT * scale) / 2.0;
-            mouseX = (e.getSceneX() - offsetX) / scale;
-            mouseY = (e.getSceneY() - offsetY) / scale;
+            updateMousePosition(e.getSceneX(), e.getSceneY());
             pendingMouseClick = mouseX >= 0.0 && mouseX <= Config.LOGICAL_WIDTH
                     && mouseY >= 0.0 && mouseY <= Config.LOGICAL_HEIGHT;
         });
@@ -63,7 +64,15 @@ public class InputSystem {
     public double getMouseY() {
         return mouseY;
     }
-    
+
+    private void updateMousePosition(double sceneX, double sceneY) {
+        double scale = Math.min(scene.getWidth() / Config.LOGICAL_WIDTH, scene.getHeight() / Config.LOGICAL_HEIGHT);
+        double offsetX = (scene.getWidth() - Config.LOGICAL_WIDTH * scale) / 2.0;
+        double offsetY = (scene.getHeight() - Config.LOGICAL_HEIGHT * scale) / 2.0;
+        mouseX = (sceneX - offsetX) / scale;
+        mouseY = (sceneY - offsetY) / scale;
+    }
+
     public void reset() {
         activeKeys.clear();
         previousKeys.clear();

@@ -49,7 +49,8 @@ public class MainMenuState implements GameState {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         if (AssetManager.background() != null) {
             gc.drawImage(AssetManager.background(), 0, 0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
-            gc.setFill(Color.rgb(0, 0, 0, 0.58));
+//            gc.setFill(Color.rgb(0, 0, 0, 0.58));
+            gc.setFill(Color.rgb(124,183,213,0.58));
             gc.fillRect(0, 0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
         } else {
             gc.setFill(Color.web("#101820"));
@@ -64,7 +65,9 @@ public class MainMenuState implements GameState {
         for (int i = 0; i < Config.Difficulty.values().length; i++) {
             Config.Difficulty difficulty = Config.Difficulty.values()[i];
             ButtonRect rect = buttonRect(i);
-            drawDifficultyButton(gc, rect, difficulty);
+            boolean hovered = rect.contains(input.getMouseX(), input.getMouseY());
+            drawDifficultyButton(gc, rect, difficulty, hovered);
+//            drawDifficultyButton(gc, rect, difficulty);
         }
         gc.setTextAlign(TextAlignment.LEFT);
     }
@@ -77,14 +80,16 @@ public class MainMenuState implements GameState {
         gsm.setState("PLAYING");
     }
 
-    private void drawDifficultyButton(GraphicsContext gc, ButtonRect rect, Config.Difficulty difficulty) {
+    private void drawDifficultyButton(GraphicsContext gc, ButtonRect rect, Config.Difficulty difficulty,boolean hovered) {
         Color fill = switch (difficulty) {
             case EASY -> Color.rgb(41, 120, 82, 0.88);
             case MEDIUM -> Color.rgb(42, 86, 145, 0.88);
             case HARD -> Color.rgb(150, 50, 46, 0.88);
         };
-        gc.setFill(fill);
-        gc.fillRoundRect(rect.x, rect.y, rect.w, rect.h, 8.0, 8.0);
+        if (hovered) {
+            gc.setFill(fill);
+            gc.fillRoundRect(rect.x, rect.y, rect.w, rect.h, 8.0, 8.0);
+        }
         gc.setStroke(Color.rgb(255, 255, 255, 0.85));
         gc.setLineWidth(3.0);
         gc.strokeRoundRect(rect.x, rect.y, rect.w, rect.h, 8.0, 8.0);

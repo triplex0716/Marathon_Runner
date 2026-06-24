@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import com.ycom.core.Config;
 
 public class GameApp extends Application {
     private GameLoop gameLoop;
@@ -17,8 +18,7 @@ public class GameApp extends Application {
         canvas.widthProperty().bind(root.widthProperty());
         canvas.heightProperty().bind(root.heightProperty());
         
-        Scene scene = new Scene(root, 720, 1280); // Larger default window size
-        
+        Scene scene = new Scene(root, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
         primaryStage.setTitle("You Can't Outrun Me! Believe it or not?");
         primaryStage.setScene(scene);
         primaryStage.show();

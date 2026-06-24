@@ -1,8 +1,8 @@
 package com.ycom.core;
 
 public class Config {
-    public static final double LOGICAL_WIDTH = 1080.0;
-    public static final double LOGICAL_HEIGHT = 1920.0;
+    public static final double LOGICAL_WIDTH = 1920.0;
+    public static final double LOGICAL_HEIGHT = 1080.0;
 
     public static final double BASE_SPEED = 20.0;
     public static final double BASE_TIME_SCALE = 1.0;
