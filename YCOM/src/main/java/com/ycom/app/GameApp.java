@@ -19,7 +19,7 @@ public class GameApp extends Application {
         canvas.heightProperty().bind(root.heightProperty());
         
         Scene scene = new Scene(root, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
-        primaryStage.setTitle("You Can't Outrun Me! Believe it or not?");
+        primaryStage.setTitle("You Can't Outrun Me!");
         primaryStage.setScene(scene);
         primaryStage.show();
 

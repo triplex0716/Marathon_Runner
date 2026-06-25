@@ -21,6 +21,9 @@ public class AssetManager {
         loadImage("treadmill", "book.png");
         loadImage("random", "random_box.png");
         loadImage("coin","coin.png");
+        loadImage("obstacle_slide", "obstacle_slide.png");
+        loadImage("obstacle_jump", "obstacle_jump.png");
+        loadImage("obstacle_train", "obstacle_train.png");
     }
 
     public static Image getImage(String key) {
@@ -66,6 +69,19 @@ public class AssetManager {
     public static Image coinIcon() {
         return getImage("coin");
     }
+
+    public static Image obstacleSlideIcon() {
+        return getImage("obstacle_slide");
+    }
+
+    public static Image obstacleJumpIcon() {
+        return getImage("obstacle_jump");
+    }
+
+    public static Image obstacleTrainIcon() {
+        return getImage("obstacle_train");
+    }
+
 
     private static void loadImage(String key, String fileName) {
         Path path = resolve(fileName);

@@ -99,17 +99,21 @@ public class RenderSystem {
                     double phase = ((AnimatedObject) obj).animationTime() * 6.0;
                     drawBobbingIcon(gc, p, AssetManager.randomIcon(), Color.DARKSLATEGRAY, "?", phase);
                 }
-                case OBSTACLE -> drawObstacle(gc, (Obstacle) obj, p);
+                case OBSTACLE -> drawObstacle(gc, (Obstacle) obj, p, camX, camY, camZ);
             }
         }
     }
 
     private Projection project(GameObject obj, double camX, double camY, double camZ) {
-        double distZ = Math.max(0.5, obj.z - camZ);
+        return project(obj.x, obj.y, obj.z, obj.width, obj.height, camX, camY, camZ);
+    }
+
+    private Projection project(double x, double y, double z, double width, double height, double camX, double camY, double camZ) {
+        double distZ = Math.max(0.5, z - camZ);
         double scale = Config.FOCAL_LENGTH / distZ;
-        double screenX = cx + (obj.x - camX) * scale;
-        double screenY = horizonY - (obj.y + obj.height / 2.0 - camY) * scale;
-        return new Projection(screenX, screenY, obj.width * scale, obj.height * scale, scale);
+        double screenX = cx + (x - camX) * scale;
+        double screenY = horizonY - (y + height / 2.0 - camY) * scale;
+        return new Projection(screenX, screenY, width * scale, height * scale, scale);
     }
 
     private void drawPlayer(GraphicsContext gc, Player player, Projection p) {
@@ -200,12 +204,69 @@ public class RenderSystem {
         gc.setTextAlign(TextAlignment.LEFT);
     }
 
-    private void drawObstacle(GraphicsContext gc, Obstacle obstacle, Projection p) {
-        gc.setFill(obstacle.color);
-        gc.fillRect(p.x - p.width / 2.0, p.y - p.height / 2.0, p.width, p.height);
-        gc.setStroke(Color.rgb(25, 12, 10));
-        gc.setLineWidth(Math.max(2.0, p.width * 0.03));
-        gc.strokeRect(p.x - p.width / 2.0, p.y - p.height / 2.0, p.width, p.height);
+    private void drawObstacle(GraphicsContext gc, Obstacle obstacle, Projection p, double camX, double camY, double camZ) {
+        Image obstacleImage = switch (obstacle.avoidMethod()) {
+            case SLIDE -> AssetManager.obstacleSlideIcon();
+            case JUMP -> AssetManager.obstacleJumpIcon();
+            case CHANGE_LANE -> AssetManager.obstacleTrainIcon();
+        };
+
+        if (obstacle.avoidMethod() == Obstacle.AvoidMethod.CHANGE_LANE) {
+            drawTrainObstacleBody(gc, obstacle, p, camX, camY, camZ);
+        }
+        gc.drawImage(obstacleImage, p.x - p.width / 2.0, p.y - p.height / 2.0, p.width, p.height);
+    }
+
+    private void drawTrainObstacleBody(GraphicsContext gc, Obstacle obstacle, Projection front, double camX, double camY, double camZ) {
+        Projection back = project(
+                obstacle.x,
+                obstacle.y + 0.12,
+                obstacle.z + obstacle.depth * 0.72,
+                obstacle.width * 0.95,
+                obstacle.height * 0.95,
+                camX,
+                camY,
+                camZ
+        );
+
+        double frontLeft = front.x - front.width * 0.45;
+        double frontRight = front.x + front.width * 0.45;
+        double frontTop = front.y - front.height * 0.48;
+        double frontBottom = front.y + front.height * 0.32;
+
+        double backLeft = back.x - back.width * 0.45;
+        double backRight = back.x + back.width * 0.45;
+        double backTop = back.y - back.height * 0.48;
+        double backBottom = back.y + back.height * 0.32;
+
+        gc.setFill(Color.rgb(23, 104, 160));
+        gc.fillPolygon(
+                new double[] {frontLeft, backLeft, backRight, frontRight},
+                new double[] {frontTop, backTop, backTop, frontTop},
+                4
+        );
+
+        gc.setFill(Color.rgb(31, 136, 198));
+        gc.fillPolygon(
+                new double[] {frontLeft, backLeft, backLeft, frontLeft},
+                new double[] {frontTop, backTop, backBottom, frontBottom},
+                4
+        );
+        gc.fillPolygon(
+                new double[] {frontRight, backRight, backRight, frontRight},
+                new double[] {frontTop, backTop, backBottom, frontBottom},
+                4
+        );
+
+        gc.setFill(Color.rgb(18, 74, 117));
+        gc.fillPolygon(
+                new double[] {frontLeft, backLeft, backRight, frontRight},
+                new double[] {frontBottom, backBottom, backBottom, frontBottom},
+                4
+        );
+
+        gc.setFill(Color.rgb(31, 136, 198));
+        gc.fillRect(frontLeft, frontTop, frontRight - frontLeft, frontBottom - frontTop);
     }
 
     private void drawTrack(GraphicsContext gc, double camX, double camY, double camZ) {
