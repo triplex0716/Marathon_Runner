@@ -7,6 +7,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import com.ycom.account.Account;
+import com.ycom.account.AccountStore;
+import com.ycom.account.Session;
 import com.ycom.core.Config;
 import com.ycom.entity.GameObject;
 import com.ycom.event.BoostActivatedEvent;
@@ -66,6 +69,14 @@ public class PlayingState implements GameState {
         particleSystem = new ParticleSystem();
         awaitingRevival = false;
         registerEventHandlers();
+
+        Account acc = Session.current();
+        if (Session.isGuest()) {
+            acc.coins = 0;
+            acc.capsules = 0;
+        }
+        scoreSystem.setCoins(acc.coins);
+        world.getPlayer().setRevivalCount(acc.capsules);
     }
 
     @Override
@@ -102,6 +113,15 @@ public class PlayingState implements GameState {
         scoreSystem.update(worldDt, world.getPlayer().z);
         particleSystem.update(worldDt, world.getPlayer().z);
         AudioManager.setBgmRate(TimeManager.getAudioRate());
+
+        int curCoins = scoreSystem.getCoins();
+        int curCapsules = world.getPlayer().revivalCount();
+        Account acc = Session.current();
+        if (acc.coins != curCoins || acc.capsules != curCapsules) {
+            acc.coins = curCoins;
+            acc.capsules = curCapsules;
+            if (!Session.isGuest()) AccountStore.save();
+        }
     }
 
     @Override

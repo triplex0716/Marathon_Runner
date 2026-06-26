@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import com.ycom.account.AccountStore;
 import com.ycom.core.Config;
 
 public class GameApp extends Application {
@@ -12,6 +13,7 @@ public class GameApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        AccountStore.load();
         Canvas canvas = new Canvas();
         StackPane root = new StackPane(canvas);
         

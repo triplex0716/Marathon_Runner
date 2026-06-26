@@ -42,6 +42,10 @@ public class ScoreSystem {
         return coinCount;
     }
 
+    public void setCoins(int n) {
+        coinCount = Math.max(0, n);
+    }
+
     public int getScore() {
         return (int) distance + bonusScore;
     }

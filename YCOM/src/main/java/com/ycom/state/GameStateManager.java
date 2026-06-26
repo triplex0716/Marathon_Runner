@@ -15,12 +15,13 @@ public class GameStateManager {
         this.canvas = canvas;
         this.input = input;
         
+        states.put("LOGIN", new LoginState(this, canvas, input));
         states.put("MENU", new MainMenuState(this, canvas, input));
         states.put("PLAYING", new PlayingState(this, canvas, input));
         states.put("GAMEOVER", new GameOverState(this, canvas, input));
         states.put("PAUSED", new PausedState(this, canvas, input));
-        
-        setState("MENU");
+
+        setState("LOGIN");
     }
     
     public void setState(String stateName) {

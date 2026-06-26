@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import com.ycom.account.Account;
+import com.ycom.account.Session;
 import com.ycom.core.Config;
 import com.ycom.resource.AssetManager;
 import com.ycom.resource.AudioManager;
@@ -32,6 +34,12 @@ public class MainMenuState implements GameState {
     @Override
     public void update(double dt) {
         if (!input.isMouseJustClicked()) {
+            return;
+        }
+
+        if (identityButton().contains(input.getMouseX(), input.getMouseY())) {
+            if (!Session.isGuest()) Session.logout();
+            gsm.setState("LOGIN");
             return;
         }
 
@@ -70,6 +78,50 @@ public class MainMenuState implements GameState {
 //            drawDifficultyButton(gc, rect, difficulty);
         }
         gc.setTextAlign(TextAlignment.LEFT);
+
+        drawIdentityBar(gc);
+    }
+
+    private void drawIdentityBar(GraphicsContext gc) {
+        ButtonRect btn = identityButton();
+        String info;
+        String label;
+        if (Session.isGuest()) {
+            info = "GUEST MODE";
+            label = "LOGIN";
+        } else {
+            Account acc = Session.current();
+            info = acc.username + "   coins: " + acc.coins + "   caps: " + acc.capsules;
+            label = "LOGOUT";
+        }
+
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 26));
+        gc.setFill(Color.rgb(0, 0, 0, 0.45));
+        gc.fillRoundRect(btn.x - 760.0, btn.y, 740.0, btn.h, 8.0, 8.0);
+        gc.setFill(Color.WHITE);
+        gc.setTextAlign(TextAlignment.RIGHT);
+        gc.fillText(info, btn.x - 30.0, btn.y + 40.0);
+
+        boolean hovered = btn.contains(input.getMouseX(), input.getMouseY());
+        if (hovered) {
+            gc.setFill(Color.rgb(255, 255, 255, 0.22));
+            gc.fillRoundRect(btn.x, btn.y, btn.w, btn.h, 8.0, 8.0);
+        }
+        gc.setStroke(Color.WHITE);
+        gc.setLineWidth(2.5);
+        gc.strokeRoundRect(btn.x, btn.y, btn.w, btn.h, 8.0, 8.0);
+        gc.setFill(Color.WHITE);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 26));
+        gc.fillText(label, btn.x + btn.w / 2.0, btn.y + 40.0);
+
+        gc.setTextAlign(TextAlignment.LEFT);
+    }
+
+    private ButtonRect identityButton() {
+        double w = 180.0;
+        double h = 60.0;
+        return new ButtonRect(Config.LOGICAL_WIDTH - w - 30.0, 30.0, w, h);
     }
 
     private void startGame(Config.Difficulty difficulty) {

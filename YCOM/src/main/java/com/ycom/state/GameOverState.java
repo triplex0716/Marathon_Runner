@@ -7,6 +7,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.input.KeyCode;
+import com.ycom.account.Account;
+import com.ycom.account.Session;
 import com.ycom.core.Config;
 import com.ycom.resource.AssetManager;
 import com.ycom.system.InputSystem;
@@ -51,6 +53,16 @@ public class GameOverState implements GameState {
 
         gc.setFont(new Font("Arial", 60));
         gc.fillText("Score: " + finalScore, Config.LOGICAL_WIDTH/2 - 150, Config.LOGICAL_HEIGHT/2 + 50);
+
+        gc.setFont(new Font("Arial", 36));
+        String walletLine;
+        if (Session.isGuest()) {
+            walletLine = "Guest mode — run cleared";
+        } else {
+            Account acc = Session.current();
+            walletLine = "Wallet: " + acc.coins + "    Capsules: " + acc.capsules;
+        }
+        gc.fillText(walletLine, Config.LOGICAL_WIDTH/2 - 260, Config.LOGICAL_HEIGHT/2 + 110);
 
         ButtonRect button = menuButton();
         gc.setFill(Color.rgb(255, 255, 255, 0.16));

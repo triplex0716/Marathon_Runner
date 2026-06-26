@@ -209,6 +209,10 @@ public class Player extends Actor {
         }
     }
 
+    public void setRevivalCount(int n) {
+        revivalCount = Math.max(0, n);
+    }
+
     public int coinRevivesUsed() {
         return coinRevivesUsed;
     }
