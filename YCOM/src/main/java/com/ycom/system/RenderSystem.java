@@ -57,6 +57,20 @@ public class RenderSystem {
             gc.fillRect(0.0, 0.0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
         }
 
+        // 绘制雪峰背景
+        gc.setFill(Color.rgb(200, 220, 230, 0.9)); // 左侧矮雪峰
+        gc.fillPolygon(
+                new double[]{ -50, Config.LOGICAL_WIDTH * 0.25, Config.LOGICAL_WIDTH * 0.6 },
+                new double[]{ horizonY, horizonY - 120, horizonY },
+                3
+        );
+        gc.setFill(Color.rgb(180, 205, 220, 0.9)); // 右侧高雪峰
+        gc.fillPolygon(
+                new double[]{ Config.LOGICAL_WIDTH * 0.35, Config.LOGICAL_WIDTH * 0.75, Config.LOGICAL_WIDTH + 100 },
+                new double[]{ horizonY, horizonY - 180, horizonY },
+                3
+        );
+
         gc.setFill(Color.rgb(35, 65, 45, 0.88));
         gc.fillRect(0.0, horizonY, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT - horizonY);
     }
@@ -122,10 +136,31 @@ public class RenderSystem {
             gc.fillOval(p.x - p.width * 0.95, p.y - p.height * 0.9, p.width * 1.9, p.height * 1.8);
         }
 
-        Image sheet = AssetManager.runSheet();
+        // 根据玩家状态选择精灵图
+        Image sheet = null;
+        int frameCount = 1;
+        switch (player.state()) {
+            case BOOSTED_INVINCIBLE -> {
+                sheet = AssetManager.boostSheet();
+                frameCount = AssetManager.frameCount("boost");
+            }
+            case JUMPING -> {
+                sheet = AssetManager.jumpSheet();
+                frameCount = AssetManager.frameCount("jump");
+            }
+            case SLIDING -> {
+                sheet = AssetManager.slideSheet();
+                frameCount = AssetManager.frameCount("slide");
+            }
+            default -> {
+                sheet = AssetManager.runSheet();
+                frameCount = AssetManager.frameCount("run");
+            }
+        }
+
         if (sheet != null && sheet.getWidth() > 0.0) {
-            int frame = player.currentFrame(AssetManager.runFrameCount());
-            double sw = sheet.getWidth() / AssetManager.runFrameCount();
+            int frame = player.currentFrame(frameCount);
+            double sw = sheet.getWidth() / frameCount;
             double sx = frame * sw;
             gc.drawImage(sheet, sx, 0.0, sw, sheet.getHeight(), p.x - p.width / 2.0, p.y - p.height / 2.0, p.width, p.height);
             return;

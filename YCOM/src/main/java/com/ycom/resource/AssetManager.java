@@ -8,13 +8,17 @@ import java.util.Map;
 
 public class AssetManager {
     private static final Map<String, Image> IMAGES = new HashMap<>();
-    private static final int RUN_FRAME_COUNT = 4;
+    private static final Map<String, Integer> FRAME_COUNTS = new HashMap<>();
 
     public static void init() {
         IMAGES.clear();
+        FRAME_COUNTS.clear();
         loadImage("background", "T-Pose.jpg");
         loadImage("player", "zxf.png");
-        loadImage("run", "run.jpg");
+        loadSprite("run", "run.png", 8);
+        loadSprite("jump", "jump.png", 8);
+        loadSprite("boost", "boost.png", 8);
+        loadSprite("slide", "slide.png", 8);
         loadImage("magnet", "magnet.png");
         loadImage("sprite", "energy_drink.png");
         loadImage("revival", "capsule.png");
@@ -26,8 +30,19 @@ public class AssetManager {
         loadImage("obstacle_train", "obstacle_train.png");
     }
 
+    private static void loadSprite(String key, String fileName, int frameCount) {
+        loadImage(key, fileName);
+        if (IMAGES.containsKey(key)) {
+            FRAME_COUNTS.put(key, frameCount);
+        }
+    }
+
     public static Image getImage(String key) {
         return IMAGES.get(key);
+    }
+
+    public static int frameCount(String key) {
+        return FRAME_COUNTS.getOrDefault(key, 1);
     }
 
     public static Image background() {
@@ -42,8 +57,16 @@ public class AssetManager {
         return getImage("run");
     }
 
-    public static int runFrameCount() {
-        return RUN_FRAME_COUNT;
+    public static Image jumpSheet() {
+        return getImage("jump");
+    }
+
+    public static Image boostSheet() {
+        return getImage("boost");
+    }
+
+    public static Image slideSheet() {
+        return getImage("slide");
     }
 
     public static Image magnetIcon() {
