@@ -34,6 +34,17 @@ public class RenderSystem {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         Player player = world.getPlayer();
 
+        // 把固定的逻辑画面(1080x1920)等比缩放居中到实际窗口，避免内容超出窗口看不见
+        double scale = Math.min(canvas.getWidth() / Config.LOGICAL_WIDTH, canvas.getHeight() / Config.LOGICAL_HEIGHT);
+        double offsetX = (canvas.getWidth() - Config.LOGICAL_WIDTH * scale) / 2.0;
+        double offsetY = (canvas.getHeight() - Config.LOGICAL_HEIGHT * scale) / 2.0;
+
+        // 先把整块画布刷成黑色(letterbox 黑边)，再进入逻辑坐标系绘制
+        gc.setTransform(1, 0, 0, 1, 0, 0);
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.setTransform(scale, 0, 0, scale, offsetX, offsetY);
+
         drawBackground(gc);
 
         double camX = player.x;
@@ -44,6 +55,8 @@ public class RenderSystem {
         drawObjects(gc, world, player, camX, camY, camZ);
         particles.draw(gc, camX, camY, camZ);
         drawHud(gc, player, scoreSystem);
+
+        gc.setTransform(1, 0, 0, 1, 0, 0);
     }
 
     private void drawBackground(GraphicsContext gc) {
