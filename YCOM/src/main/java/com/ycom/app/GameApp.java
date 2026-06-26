@@ -16,11 +16,16 @@ public class GameApp extends Application {
         AccountStore.load();
         Canvas canvas = new Canvas();
         StackPane root = new StackPane(canvas);
-        
+
         canvas.widthProperty().bind(root.widthProperty());
         canvas.heightProperty().bind(root.heightProperty());
-        
-        Scene scene = new Scene(root, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
+
+        // 竖屏窗口：高度取屏幕 90%，宽度按逻辑画面比例算，保持竖屏不变形、几乎无黑边
+        double screenHeight = javafx.stage.Screen.getPrimary().getVisualBounds().getHeight();
+        double windowHeight = Math.min(Config.LOGICAL_HEIGHT, screenHeight * 0.9);
+        double windowWidth = windowHeight * (Config.LOGICAL_WIDTH / Config.LOGICAL_HEIGHT);
+
+        Scene scene = new Scene(root, windowWidth, windowHeight);
         primaryStage.setTitle("You Can't Outrun Me!");
         primaryStage.setScene(scene);
         primaryStage.show();

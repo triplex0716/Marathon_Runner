@@ -28,6 +28,11 @@ public class AssetManager {
         loadImage("obstacle_slide", "obstacle_slide.png");
         loadImage("obstacle_jump", "obstacle_jump.png");
         loadImage("obstacle_train", "obstacle_train.png");
+        loadImage("ascension", "ascension.png");
+    }
+
+    public static Image ascensionImage() {
+        return getImage("ascension");
     }
 
     private static void loadSprite(String key, String fileName, int frameCount) {

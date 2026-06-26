@@ -2,3 +2,17 @@
 YCOM/target/
 *.class
 .DS_Store.
+
+# Blender 渲染工作素材（数百 MB，勿入库）
+/_assets_work/
+
+# 本地 Maven 安装与压缩包
+YCOM/apache-maven-3.9.6/
+*.zip
+
+# 运行目录下的资源副本（正式资源放在项目根）
+YCOM/*.png
+YCOM/*.mp3
+
+# Windows 误生成的空文件
+nul

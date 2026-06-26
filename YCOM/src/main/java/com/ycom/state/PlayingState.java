@@ -31,6 +31,8 @@ import com.ycom.system.SpawnSystem;
 import com.ycom.system.CollisionSystem;
 import com.ycom.system.ScoreSystem;
 import com.ycom.resource.AudioManager;
+import com.ycom.resource.AssetManager;
+import javafx.scene.image.Image;
 
 public class PlayingState implements GameState {
     private final GameStateManager gsm;
@@ -46,6 +48,11 @@ public class PlayingState implements GameState {
     private ParticleSystem particleSystem;
     private Config.Difficulty currentDifficulty = Config.DEFAULT_DIFFICULTY;
     private boolean awaitingRevival = false;
+
+    // 死亡升天动画
+    private static final double DEATH_DURATION = 3.5;
+    private boolean dyingAnimation = false;
+    private double deathTimer = 0.0;
 
     public PlayingState(GameStateManager gsm, Canvas canvas, InputSystem input) {
         this.gsm = gsm;
@@ -68,6 +75,8 @@ public class PlayingState implements GameState {
         collisionSystem = new CollisionSystem(world, eventBus);
         particleSystem = new ParticleSystem();
         awaitingRevival = false;
+        dyingAnimation = false;
+        deathTimer = 0.0;
         registerEventHandlers();
 
         Account acc = Session.current();
@@ -94,6 +103,14 @@ public class PlayingState implements GameState {
 
     @Override
     public void update(double dt) {
+        if (dyingAnimation) {
+            deathTimer += dt;
+            if (deathTimer >= DEATH_DURATION) {
+                dyingAnimation = false;
+                gsm.setState("GAMEOVER");
+            }
+            return;
+        }
         if (awaitingRevival) {
             handleRevivalPrompt();
             return;
@@ -129,9 +146,73 @@ public class PlayingState implements GameState {
         if (renderSystem != null && world != null && scoreSystem != null) {
             renderSystem.render(world, scoreSystem, particleSystem);
         }
+        if (dyingAnimation) {
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+            double scale = Math.min(canvas.getWidth() / Config.LOGICAL_WIDTH, canvas.getHeight() / Config.LOGICAL_HEIGHT);
+            double ox = (canvas.getWidth() - Config.LOGICAL_WIDTH * scale) / 2.0;
+            double oy = (canvas.getHeight() - Config.LOGICAL_HEIGHT * scale) / 2.0;
+            gc.setTransform(scale, 0, 0, scale, ox, oy);
+            drawDeathAnimation(gc);
+            gc.setTransform(1, 0, 0, 1, 0, 0);
+        }
         if (awaitingRevival) {
             drawRevivalPrompt();
         }
+    }
+
+    private void drawDeathAnimation(GraphicsContext gc) {
+        double t = Math.min(1.0, deathTimer / DEATH_DURATION);
+        double W = Config.LOGICAL_WIDTH;
+        double H = Config.LOGICAL_HEIGHT;
+
+        // 渐暗的红黑背景
+        gc.setGlobalAlpha(Math.min(0.82, t * 1.6));
+        gc.setFill(Color.rgb(20, 0, 6));
+        gc.fillRect(0, 0, W, H);
+        gc.setGlobalAlpha(1.0);
+
+        // 升天的张雪峰老师：从下往上飘 + 旋转 + 后段淡出
+        Image img = AssetManager.ascensionImage();
+        if (img != null && img.getWidth() > 0.0) {
+            double ease = 1.0 - Math.pow(1.0 - t, 2.0);
+            double cx = W / 2.0;
+            double cy = (0.72 - 0.56 * ease) * H;
+            double imgScale = 1.0 - 0.25 * t;
+            double drawW = W * 0.42 * imgScale;
+            double drawH = drawW * (img.getHeight() / img.getWidth());
+            double angle = t * 150.0;
+            double alpha = t < 0.65 ? 1.0 : Math.max(0.0, 1.0 - (t - 0.65) / 0.35);
+
+            // 升天光晕
+            gc.setGlobalAlpha(alpha * 0.45);
+            gc.setFill(Color.rgb(255, 244, 200));
+            double halo = drawW * (0.85 + 0.18 * Math.sin(t * Math.PI * 4.0));
+            gc.fillOval(cx - halo, cy - halo, halo * 2.0, halo * 2.0);
+
+            // 旋转绘制角色
+            gc.setGlobalAlpha(alpha);
+            gc.save();
+            gc.translate(cx, cy);
+            gc.rotate(angle);
+            gc.drawImage(img, -drawW / 2.0, -drawH / 2.0, drawW, drawH);
+            gc.restore();
+            gc.setGlobalAlpha(1.0);
+        }
+
+        // 大字标语
+        double textAlpha = Math.max(0.0, Math.min(1.0, (t - 0.3) / 0.4));
+        gc.setGlobalAlpha(textAlpha);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 96));
+        gc.setLineWidth(7.0);
+        gc.setStroke(Color.rgb(110, 0, 0));
+        gc.setFill(Color.rgb(255, 215, 0));
+        gc.strokeText("YOU CAN'T", W / 2.0, H * 0.30);
+        gc.fillText("YOU CAN'T", W / 2.0, H * 0.30);
+        gc.strokeText("OUTRUN ME!", W / 2.0, H * 0.30 + 116.0);
+        gc.fillText("OUTRUN ME!", W / 2.0, H * 0.30 + 116.0);
+        gc.setGlobalAlpha(1.0);
+        gc.setTextAlign(TextAlignment.LEFT);
     }
 
     private void registerEventHandlers() {
@@ -192,8 +273,9 @@ public class PlayingState implements GameState {
     private void doGameOver() {
         GameOverState.finalScore = scoreSystem.getScore();
         AudioManager.stopBGM();
-        AudioManager.playSfx("fail");
-        gsm.setState("GAMEOVER");
+        AudioManager.playSfx("ascension");
+        dyingAnimation = true;
+        deathTimer = 0.0;
     }
 
     private void doRevive() {
