@@ -32,6 +32,7 @@ public class AudioManager {
         loadSfx("invincible", "invincible.wav", "invincible.mp3");
         loadSfx("win", "win.wav", "win.mp3");
         loadSfx("obstacle_break", "obstacle_break.wav", "obstacle_break.mp3");
+        loadSfx("ascension", "ascension.mp3");
     }
 
     public static void playBGM() {
