@@ -21,7 +21,7 @@ public class Config {
     public static final double BGM_VOLUME = 0.85;
     public static final double SFX_VOLUME = 0.38;
 
-    public static final double CAMERA_Y = 2.5;
+    public static final double CAMERA_Y = 4;
     public static final double CAMERA_OFFSET_Z = -8.0;
     public static final double FOCAL_LENGTH = 1000.0;
 
