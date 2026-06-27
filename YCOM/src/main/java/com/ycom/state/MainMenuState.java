@@ -14,9 +14,18 @@ import com.ycom.resource.AudioManager;
 import com.ycom.system.InputSystem;
 
 public class MainMenuState implements GameState {
+    private static final double DIFFICULTY_X = 650.0;
+    private static final double DIFFICULTY_Y = 278.0;
+    private static final double DIFFICULTY_W = 620.0;
+    private static final double DIFFICULTY_H = 96.0;
+    private static final double DIFFICULTY_SPACING = 128.0;
+    private static final double EXPANDED_EXTRA_H = 126.0;
+    private static final double HOVER_ANIMATION_SPEED = 5.8;
+
     private final GameStateManager gsm;
     private final Canvas canvas;
     private final InputSystem input;
+    private final double[] difficultyHover = new double[Config.Difficulty.values().length];
 
     public MainMenuState(GameStateManager gsm, Canvas canvas, InputSystem input) {
         this.gsm = gsm;
@@ -33,19 +42,30 @@ public class MainMenuState implements GameState {
 
     @Override
     public void update(double dt) {
+        int hoveredDifficulty = hoveredDifficultyIndex();
+        updateDifficultyHover(dt, hoveredDifficulty);
+
         if (!input.isMouseJustClicked()) {
             return;
         }
 
-        if (identityButton().contains(input.getMouseX(), input.getMouseY())) {
+        double mx = input.getMouseX();
+        double my = input.getMouseY();
+
+        if (identityButton().contains(mx, my)) {
             if (!Session.isGuest()) Session.logout();
             gsm.setState("LOGIN");
             return;
         }
 
+        if (instructionButton().contains(mx, my)) {
+            gsm.setState("INSTRUCTION");
+            return;
+        }
+
         for (int i = 0; i < Config.Difficulty.values().length; i++) {
             ButtonRect rect = buttonRect(i);
-            if (rect.contains(input.getMouseX(), input.getMouseY())) {
+            if (rect.contains(mx, my)) {
                 startGame(Config.Difficulty.values()[i]);
                 return;
             }
@@ -67,16 +87,16 @@ public class MainMenuState implements GameState {
 
         gc.setFill(Color.WHITE);
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 78));
-        gc.fillText("YOU CAN'T OUTRUN ME!", Config.LOGICAL_WIDTH/2 - 450, Config.LOGICAL_HEIGHT/2 - 100);
-
         gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText("YOU CAN'T OUTRUN ME!", Config.LOGICAL_WIDTH / 2.0, 168.0);
+
         for (int i = 0; i < Config.Difficulty.values().length; i++) {
             Config.Difficulty difficulty = Config.Difficulty.values()[i];
             ButtonRect rect = buttonRect(i);
-            boolean hovered = rect.contains(input.getMouseX(), input.getMouseY());
-            drawDifficultyButton(gc, rect, difficulty, hovered);
-//            drawDifficultyButton(gc, rect, difficulty);
+            drawDifficultyButton(gc, rect, difficulty, difficultyHover[i]);
         }
+
+        drawInstructionButton(gc);
         gc.setTextAlign(TextAlignment.LEFT);
 
         drawIdentityBar(gc);
@@ -132,31 +152,137 @@ public class MainMenuState implements GameState {
         gsm.setState("PLAYING");
     }
 
-    private void drawDifficultyButton(GraphicsContext gc, ButtonRect rect, Config.Difficulty difficulty,boolean hovered) {
+    private void drawDifficultyButton(GraphicsContext gc, ButtonRect rect, Config.Difficulty difficulty, double progress) {
+        double eased = easeOut(progress);
+        double expandedH = rect.h + EXPANDED_EXTRA_H * eased;
         Color fill = switch (difficulty) {
             case EASY -> Color.rgb(41, 120, 82, 0.88);
             case MEDIUM -> Color.rgb(42, 86, 145, 0.88);
             case HARD -> Color.rgb(150, 50, 46, 0.88);
         };
-        if (hovered) {
-            gc.setFill(fill);
-            gc.fillRoundRect(rect.x, rect.y, rect.w, rect.h, 8.0, 8.0);
+
+        gc.setFill(Color.rgb(0, 0, 0, 0.26 + 0.12 * eased));
+        gc.fillRoundRect(rect.x + 12.0 * eased, rect.y + 12.0 * eased, rect.w, expandedH, 8.0, 8.0);
+
+        gc.setFill(Color.rgb(
+                (int) Math.round(255 * (1.0 - eased) + fill.getRed() * 255 * eased),
+                (int) Math.round(255 * (1.0 - eased) + fill.getGreen() * 255 * eased),
+                (int) Math.round(255 * (1.0 - eased) + fill.getBlue() * 255 * eased),
+                0.10 + 0.78 * eased
+        ));
+        gc.fillRoundRect(rect.x, rect.y, rect.w, expandedH, 8.0, 8.0);
+
+        if (eased > 0.03) {
+            gc.setFill(Color.rgb(255, 255, 255, 0.12 * eased));
+            gc.fillRoundRect(rect.x + 18.0, rect.y + 86.0, rect.w - 36.0, expandedH - 104.0, 8.0, 8.0);
         }
+
         gc.setStroke(Color.rgb(255, 255, 255, 0.85));
+        gc.setLineWidth(3.0 + 1.0 * eased);
+        gc.strokeRoundRect(rect.x, rect.y, rect.w, expandedH, 8.0, 8.0);
+
+        gc.setFill(Color.WHITE);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 42.0 + 4.0 * eased));
+        gc.fillText(difficulty.label.toUpperCase(), rect.x + rect.w / 2.0, rect.y + 64.0);
+
+        if (eased > 0.02) {
+            drawDifficultyInfo(gc, rect, difficulty, eased);
+        }
+    }
+
+    private void drawDifficultyInfo(GraphicsContext gc, ButtonRect rect, Config.Difficulty difficulty, double alpha) {
+        String[] lines = switch (difficulty) {
+            case EASY -> new String[] {
+                    "Fewer obstacles and wider spawn gaps",
+                    "More time before lane blocks appear",
+                    "Best for learning items and movement"
+            };
+            case MEDIUM -> new String[] {
+                    "Balanced obstacles and item chances",
+                    "Normal speed growth and pressure",
+                    "Recommended mode for a fair run"
+            };
+            case HARD -> new String[] {
+                    "More obstacles with shorter gaps",
+                    "Lane blocks appear much earlier",
+                    "Fewer safety items and faster pressure"
+            };
+        };
+
+        gc.setGlobalAlpha(alpha);
+        gc.setTextAlign(TextAlignment.LEFT);
+        gc.setFill(Color.rgb(255, 255, 255, 0.88));
+        gc.setFont(Font.font("Arial", FontWeight.NORMAL, 26.0));
+        double textX = rect.x + 72.0;
+        double textY = rect.y + 120.0;
+        for (int i = 0; i < lines.length; i++) {
+            gc.fillText(lines[i], textX, textY + i * 36.0);
+        }
+
+        gc.setFill(Color.rgb(255, 255, 255, 0.46));
+        for (int i = 0; i < lines.length; i++) {
+            gc.fillOval(rect.x + 40.0, textY - 14.0 + i * 36.0, 10.0, 10.0);
+        }
+        gc.setGlobalAlpha(1.0);
+        gc.setTextAlign(TextAlignment.CENTER);
+    }
+
+    private ButtonRect buttonRect(int index) {
+        double y = DIFFICULTY_Y + index * DIFFICULTY_SPACING;
+        for (int i = 0; i < index; i++) {
+            y += EXPANDED_EXTRA_H * easeOut(difficultyHover[i]);
+        }
+        return new ButtonRect(DIFFICULTY_X, y, DIFFICULTY_W, DIFFICULTY_H);
+    }
+
+    private ButtonRect instructionButton() {
+        double y = DIFFICULTY_Y + Config.Difficulty.values().length * DIFFICULTY_SPACING + 36.0;
+        for (double progress : difficultyHover) {
+            y += EXPANDED_EXTRA_H * easeOut(progress);
+        }
+        return new ButtonRect((Config.LOGICAL_WIDTH - 420.0) / 2.0, y, 420.0, 82.0);
+    }
+
+    private void drawInstructionButton(GraphicsContext gc) {
+        ButtonRect rect = instructionButton();
+        boolean hovered = rect.contains(input.getMouseX(), input.getMouseY());
+        gc.setFill(hovered ? Color.rgb(255, 255, 255, 0.24) : Color.rgb(0, 0, 0, 0.24));
+        gc.fillRoundRect(rect.x, rect.y, rect.w, rect.h, 8.0, 8.0);
+        gc.setStroke(Color.rgb(255, 255, 255, hovered ? 0.95 : 0.72));
         gc.setLineWidth(3.0);
         gc.strokeRoundRect(rect.x, rect.y, rect.w, rect.h, 8.0, 8.0);
 
         gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 44.0));
-        gc.fillText(difficulty.label, rect.x + rect.w / 2.0, rect.y + 70.0);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 34.0));
+        gc.fillText("Instruction", rect.x + rect.w / 2.0, rect.y + 54.0);
     }
 
-    private ButtonRect buttonRect(int index) {
-        double w = 620.0;
-        double h = 112.0;
-        double x = (Config.LOGICAL_WIDTH - w) / 2.0;
-        double y = Config.LOGICAL_HEIGHT / 2.0 + 38.0 + index * 150.0;
-        return new ButtonRect(x, y, w, h);
+    private int hoveredDifficultyIndex() {
+        double mx = input.getMouseX();
+        double my = input.getMouseY();
+        for (int i = 0; i < Config.Difficulty.values().length; i++) {
+            if (buttonRect(i).contains(mx, my)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void updateDifficultyHover(double dt, int hoveredDifficulty) {
+        double step = Math.min(1.0, Math.max(0.0, dt * HOVER_ANIMATION_SPEED));
+        for (int i = 0; i < difficultyHover.length; i++) {
+            double target = i == hoveredDifficulty ? 1.0 : 0.0;
+            difficultyHover[i] += (target - difficultyHover[i]) * step;
+            if (Math.abs(target - difficultyHover[i]) < 0.002) {
+                difficultyHover[i] = target;
+            }
+        }
+    }
+
+    private double easeOut(double t) {
+        double clamped = Math.max(0.0, Math.min(1.0, t));
+        return 1.0 - Math.pow(1.0 - clamped, 3.0);
     }
 
     private record ButtonRect(double x, double y, double w, double h) {

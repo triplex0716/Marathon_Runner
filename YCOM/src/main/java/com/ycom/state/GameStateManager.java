@@ -17,6 +17,7 @@ public class GameStateManager {
         
         states.put("LOGIN", new LoginState(this, canvas, input));
         states.put("MENU", new MainMenuState(this, canvas, input));
+        states.put("INSTRUCTION", new InstructionState(this, canvas, input));
         states.put("PLAYING", new PlayingState(this, canvas, input));
         states.put("GAMEOVER", new GameOverState(this, canvas, input));
         states.put("PAUSED", new PausedState(this, canvas, input));
