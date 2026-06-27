@@ -2,6 +2,7 @@ package com.ycom.state;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -58,6 +59,11 @@ public class MainMenuState implements GameState {
             return;
         }
 
+        if (Session.isLoggedIn() && shopButton().contains(mx, my)) {
+            gsm.setState("SHOP");
+            return;
+        }
+
         if (instructionButton().contains(mx, my)) {
             gsm.setState("INSTRUCTION");
             return;
@@ -100,6 +106,9 @@ public class MainMenuState implements GameState {
         gc.setTextAlign(TextAlignment.LEFT);
 
         drawIdentityBar(gc);
+        if (Session.isLoggedIn()) {
+            drawShopButton(gc);
+        }
     }
 
     private void drawIdentityBar(GraphicsContext gc) {
@@ -111,16 +120,19 @@ public class MainMenuState implements GameState {
             label = "LOGIN";
         } else {
             Account acc = Session.current();
-            info = acc.username + "   coins: " + acc.coins + "   caps: " + acc.capsules;
+            info = acc.username + "   coins: " + acc.coins + "   caps: " + acc.capsules + "   HI: " + acc.highScore;
             label = "LOGOUT";
         }
 
+        boolean shopVisible = Session.isLoggedIn();
+        double infoBoxW = shopVisible ? 672.0 : 740.0;
+        double infoTextRight = shopVisible ? btn.x - 96.0 : btn.x - 30.0;
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 26));
         gc.setFill(Color.rgb(0, 0, 0, 0.45));
-        gc.fillRoundRect(btn.x - 760.0, btn.y, 740.0, btn.h, 8.0, 8.0);
+        gc.fillRoundRect(btn.x - 760.0, btn.y, infoBoxW, btn.h, 8.0, 8.0);
         gc.setFill(Color.WHITE);
         gc.setTextAlign(TextAlignment.RIGHT);
-        gc.fillText(info, btn.x - 30.0, btn.y + 40.0);
+        gc.fillText(info, infoTextRight, btn.y + 40.0);
 
         boolean hovered = btn.contains(input.getMouseX(), input.getMouseY());
         if (hovered) {
@@ -142,6 +154,39 @@ public class MainMenuState implements GameState {
         double w = 180.0;
         double h = 60.0;
         return new ButtonRect(Config.LOGICAL_WIDTH - w - 30.0, 30.0, w, h);
+    }
+
+    private ButtonRect shopButton() {
+        ButtonRect id = identityButton();
+        double size = 60.0;
+        return new ButtonRect(id.x - size - 14.0, id.y, size, size);
+    }
+
+    private void drawShopButton(GraphicsContext gc) {
+        ButtonRect btn = shopButton();
+        boolean hovered = btn.contains(input.getMouseX(), input.getMouseY());
+        gc.setFill(hovered ? Color.rgb(255, 255, 255, 0.28) : Color.rgb(0, 0, 0, 0.42));
+        gc.fillRoundRect(btn.x, btn.y, btn.w, btn.h, 8.0, 8.0);
+        gc.setStroke(Color.WHITE);
+        gc.setLineWidth(2.5);
+        gc.strokeRoundRect(btn.x, btn.y, btn.w, btn.h, 8.0, 8.0);
+
+        Image icon = AssetManager.shoppingIcon();
+        if (icon != null && icon.getWidth() > 0.0) {
+            double pad = 8.0;
+            double iw = icon.getWidth();
+            double ih = icon.getHeight();
+            double scale = Math.min((btn.w - pad * 2) / iw, (btn.h - pad * 2) / ih);
+            double dw = iw * scale;
+            double dh = ih * scale;
+            gc.drawImage(icon, btn.x + (btn.w - dw) / 2.0, btn.y + (btn.h - dh) / 2.0, dw, dh);
+        } else {
+            gc.setFill(Color.WHITE);
+            gc.setTextAlign(TextAlignment.CENTER);
+            gc.setFont(Font.font("Arial", FontWeight.BOLD, 26));
+            gc.fillText("S", btn.x + btn.w / 2.0, btn.y + 42.0);
+            gc.setTextAlign(TextAlignment.LEFT);
+        }
     }
 
     private void startGame(Config.Difficulty difficulty) {

@@ -8,6 +8,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.input.KeyCode;
 import com.ycom.account.Account;
+import com.ycom.account.AccountStore;
 import com.ycom.account.Session;
 import com.ycom.core.Config;
 import com.ycom.resource.AssetManager;
@@ -18,14 +19,26 @@ public class GameOverState implements GameState {
     private final Canvas canvas;
     private final InputSystem input;
     public static int finalScore = 0;
+    private boolean newHighScore = false;
 
     public GameOverState(GameStateManager gsm, Canvas canvas, InputSystem input) {
         this.gsm = gsm;
         this.canvas = canvas;
         this.input = input;
     }
-    
-    @Override public void onEnter() {}
+
+    @Override
+    public void onEnter() {
+        newHighScore = false;
+        if (Session.isLoggedIn()) {
+            Account acc = Session.current();
+            if (finalScore > acc.highScore) {
+                acc.highScore = finalScore;
+                AccountStore.save();
+                newHighScore = true;
+            }
+        }
+    }
     @Override public void onExit() {}
 
     @Override
@@ -63,6 +76,34 @@ public class GameOverState implements GameState {
             walletLine = "Wallet: " + acc.coins + "    Capsules: " + acc.capsules;
         }
         gc.fillText(walletLine, Config.LOGICAL_WIDTH/2 - 260, Config.LOGICAL_HEIGHT/2 + 110);
+
+        if (Session.isLoggedIn()) {
+            Account acc = Session.current();
+            if (newHighScore) {
+                gc.setFill(Color.rgb(255, 215, 0));
+                gc.setFont(Font.font("Arial", FontWeight.BOLD, 44));
+                gc.setTextAlign(TextAlignment.CENTER);
+                gc.fillText("NEW HIGH SCORE!", Config.LOGICAL_WIDTH/2.0, Config.LOGICAL_HEIGHT/2.0 + 12);
+                gc.setTextAlign(TextAlignment.LEFT);
+                gc.setFill(Color.WHITE);
+            }
+            gc.setFont(new Font("Arial", 32));
+            gc.fillText("Best: " + acc.highScore, Config.LOGICAL_WIDTH/2 - 260, Config.LOGICAL_HEIGHT/2 + 158);
+        }
+
+        if (Session.isLoggedIn()) {
+            Account acc = Session.current();
+            if (newHighScore) {
+                gc.setFill(Color.rgb(255, 215, 0));
+                gc.setFont(Font.font("Arial", FontWeight.BOLD, 44));
+                gc.setTextAlign(TextAlignment.CENTER);
+                gc.fillText("NEW HIGH SCORE!", Config.LOGICAL_WIDTH/2.0, Config.LOGICAL_HEIGHT/2.0 + 12);
+                gc.setTextAlign(TextAlignment.LEFT);
+                gc.setFill(Color.WHITE);
+            }
+            gc.setFont(new Font("Arial", 32));
+            gc.fillText("Best: " + acc.highScore, Config.LOGICAL_WIDTH/2 - 260, Config.LOGICAL_HEIGHT/2 + 158);
+        }
 
         ButtonRect button = menuButton();
         gc.setFill(Color.rgb(255, 255, 255, 0.16));

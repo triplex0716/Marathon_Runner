@@ -1,7 +1,7 @@
 package com.ycom.account;
 
 public class Session {
-    private static final Account GUEST = new Account("__guest__", "", 0, 0);
+    private static final Account GUEST = new Account("__guest__", "", 0, 0, 0);
     private static Account current = null;
 
     public static void login(Account acc) {

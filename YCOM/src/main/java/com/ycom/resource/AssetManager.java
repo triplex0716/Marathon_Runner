@@ -29,10 +29,15 @@ public class AssetManager {
         loadImage("obstacle_jump", "obstacle_jump.png");
         loadImage("obstacle_train", "obstacle_train.png");
         loadImage("ascension", "ascension.png");
+        loadImage("shopping", "shopping.png");
     }
 
     public static Image ascensionImage() {
         return getImage("ascension");
+    }
+
+    public static Image shoppingIcon() {
+        return getImage("shopping");
     }
 
     private static void loadSprite(String key, String fileName, int frameCount) {

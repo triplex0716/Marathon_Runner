@@ -36,16 +36,18 @@ public class AccountStore {
                 String line = lines.get(i).trim();
                 if (line.isEmpty()) continue;
                 String[] parts = line.split(";", -1);
-                if (parts.length != 4) {
+                if (parts.length != 4 && parts.length != 5) {
                     System.err.println("AccountStore: skipped malformed line " + (i + 1));
                     continue;
                 }
                 try {
+                    int high = parts.length == 5 ? Integer.parseInt(parts[4]) : 0;
                     Account acc = new Account(
                             parts[0],
                             parts[1],
                             Integer.parseInt(parts[2]),
-                            Integer.parseInt(parts[3]));
+                            Integer.parseInt(parts[3]),
+                            high);
                     accounts.put(acc.username, acc);
                 } catch (NumberFormatException ex) {
                     System.err.println("AccountStore: skipped line " + (i + 1) + " (bad number)");
@@ -63,7 +65,7 @@ public class AccountStore {
         if (accounts.containsKey(username)) {
             throw new IllegalStateException("DUPLICATE");
         }
-        Account acc = new Account(username, password, 0, 0);
+        Account acc = new Account(username, password, 0, 0, 0);
         accounts.put(username, acc);
         save();
         return acc;
@@ -86,7 +88,7 @@ public class AccountStore {
             }
             List<String> lines = new ArrayList<>(accounts.size());
             for (Account a : accounts.values()) {
-                lines.add(a.username + ";" + a.password + ";" + a.coins + ";" + a.capsules);
+                lines.add(a.username + ";" + a.password + ";" + a.coins + ";" + a.capsules + ";" + a.highScore);
             }
             Files.write(FILE, lines, StandardCharsets.UTF_8);
         } catch (IOException ex) {
