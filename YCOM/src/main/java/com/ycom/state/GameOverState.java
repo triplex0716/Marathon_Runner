@@ -60,12 +60,24 @@ public class GameOverState implements GameState {
         gc.setFill(Color.rgb(60, 0, 0, 0.78));
         gc.fillRect(0, 0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
 
+        double cx = Config.LOGICAL_WIDTH / 2.0;
+        double cy = Config.LOGICAL_HEIGHT / 2.0;
+
+        gc.setTextAlign(TextAlignment.CENTER);
+
         gc.setFill(Color.WHITE);
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 96));
-        gc.fillText("GAME OVER", Config.LOGICAL_WIDTH/2 - 300, Config.LOGICAL_HEIGHT/2 - 100);
+        gc.fillText("GAME OVER", cx, cy - 100.0);
+
+        if (newHighScore) {
+            gc.setFill(Color.rgb(255, 215, 0));
+            gc.setFont(Font.font("Arial", FontWeight.BOLD, 44));
+            gc.fillText("NEW HIGH SCORE!", cx, cy - 30.0);
+            gc.setFill(Color.WHITE);
+        }
 
         gc.setFont(new Font("Arial", 60));
-        gc.fillText("Score: " + finalScore, Config.LOGICAL_WIDTH/2 - 150, Config.LOGICAL_HEIGHT/2 + 50);
+        gc.fillText("Score: " + finalScore, cx, cy + 50.0);
 
         gc.setFont(new Font("Arial", 36));
         String walletLine;
@@ -73,37 +85,9 @@ public class GameOverState implements GameState {
             walletLine = "Guest mode — run cleared";
         } else {
             Account acc = Session.current();
-            walletLine = "Wallet: " + acc.coins + "    Capsules: " + acc.capsules;
+            walletLine = "Wallet: " + acc.coins + "    Capsules: " + acc.capsules + "    Best: " + acc.highScore;
         }
-        gc.fillText(walletLine, Config.LOGICAL_WIDTH/2 - 260, Config.LOGICAL_HEIGHT/2 + 110);
-
-        if (Session.isLoggedIn()) {
-            Account acc = Session.current();
-            if (newHighScore) {
-                gc.setFill(Color.rgb(255, 215, 0));
-                gc.setFont(Font.font("Arial", FontWeight.BOLD, 44));
-                gc.setTextAlign(TextAlignment.CENTER);
-                gc.fillText("NEW HIGH SCORE!", Config.LOGICAL_WIDTH/2.0, Config.LOGICAL_HEIGHT/2.0 + 12);
-                gc.setTextAlign(TextAlignment.LEFT);
-                gc.setFill(Color.WHITE);
-            }
-            gc.setFont(new Font("Arial", 32));
-            gc.fillText("Best: " + acc.highScore, Config.LOGICAL_WIDTH/2 - 260, Config.LOGICAL_HEIGHT/2 + 158);
-        }
-
-        if (Session.isLoggedIn()) {
-            Account acc = Session.current();
-            if (newHighScore) {
-                gc.setFill(Color.rgb(255, 215, 0));
-                gc.setFont(Font.font("Arial", FontWeight.BOLD, 44));
-                gc.setTextAlign(TextAlignment.CENTER);
-                gc.fillText("NEW HIGH SCORE!", Config.LOGICAL_WIDTH/2.0, Config.LOGICAL_HEIGHT/2.0 + 12);
-                gc.setTextAlign(TextAlignment.LEFT);
-                gc.setFill(Color.WHITE);
-            }
-            gc.setFont(new Font("Arial", 32));
-            gc.fillText("Best: " + acc.highScore, Config.LOGICAL_WIDTH/2 - 260, Config.LOGICAL_HEIGHT/2 + 158);
-        }
+        gc.fillText(walletLine, cx, cy + 130.0);
 
         ButtonRect button = menuButton();
         gc.setFill(Color.rgb(255, 255, 255, 0.16));
@@ -113,19 +97,19 @@ public class GameOverState implements GameState {
         gc.strokeRoundRect(button.x, button.y, button.w, button.h, 8.0, 8.0);
 
         gc.setFill(Color.WHITE);
-        gc.setTextAlign(TextAlignment.CENTER);
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 38));
         gc.fillText("Back to Menu", button.x + button.w / 2.0, button.y + 66.0);
-        gc.setTextAlign(TextAlignment.LEFT);
 
         gc.setFont(new Font("Arial", 28));
-        gc.fillText("Choose a difficulty again from the menu", Config.LOGICAL_WIDTH/2 - 245, Config.LOGICAL_HEIGHT/2 + 280);
+        gc.fillText("Choose a difficulty again from the menu", cx, cy + 350.0);
+
+        gc.setTextAlign(TextAlignment.LEFT);
     }
 
     private ButtonRect menuButton() {
         double w = 440.0;
         double h = 104.0;
-        return new ButtonRect((Config.LOGICAL_WIDTH - w) / 2.0, Config.LOGICAL_HEIGHT / 2.0 + 150.0, w, h);
+        return new ButtonRect((Config.LOGICAL_WIDTH - w) / 2.0, Config.LOGICAL_HEIGHT / 2.0 + 190.0, w, h);
     }
 
     private record ButtonRect(double x, double y, double w, double h) {
