@@ -236,6 +236,7 @@ public class LoginState implements GameState {
         Image magnet = AssetManager.magnetIcon();
         Image sprite = AssetManager.spriteIcon();
         Image coin = AssetManager.coinIcon();
+        Image random = AssetManager.randomIcon();
 
         if (player != null) {
             gc.save();
@@ -253,6 +254,18 @@ public class LoginState implements GameState {
             gc.save();
             gc.setGlobalAlpha(0.95);
             gc.drawImage(magnet, 0, 880, 190, 190);
+            gc.restore();
+        }
+
+        // random box sitting next to the magnet, sharing the same ground line, with a purple glow.
+        gc.setFill(Color.rgb(170, 90, 255, 0.20));
+        gc.fillOval(180, 1010, 220, 90);
+        gc.setFill(Color.rgb(170, 90, 255, 0.32));
+        gc.fillOval(210, 1025, 160, 60);
+        if (random != null) {
+            gc.save();
+            gc.setGlobalAlpha(0.95);
+            gc.drawImage(random, 200, 905, 170, 170);
             gc.restore();
         }
 
