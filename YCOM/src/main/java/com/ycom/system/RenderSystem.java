@@ -1,5 +1,7 @@
 package com.ycom.system;
 
+import com.ycom.account.Account;
+import com.ycom.account.Session;
 import com.ycom.core.Config;
 import com.ycom.core.TimeManager;
 import com.ycom.entity.AnimatedObject;
@@ -342,17 +344,37 @@ public class RenderSystem {
 
     private void drawHud(GraphicsContext gc, Player player, ScoreSystem scoreSystem) {
         gc.setTextAlign(TextAlignment.LEFT);
+
+        boolean topRunVisible = Session.isLoggedIn() && Session.current().highScore > 0;
+        double panelH = topRunVisible ? 250.0 : 208.0;
         gc.setFill(Color.rgb(0, 0, 0, 0.45));
-        gc.fillRoundRect(24.0, 24.0, 392.0, 250.0, 10.0, 10.0);
+        gc.fillRoundRect(24.0, 24.0, 392.0, panelH, 10.0, 10.0);
 
         gc.setFill(Color.WHITE);
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 34.0));
-        gc.fillText("Score " + scoreSystem.getScore(), 48.0, 72.0);
+        double y = 72.0;
+        gc.fillText("Score " + scoreSystem.getScore(), 48.0, y);
+        y += 42.0;
+
         gc.setFont(Font.font("Arial", 28.0));
-        gc.fillText("Coins " + scoreSystem.getCoins(), 48.0, 114.0);
-        gc.fillText("Best " + scoreSystem.getHighScore(), 48.0, 156.0);
-        gc.fillText("Speed " + String.format("%.2fx", TimeManager.getWorldRate()), 48.0, 198.0);
-        gc.fillText("Revives " + player.revivalCount(), 48.0, 240.0);
+        if (topRunVisible) {
+            Account acc = Session.current();
+            int gap = acc.highScore - scoreSystem.getScore();
+            if (gap > 0) {
+                gc.setFill(Color.WHITE);
+                gc.fillText("Top Run " + gap, 48.0, y);
+            } else {
+                gc.setFill(Color.rgb(255, 215, 0));
+                gc.fillText("Top Run NEW BEST! +" + (-gap), 48.0, y);
+                gc.setFill(Color.WHITE);
+            }
+            y += 42.0;
+        }
+
+        int totalCoins = Session.current() != null ? Session.current().coins : scoreSystem.getCoins();
+        gc.fillText("Coins " + scoreSystem.getRunCoinsEarned() + " (Total: " + totalCoins + ")", 48.0, y); y += 42.0;
+        gc.fillText("Speed " + String.format("%.2fx", TimeManager.getWorldRate()), 48.0, y); y += 42.0;
+        gc.fillText("Revival Capsule " + player.revivalCount(), 48.0, y);
 
         double size = 84.0;
         double stride = 104.0;

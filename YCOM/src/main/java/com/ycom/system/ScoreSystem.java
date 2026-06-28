@@ -12,12 +12,14 @@ public class ScoreSystem {
     private double distance = 0.0;
     private double lastPlayerZ = 0.0;
     private int coinCount = 0;
+    private int runCoinsEarned = 0;
     private int bonusScore = 0;
 
     public ScoreSystem(EventBus eventBus, Player player) {
         this.player = player;
         eventBus.subscribe(CoinCollectedEvent.class, event -> {
             coinCount++;
+            runCoinsEarned++;
             bonusScore += event.value();
         });
         eventBus.subscribe(ScoreAddEvent.class, event -> bonusScore += event.points());
@@ -40,6 +42,10 @@ public class ScoreSystem {
 
     public int getCoins() {
         return coinCount;
+    }
+
+    public int getRunCoinsEarned() {
+        return runCoinsEarned;
     }
 
     public void setCoins(int n) {
