@@ -54,7 +54,12 @@ public class SpawnSystem {
         } else if (roll < slideThreshold) {
             world.addObject(new Obstacle(x, 1.25, z, 2.2, 1.0, 1.1, Color.CRIMSON, Obstacle.AvoidMethod.SLIDE));
         } else if (roll < blockThreshold) {
-            world.addObject(new Obstacle(x, 0.0, z, 2.4, 3.0, 7.0, Color.DARKRED, Obstacle.AvoidMethod.CHANGE_LANE));
+            if (rand.nextBoolean()) {
+                world.addObject(new Obstacle(x, 0.0, z, 2.4, 3.0, 7.0, Color.DARKRED, Obstacle.AvoidMethod.CHANGE_LANE));
+            } else {
+                world.addObject(new Obstacle(x, 0.0, z, 2.4, 3.0, 7.0, Color.DARKBLUE, Obstacle.AvoidMethod.CONTAINER));
+                world.addObject(new Obstacle(x, 0.0, z - 5.5, 2.4, 3.0, 4.0, Color.GRAY, Obstacle.AvoidMethod.RAMP));
+            }
         } else if (roll < magnetThreshold) {
             world.addObject(new Magnet(x, 0.6, z));
         } else if (roll < energyThreshold) {

@@ -8,12 +8,14 @@ public final class EntityUpdateContext {
     private final EventBus eventBus;
     private final Player player;
     private final double fixedDt;
+    private final com.ycom.world.GameWorld world;
 
-    public EntityUpdateContext(InputSystem input, EventBus eventBus, Player player, double fixedDt) {
+    public EntityUpdateContext(InputSystem input, EventBus eventBus, Player player, double fixedDt, com.ycom.world.GameWorld world) {
         this.input = input;
         this.eventBus = eventBus;
         this.player = player;
         this.fixedDt = fixedDt;
+        this.world = world;
     }
 
     public InputSystem input() {
@@ -30,5 +32,9 @@ public final class EntityUpdateContext {
 
     public double fixedDt() {
         return fixedDt;
+    }
+
+    public com.ycom.world.GameWorld world() {
+        return world;
     }
 }

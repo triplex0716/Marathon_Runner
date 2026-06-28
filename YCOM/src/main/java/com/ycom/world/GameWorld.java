@@ -26,7 +26,7 @@ public class GameWorld {
     }
 
     public void update(double worldDt, double fixedDt, InputSystem input, EventBus eventBus) {
-        context = new EntityUpdateContext(input, eventBus, player, fixedDt);
+        context = new EntityUpdateContext(input, eventBus, player, fixedDt, this);
         objects.addAll(newObjects);
         newObjects.clear();
 

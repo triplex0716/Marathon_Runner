@@ -39,7 +39,7 @@ public class RenderSystem {
         drawBackground(gc);
 
         double camX = player.x;
-        double camY = Config.CAMERA_Y;
+        double camY = Config.CAMERA_Y + player.y;
         double camZ = player.z + Config.CAMERA_OFFSET_Z;
 
         drawTrack(gc, camX, camY, camZ);
@@ -240,31 +240,32 @@ public class RenderSystem {
         gc.fillText(label, p.x, p.y + h * 0.16);
         gc.setTextAlign(TextAlignment.LEFT);
     }
-
     private void drawObstacle(GraphicsContext gc, Obstacle obstacle, Projection p, double camX, double camY, double camZ) {
+        if (obstacle.avoidMethod() == Obstacle.AvoidMethod.CHANGE_LANE || obstacle.avoidMethod() == Obstacle.AvoidMethod.CONTAINER) {
+            drawTrainObstacleBody(gc, obstacle, p, camX, camY, camZ);
+            return;
+        } else if (obstacle.avoidMethod() == Obstacle.AvoidMethod.RAMP) {
+            drawRamp(gc, obstacle, p, camX, camY, camZ);
+            return;
+        }
+
         Image obstacleImage = switch (obstacle.avoidMethod()) {
             case SLIDE -> AssetManager.obstacleSlideIcon();
             case JUMP -> AssetManager.obstacleJumpIcon();
-            case CHANGE_LANE -> AssetManager.obstacleTrainIcon();
+            default -> null;
         };
 
-        if (obstacle.avoidMethod() == Obstacle.AvoidMethod.CHANGE_LANE) {
-            drawTrainObstacleBody(gc, obstacle, p, camX, camY, camZ);
+        if (obstacleImage != null) {
+            gc.drawImage(obstacleImage, p.x - p.width / 2.0, p.y - p.height / 2.0, p.width, p.height);
         }
-        gc.drawImage(obstacleImage, p.x - p.width / 2.0, p.y - p.height / 2.0, p.width, p.height);
     }
 
-    private void drawTrainObstacleBody(GraphicsContext gc, Obstacle obstacle, Projection front, double camX, double camY, double camZ) {
-        Projection back = project(
-                obstacle.x,
-                obstacle.y + 0.12,
-                obstacle.z + obstacle.depth * 0.72,
-                obstacle.width * 0.95,
-                obstacle.height * 0.95,
-                camX,
-                camY,
-                camZ
-        );
+    private void drawTrainObstacleBody(GraphicsContext gc, Obstacle obstacle, Projection dummyFront, double camX, double camY, double camZ) {
+        double fZ = obstacle.z - obstacle.depth / 2.0;
+        double bZ = obstacle.z + obstacle.depth / 2.0;
+        
+        Projection front = project(obstacle.x, obstacle.y, fZ, obstacle.width * 0.95, obstacle.height * 0.95, camX, camY, camZ);
+        Projection back = project(obstacle.x, obstacle.y + 0.12, bZ, obstacle.width * 0.95, obstacle.height * 0.95, camX, camY, camZ);
 
         double frontLeft = front.x - front.width * 0.45;
         double frontRight = front.x + front.width * 0.45;
@@ -276,34 +277,183 @@ public class RenderSystem {
         double backTop = back.y - back.height * 0.48;
         double backBottom = back.y + back.height * 0.32;
 
-        gc.setFill(Color.rgb(23, 104, 160));
-        gc.fillPolygon(
-                new double[] {frontLeft, backLeft, backRight, frontRight},
-                new double[] {frontTop, backTop, backTop, frontTop},
-                4
-        );
+        Image topImg, sideImg, frontImg;
+        if (obstacle.avoidMethod() == Obstacle.AvoidMethod.CONTAINER) {
+            topImg = AssetManager.containerTop();
+            sideImg = AssetManager.containerSide();
+            frontImg = AssetManager.containerFront();
+        } else {
+            topImg = AssetManager.obstacleTrainSideIcon();
+            sideImg = AssetManager.obstacleTrainSideIcon();
+            frontImg = AssetManager.obstacleTrainIcon();
+        }
 
-        gc.setFill(Color.rgb(31, 136, 198));
-        gc.fillPolygon(
-                new double[] {frontLeft, backLeft, backLeft, frontLeft},
-                new double[] {frontTop, backTop, backBottom, frontBottom},
-                4
-        );
-        gc.fillPolygon(
-                new double[] {frontRight, backRight, backRight, frontRight},
-                new double[] {frontTop, backTop, backBottom, frontBottom},
-                4
-        );
+        // Top
+        if (frontTop > backTop) {
+            if (topImg != null && topImg.getWidth() > 0) {
+                drawPerspectiveImage(gc, topImg, backLeft, backTop, backRight, backTop, frontRight, frontTop, frontLeft, frontTop);
+            } else {
+                gc.setFill(Color.rgb(23, 104, 160));
+                gc.fillPolygon(
+                        new double[] {frontLeft, backLeft, backRight, frontRight},
+                        new double[] {frontTop, backTop, backTop, frontTop},
+                        4
+                );
+            }
+        }
 
-        gc.setFill(Color.rgb(18, 74, 117));
-        gc.fillPolygon(
-                new double[] {frontLeft, backLeft, backRight, frontRight},
-                new double[] {frontBottom, backBottom, backBottom, frontBottom},
-                4
-        );
+        // Left
+        if (frontLeft > backLeft) {
+            if (sideImg != null && sideImg.getWidth() > 0) {
+                drawPerspectiveImage(gc, sideImg, backLeft, backTop, frontLeft, frontTop, frontLeft, frontBottom, backLeft, backBottom);
+            } else {
+                gc.setFill(Color.rgb(31, 136, 198));
+                gc.fillPolygon(
+                        new double[] {frontLeft, backLeft, backLeft, frontLeft},
+                        new double[] {frontTop, backTop, backBottom, frontBottom},
+                        4
+                );
+            }
+        }
 
-        gc.setFill(Color.rgb(31, 136, 198));
-        gc.fillRect(frontLeft, frontTop, frontRight - frontLeft, frontBottom - frontTop);
+        // Right
+        if (frontRight < backRight) {
+            if (sideImg != null && sideImg.getWidth() > 0) {
+                drawPerspectiveImage(gc, sideImg, frontRight, frontTop, backRight, backTop, backRight, backBottom, frontRight, frontBottom);
+            } else {
+                gc.setFill(Color.rgb(31, 136, 198));
+                gc.fillPolygon(
+                        new double[] {frontRight, backRight, backRight, frontRight},
+                        new double[] {frontTop, backTop, backBottom, frontBottom},
+                        4
+                );
+            }
+        }
+
+        // Bottom
+        if (frontBottom < backBottom) {
+            gc.setFill(Color.rgb(18, 74, 117));
+            gc.fillPolygon(
+                    new double[] {frontLeft, backLeft, backRight, frontRight},
+                    new double[] {frontBottom, backBottom, backBottom, frontBottom},
+                    4
+            );
+        }
+
+        // Front
+        if (frontImg != null && frontImg.getWidth() > 0) {
+            gc.drawImage(frontImg, frontLeft, frontTop, frontRight - frontLeft, frontBottom - frontTop);
+        } else {
+            gc.setFill(Color.rgb(31, 136, 198));
+            gc.fillRect(frontLeft, frontTop, frontRight - frontLeft, frontBottom - frontTop);
+        }
+    }
+
+    private void drawRamp(GraphicsContext gc, Obstacle obstacle, Projection front, double camX, double camY, double camZ) {
+        double fZ = obstacle.z - obstacle.depth / 2.0;
+        double bZ = obstacle.z + obstacle.depth / 2.0;
+        
+        Projection pFrontBottomLeft = project(obstacle.x - obstacle.width / 2.0, obstacle.y, fZ, 0, 0, camX, camY, camZ);
+        Projection pFrontBottomRight = project(obstacle.x + obstacle.width / 2.0, obstacle.y, fZ, 0, 0, camX, camY, camZ);
+        
+        Projection pBackTopLeft = project(obstacle.x - obstacle.width / 2.0, obstacle.y + obstacle.height, bZ, 0, 0, camX, camY, camZ);
+        Projection pBackTopRight = project(obstacle.x + obstacle.width / 2.0, obstacle.y + obstacle.height, bZ, 0, 0, camX, camY, camZ);
+        
+        Projection pBackBottomLeft = project(obstacle.x - obstacle.width / 2.0, obstacle.y, bZ, 0, 0, camX, camY, camZ);
+        Projection pBackBottomRight = project(obstacle.x + obstacle.width / 2.0, obstacle.y, bZ, 0, 0, camX, camY, camZ);
+        
+        Image rampSlopeImg = AssetManager.rampSlope();
+        Image rampSideImg = AssetManager.rampSide();
+
+        // Slope
+        if (rampSlopeImg != null && rampSlopeImg.getWidth() > 0) {
+            drawPerspectiveImage(gc, rampSlopeImg, 
+                pBackTopLeft.x, pBackTopLeft.y, 
+                pBackTopRight.x, pBackTopRight.y, 
+                pFrontBottomRight.x, pFrontBottomRight.y, 
+                pFrontBottomLeft.x, pFrontBottomLeft.y);
+        } else {
+            gc.setFill(Color.rgb(150, 150, 150));
+            gc.fillPolygon(
+                new double[] {pBackTopLeft.x, pBackTopRight.x, pFrontBottomRight.x, pFrontBottomLeft.x},
+                new double[] {pBackTopLeft.y, pBackTopRight.y, pFrontBottomRight.y, pFrontBottomLeft.y},
+                4
+            );
+        }
+
+        // Left face
+        if (pFrontBottomLeft.x > pBackBottomLeft.x) {
+            if (rampSideImg != null && rampSideImg.getWidth() > 0) {
+                gc.save();
+                gc.beginPath();
+                gc.moveTo(pBackTopLeft.x, pBackTopLeft.y);
+                gc.lineTo(pFrontBottomLeft.x, pFrontBottomLeft.y);
+                gc.lineTo(pBackBottomLeft.x, pBackBottomLeft.y);
+                gc.closePath();
+                gc.clip();
+                
+                Projection pFrontTopLeft = project(obstacle.x - obstacle.width / 2.0, obstacle.y + obstacle.height, fZ, 0, 0, camX, camY, camZ);
+                drawPerspectiveImage(gc, rampSideImg,
+                    pBackTopLeft.x, pBackTopLeft.y,
+                    pFrontTopLeft.x, pFrontTopLeft.y,
+                    pFrontBottomLeft.x, pFrontBottomLeft.y,
+                    pBackBottomLeft.x, pBackBottomLeft.y
+                );
+                gc.restore();
+            } else {
+                gc.setFill(Color.rgb(100, 100, 100));
+                gc.fillPolygon(
+                    new double[] {pBackTopLeft.x, pFrontBottomLeft.x, pBackBottomLeft.x},
+                    new double[] {pBackTopLeft.y, pFrontBottomLeft.y, pBackBottomLeft.y},
+                    3
+                );
+            }
+        }
+        
+        // Right face
+        if (pFrontBottomRight.x < pBackBottomRight.x) {
+            if (rampSideImg != null && rampSideImg.getWidth() > 0) {
+                gc.save();
+                gc.beginPath();
+                gc.moveTo(pBackTopRight.x, pBackTopRight.y);
+                gc.lineTo(pFrontBottomRight.x, pFrontBottomRight.y);
+                gc.lineTo(pBackBottomRight.x, pBackBottomRight.y);
+                gc.closePath();
+                gc.clip();
+                
+                Projection pFrontTopRight = project(obstacle.x + obstacle.width / 2.0, obstacle.y + obstacle.height, fZ, 0, 0, camX, camY, camZ);
+                drawPerspectiveImage(gc, rampSideImg,
+                    pFrontTopRight.x, pFrontTopRight.y,
+                    pBackTopRight.x, pBackTopRight.y,
+                    pBackBottomRight.x, pBackBottomRight.y,
+                    pFrontBottomRight.x, pFrontBottomRight.y
+                );
+                gc.restore();
+            } else {
+                gc.setFill(Color.rgb(100, 100, 100));
+                gc.fillPolygon(
+                    new double[] {pBackTopRight.x, pFrontBottomRight.x, pBackBottomRight.x},
+                    new double[] {pBackTopRight.y, pFrontBottomRight.y, pBackBottomRight.y},
+                    3
+                );
+            }
+        }
+    }
+
+    private void drawPerspectiveImage(GraphicsContext gc, Image img, 
+                                      double ulx, double uly, 
+                                      double urx, double ury, 
+                                      double lrx, double lry, 
+                                      double llx, double lly) {
+        if (img == null || img.getWidth() <= 0) return;
+        javafx.scene.effect.PerspectiveTransform pt = new javafx.scene.effect.PerspectiveTransform();
+        pt.setUlx(ulx); pt.setUly(uly);
+        pt.setUrx(urx); pt.setUry(ury);
+        pt.setLrx(lrx); pt.setLry(lry);
+        pt.setLlx(llx); pt.setLly(lly);
+        gc.setEffect(pt);
+        gc.drawImage(img, 0, 0, img.getWidth(), img.getHeight());
+        gc.setEffect(null);
     }
 
     private void drawTrack(GraphicsContext gc, double camX, double camY, double camZ) {

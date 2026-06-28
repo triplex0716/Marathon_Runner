@@ -20,6 +20,8 @@ public class AssetManager {
         loadSprite("boost", "boost.png", 8);
         loadSprite("slide", "slide.png", 8);
         loadImage("magnet", "magnet.png");
+        loadImage("ramp_slope", "ramp_slope.png");
+        loadImage("ramp_side", "ramp_side.png");
         loadImage("sprite", "energy_drink.png");
         loadImage("revival", "capsule.png");
         loadImage("treadmill", "book.png");
@@ -28,8 +30,12 @@ public class AssetManager {
         loadImage("obstacle_slide", "obstacle_slide.png");
         loadImage("obstacle_jump", "obstacle_jump.png");
         loadImage("obstacle_train", "obstacle_train.png");
+        loadImage("obstacle_train_side", "obstacle_train_side.jpg");
         loadImage("ascension", "ascension.png");
         loadImage("shopping", "shopping.png");
+        loadImage("container_front", "container_front.jpg");
+        loadImage("container_side", "container_side.jpg");
+        loadImage("container_top", "container_top.jpg");
     }
 
     public static Image ascensionImage() {
@@ -95,6 +101,10 @@ public class AssetManager {
         return getImage("treadmill");
     }
 
+    public static Image randomItemIcon() { return getImage("random_item"); }
+    public static Image rampSlope() { return getImage("ramp_slope"); }
+    public static Image rampSide() { return getImage("ramp_side"); }
+
     public static Image randomIcon() {
         return getImage("random");
     }
@@ -113,6 +123,22 @@ public class AssetManager {
 
     public static Image obstacleTrainIcon() {
         return getImage("obstacle_train");
+    }
+
+    public static Image obstacleTrainSideIcon() {
+        return getImage("obstacle_train_side");
+    }
+
+    public static Image containerFront() {
+        return getImage("container_front");
+    }
+
+    public static Image containerSide() {
+        return getImage("container_side");
+    }
+
+    public static Image containerTop() {
+        return getImage("container_top");
     }
 
 

@@ -8,7 +8,9 @@ public class Obstacle extends RenderableObject {
     public enum AvoidMethod {
         JUMP,
         SLIDE,
-        CHANGE_LANE
+        CHANGE_LANE,
+        CONTAINER,
+        RAMP
     }
 
     private final AvoidMethod avoidMethod;
@@ -21,6 +23,12 @@ public class Obstacle extends RenderableObject {
     @Override
     public void onCollision(CollisionEvent event, EntityUpdateContext context) {
         if (event.other() instanceof Player player) {
+            if (avoidMethod == AvoidMethod.RAMP) {
+                return;
+            }
+            if (avoidMethod == AvoidMethod.CONTAINER && player.floorY() > 0.0) {
+                return;
+            }
             if (player.isBoosted()) {
                 active = false;
                 context.eventBus().publish(new ObstacleDestroyedEvent(
