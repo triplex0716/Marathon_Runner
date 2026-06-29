@@ -262,12 +262,7 @@ public class PlayingState implements GameState {
     }
 
     private int currentCoinReviveCost() {
-        int used = world.getPlayer().coinRevivesUsed();
-        int[] costs = Config.COIN_REVIVE_COSTS;
-        if (used >= costs.length) {
-            return Integer.MAX_VALUE;
-        }
-        return costs[used];
+        return Config.COIN_REVIVE_COST;
     }
 
     private void doGameOver() {
@@ -300,7 +295,7 @@ public class PlayingState implements GameState {
     private void handleRevivalPrompt() {
         boolean capsuleAvail = world.getPlayer().hasRevival();
         int cost = currentCoinReviveCost();
-        boolean coinAvail = cost != Integer.MAX_VALUE && scoreSystem.getCoins() >= cost;
+        boolean coinAvail = scoreSystem.getCoins() >= cost;
 
         double mx = input.getMouseX();
         double my = input.getMouseY();
@@ -390,7 +385,7 @@ public class PlayingState implements GameState {
 
         boolean capsuleAvail = world.getPlayer().hasRevival();
         int cost = currentCoinReviveCost();
-        boolean coinAvail = cost != Integer.MAX_VALUE && scoreSystem.getCoins() >= cost;
+        boolean coinAvail = scoreSystem.getCoins() >= cost;
         int capsuleCount = world.getPlayer().revivalCount();
 
         drawCapsuleButton(gc, capsuleAvail, capsuleCount);
@@ -529,9 +524,7 @@ public class PlayingState implements GameState {
         ButtonRect r = coinButton();
         Color border = Color.web("#FFA82E");
         Color subColor = Color.web("#FFC73B");
-        String title = cost == Integer.MAX_VALUE
-                ? "Coin Revive Used Up"
-                : "Spend " + cost + " Coins";
+        String title = "Spend " + cost + " Coins";
         drawReviveButton(gc, r, title, "Press C", enabled,
                 AssetManager.coinIcon(), false,
                 border, subColor, null, "Not enough coins");
