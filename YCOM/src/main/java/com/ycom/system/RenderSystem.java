@@ -39,7 +39,7 @@ public class RenderSystem {
         drawBackground(gc);
 
         double camX = player.x;
-        double camY = Config.CAMERA_Y + player.y;
+        double camY = Config.CAMERA_Y + player.floorY();
         double camZ = player.z + Config.CAMERA_OFFSET_Z;
 
         drawTrack(gc, camX, camY, camZ);

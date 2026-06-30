@@ -77,7 +77,9 @@ public class Player extends Actor {
             if (x >= obs.x - halfW && x <= obs.x + halfW) {
                 if (z + depth / 2.0 >= obs.z - obs.depth / 2.0 && z - depth / 2.0 <= obs.z + obs.depth / 2.0) {
                     if (obs.avoidMethod() == Obstacle.AvoidMethod.CONTAINER) {
-                        floorY = Math.max(floorY, obs.height);
+                        if (y >= obs.height - 0.8) {
+                            floorY = Math.max(floorY, obs.height);
+                        }
                     } else if (obs.avoidMethod() == Obstacle.AvoidMethod.RAMP) {
                         double frontZ = obs.z - obs.depth / 2.0;
                         double clampZ = Math.max(frontZ, Math.min(obs.z + obs.depth / 2.0, z + depth / 2.0));
