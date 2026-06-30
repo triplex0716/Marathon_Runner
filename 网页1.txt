@@ -1,0 +1,2669 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Eight Arms 8 Bit Games | Eight Arms, London</title>
+		<meta name="description" content="Run, jump and shoot your way to victory at The Eight Arms 8bit Olympics">
+        
+        <link rel="canonical" href="https://8bitgames.eightarms.co.uk/" />
+        <meta property="og:locale" content="en_GB" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Eight Arms 8 Bit Games | Eight Arms, London" />
+        <meta property="og:description" content="Challenge your coordination, dexterity and patience!" />
+        <meta property="og:url" content="http://8bitgames.eightarms.co.uk/" />
+        <meta property="og:site_name" content="Eight Arms 8 Bit Games" />
+        <meta property="og:image" content="http://8bitgames.eightarms.co.uk/cover.jpg" />
+		<meta property="fb:app_id" content="321327711590362" />
+
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:description" content="Challenge your coordination, dexterity and patience!"/>
+        <meta name="twitter:title" content="Eight Arms 8 Bit Games | Eight Arms, London"/>
+        <meta name="twitter:domain" content="Eight Arms 8 Bit Games | Eight Arms, London"/>
+        <meta name="twitter:image:src" content="http://8bitgames.eightarms.co.uk/cover.jpg"/>
+
+
+		<link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+		
+		<link rel="stylesheet" href="css/style.css">
+		
+		<script>var WEB_ROOT = 'http://8bitgames.eightarms.co.uk/';
+		var IP = 21125195204;
+		var tweet_text = 'Challenge+your+coordination%2C+dexterity+and+patience%21';
+		var COMMENTARY = {"archery":{"bad":["Who taught you to shoot, Stevie Wonder?","Pfff. Who uses a bow and arrow these days anyway, right?"],"ok":["Hey! You hit something! Not bad.","Hey, that wasn't awful! Keep practising. If only for the sake of spectator safety..."],"good":["Hey, that was really good! Nice work.","Great work! There's a long-running, agricultural-themed radio drama out there somewhere with your name on it!"],"amazing":["Are you Robin Hood in disguise? You nailed it!"]},"hurdles":{"bad":["Are you sure that packet said 'Performance ENHANCING'?","Sure, keep running through them. That'll work..."],"ok":["You're getting there! Maybe try running into less stuff?","Hey, can you hear that? The sound of scattered applause."],"good":["Well, just look at you go! Bravo!","You\u2019re quite the hurdle nerd-le, aren\u2019t you?"],"amazing":["Wow! You\u2019re a pro! I hope you\u2019ve learned the National Anthem..."]},"triplejump":{"bad":["Hmm... Well, it\u2019s the taking part that counts.","Yeah, I suppose asking for three jumps is a bit much..."],"ok":["Not bad. Not bad at all.","Are you okay? You seem a LITTLE JUMPy..."],"good":["Woah, great job!","You\u2019re once, twice, three times the leaper! Pow!"],"amazing":["Blimey! That was brilliant! Don\u2019t forget to check the leaderboard."]}};
+		var preloaders = ["img\/archery-arms.png","img\/awards\/cssda-special-kudos-left.png","img\/awards\/one-page-love-award.png","img\/cheryl\/archery.png","img\/cheryl\/hurdle.png","img\/cheryl\/run-1.png","img\/cheryl\/run-2.png","img\/cheryl\/triple-hop.png","img\/cheryl\/triple-jump.png","img\/cheryl\/triple-step.png","img\/crowd.png","img\/dave\/archery.png","img\/dave\/hurdle.png","img\/dave\/run-1.png","img\/dave\/run-2.png","img\/dave\/triple-hop.png","img\/dave\/triple-jump.png","img\/dave\/triple-step.png","img\/eightarms-8bit-games-logo.png","img\/facebook.png","img\/flags.png","img\/hurdle-hit.png","img\/hurdle.png","img\/intro\/cheryl.png","img\/intro\/dave.png","img\/intro\/matt.png","img\/intro\/mazz.png","img\/intro\/streaker.png","img\/matt\/archery.png","img\/matt\/hurdle.png","img\/matt\/run-1.png","img\/matt\/run-2.png","img\/matt\/triple-hop.png","img\/matt\/triple-jump.png","img\/matt\/triple-step.png","img\/mazz\/archery.png","img\/mazz\/hurdle.png","img\/mazz\/run-1.png","img\/mazz\/run-2.png","img\/mazz\/triple-hop.png","img\/mazz\/triple-jump.png","img\/mazz\/triple-step.png","img\/mountains.png","img\/name-pointer.png","img\/pit.png","img\/portrait-warning.png","img\/streaker\/archery.png","img\/streaker\/hurdle.png","img\/streaker\/run-1.png","img\/streaker\/run-2.png","img\/streaker\/triple-hop.png","img\/streaker\/triple-jump.png","img\/streaker\/triple-step.png","img\/twitter.png"];
+		</script>
+		<script src="js/prefixfree.min.js"></script>
+	</head>
+
+
+	<body>
+		<div id="loader" class="loader">
+			<div class="vertical-contain">
+				<div class="vertical-center text-center">
+					<div class="loading-runner text-center">
+						<div class="loader-sprite-wrapper">
+														<div class="uia runner loader-runner" data-page='triplejump-intro' style="background-image:url('img/intro/cheryl.png');"></div>
+						</div>
+						<p>Loading</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="hidden-wrapper">
+						
+<div id="page-intro" class="page page-intro">
+	
+	<div class="awards">
+		<a target="_blank" class="cssda-award" href="http://www.cssdesignawards.com/sites/the-eight-arms-8-bit-games/29007/"><img src="https://8bitgames.eightarms.co.uk/img/awards/cssda-special-kudos-left.png" alt="CSS Special Kudos" /></a>
+		<a target="_blank" class="opl-award" href="https://onepagelove.com/the-eight-arms-8-bit-games"><img src="https://8bitgames.eightarms.co.uk/img/awards/one-page-love-award.png" alt="One Page Love Award" /></a>
+	</div>
+
+	<div class="home-navs">	
+
+		<nav class="share">
+			<ul>
+				<li><a href="https://www.facebook.com/sharer.php?u=http://olympics.eightarms.co.uk" target="_blank"><img src="img/facebook.png" alt=""></a></li>
+				<li><a href="https://twitter.com/intent/tweet?url=http%3A%2F%2F8bitgames.eightarms.co.uk%2F&amp;text=Challenge+your+coordination%2C+dexterity+and+patience%21&amp;via=eightarmshq&amp;hashtags=Rio2016" target="_blank"><img src="img/twitter.png" alt="Share on Twitter"></a></li>
+			</ul>
+		</nav>
+		
+		<nav class="guide">
+			<ul>
+				<li><a href="#" class="uia" data-page='rules'>Rules</a></li>
+				<li><a href="#" class="uia" data-page='scores'>Leaderboard</a></li>
+			</ul>
+		</nav>
+
+	</div>
+	
+	<header>
+		<div>
+			<h1>The Eight Arms <span class="olympics-text">8 Bit Games</span></h1>
+			<img src="img/eightarms-8bit-games-logo.png" alt="Eight Arms Olympics">
+		</div>
+		<p>
+			Click on an athlete to begin
+		</p>
+	</header>
+	
+	<div class="stadium animated">
+		
+		<div class="mountains">
+			<div class="mountains-bg"></div>
+		</div>
+		
+		<div class="flags">
+			<div class="flags-bg"></div>
+		</div>
+		
+		<div class="crowd">
+			<div class="crowd-bg"></div>
+		</div>
+		
+		<div class="grass-top"></div>
+		<div class="track">
+			<div class="runners">
+				<div class="uia runner mazz" data-character-slug="mazz" data-page='triplejump-intro' title="Mazz">
+					<div class="tooltip"><span>Mazz</span></div>
+				</div>
+				<div class="uia runner matt" data-character-slug="matt" data-page='triplejump-intro' title="Matt">
+					<div class="tooltip"><span>Matt</span></div>
+				</div>
+				<div class="uia runner dave" data-character-slug="dave" data-page='triplejump-intro' title="Dave">
+					<div class="tooltip"><span>Dave</span></div>
+				</div>
+				<div class="uia runner cheryl" data-character-slug="cheryl" data-page='triplejump-intro' title="Cheryl">
+					<div class="tooltip"><span>Cheryl</span></div>
+				</div>
+			</div>
+				<div class="uia runner streaker" data-character-slug="streaker" data-page='triplejump-intro' title="Streaker">
+					<div class="tooltip"><span>Streaker</span></div>
+				</div>
+		</div>
+		<div class="grass-bottom"></div>
+	
+	</div>
+
+</div>			<div class="page blue-bg full-scroll" id="page-scores">
+	<p><a href="#" class="uia close" data-page="intro">X Close</a>
+	<div class="container">
+		<h2>Highscores</h2>
+		
+		<div id="scores-table">
+			<table class="pure-table pure-table-horizontal" style="width:100%;">
+	<thead>
+		<tr>
+			<td>Name</td>
+			<td>Triplejump</td>
+			<td>Hurdles</td>
+			<td>Archery</td>
+			<td>Total</td>
+		</tr>
+	</thead>
+							<tr class="gold" id="score-11389">
+					<td>AdkuPL</td>
+			<td>340</td>
+			<td>216</td>
+			<td>20</td>
+			<td>576</td>
+		</tr>
+						<tr class="silver" id="score-4788">
+					<td>Poletka</td>
+			<td>307</td>
+			<td>108</td>
+			<td>90</td>
+			<td>505</td>
+		</tr>
+						<tr class="bronze" id="score-5683">
+					<td>Andy</td>
+			<td>307</td>
+			<td>108</td>
+			<td>90</td>
+			<td>505</td>
+		</tr>
+						<tr id="score-11385">
+					<td>AdkuPL</td>
+			<td>287</td>
+			<td>156</td>
+			<td>60</td>
+			<td>503</td>
+		</tr>
+						<tr id="score-4549">
+					<td>Poletka</td>
+			<td>297</td>
+			<td>108</td>
+			<td>90</td>
+			<td>495</td>
+		</tr>
+						<tr id="score-4337">
+					<td>Poletka</td>
+			<td>274</td>
+			<td>108</td>
+			<td>90</td>
+			<td>472</td>
+		</tr>
+						<tr id="score-4333">
+					<td>Poletka</td>
+			<td>267</td>
+			<td>108</td>
+			<td>90</td>
+			<td>465</td>
+		</tr>
+						<tr id="score-14627">
+					<td>chumpy</td>
+			<td>272</td>
+			<td>100</td>
+			<td>80</td>
+			<td>452</td>
+		</tr>
+						<tr id="score-4102">
+					<td>cyberx60</td>
+			<td>249</td>
+			<td>106</td>
+			<td>90</td>
+			<td>445</td>
+		</tr>
+						<tr id="score-3228">
+					<td>Poletka</td>
+			<td>237</td>
+			<td>108</td>
+			<td>90</td>
+			<td>435</td>
+		</tr>
+						<tr id="score-3253">
+					<td>Poletka</td>
+			<td>237</td>
+			<td>108</td>
+			<td>90</td>
+			<td>435</td>
+		</tr>
+						<tr id="score-3275">
+					<td>Poletka</td>
+			<td>237</td>
+			<td>108</td>
+			<td>90</td>
+			<td>435</td>
+		</tr>
+						<tr id="score-4097">
+					<td>cyberx60</td>
+			<td>236</td>
+			<td>106</td>
+			<td>90</td>
+			<td>432</td>
+		</tr>
+						<tr id="score-12881">
+					<td>Sigurdez</td>
+			<td>267</td>
+			<td>105</td>
+			<td>60</td>
+			<td>432</td>
+		</tr>
+						<tr id="score-3203">
+					<td>Poletka</td>
+			<td>231</td>
+			<td>107</td>
+			<td>90</td>
+			<td>428</td>
+		</tr>
+						<tr id="score-3370">
+					<td>Bojmir</td>
+			<td>231</td>
+			<td>102</td>
+			<td>90</td>
+			<td>423</td>
+		</tr>
+						<tr id="score-3183">
+					<td>Poletka</td>
+			<td>225</td>
+			<td>107</td>
+			<td>90</td>
+			<td>422</td>
+		</tr>
+						<tr id="score-12799">
+					<td>Victor Steiner Kristensen</td>
+			<td>232</td>
+			<td>109</td>
+			<td>80</td>
+			<td>421</td>
+		</tr>
+						<tr id="score-3012">
+					<td>Poletka</td>
+			<td>220</td>
+			<td>107</td>
+			<td>90</td>
+			<td>417</td>
+		</tr>
+						<tr id="score-3270">
+					<td>BERTRAMHVAAAAS</td>
+			<td>231</td>
+			<td>102</td>
+			<td>80</td>
+			<td>413</td>
+		</tr>
+						<tr id="score-2985">
+					<td>Poletka</td>
+			<td>213</td>
+			<td>107</td>
+			<td>90</td>
+			<td>410</td>
+		</tr>
+						<tr id="score-12772">
+					<td>Aleksandermelsen</td>
+			<td>291</td>
+			<td>69</td>
+			<td>50</td>
+			<td>410</td>
+		</tr>
+						<tr id="score-4091">
+					<td>cyberx60</td>
+			<td>218</td>
+			<td>100</td>
+			<td>90</td>
+			<td>408</td>
+		</tr>
+						<tr id="score-3926">
+					<td>LILY</td>
+			<td>230</td>
+			<td>96</td>
+			<td>80</td>
+			<td>406</td>
+		</tr>
+						<tr id="score-3377">
+					<td>Bojmir</td>
+			<td>221</td>
+			<td>102</td>
+			<td>80</td>
+			<td>403</td>
+		</tr>
+						<tr id="score-14626">
+					<td>chumpy</td>
+			<td>238</td>
+			<td>95</td>
+			<td>70</td>
+			<td>403</td>
+		</tr>
+						<tr id="score-2941">
+					<td>Poletka</td>
+			<td>208</td>
+			<td>104</td>
+			<td>90</td>
+			<td>402</td>
+		</tr>
+						<tr id="score-3929">
+					<td>LILY</td>
+			<td>220</td>
+			<td>102</td>
+			<td>80</td>
+			<td>402</td>
+		</tr>
+						<tr id="score-2979">
+					<td>BERTRAMHVAAAAS</td>
+			<td>219</td>
+			<td>102</td>
+			<td>80</td>
+			<td>401</td>
+		</tr>
+						<tr id="score-2978">
+					<td>BERTRAMHVAAAAS</td>
+			<td>206</td>
+			<td>103</td>
+			<td>90</td>
+			<td>399</td>
+		</tr>
+						<tr id="score-12482">
+					<td>BERTRAMHVAA4AAS</td>
+			<td>225</td>
+			<td>104</td>
+			<td>70</td>
+			<td>399</td>
+		</tr>
+						<tr id="score-3985">
+					<td>ButtFeckman</td>
+			<td>207</td>
+			<td>101</td>
+			<td>90</td>
+			<td>398</td>
+		</tr>
+						<tr id="score-3119">
+					<td>BERTRAMHVASAS</td>
+			<td>214</td>
+			<td>103</td>
+			<td>80</td>
+			<td>397</td>
+		</tr>
+						<tr id="score-2932">
+					<td>Poletka</td>
+			<td>208</td>
+			<td>107</td>
+			<td>80</td>
+			<td>395</td>
+		</tr>
+						<tr id="score-3062">
+					<td>Poletka</td>
+			<td>208</td>
+			<td>107</td>
+			<td>80</td>
+			<td>395</td>
+		</tr>
+						<tr id="score-1345">
+					<td>ZachHarris</td>
+			<td>213</td>
+			<td>101</td>
+			<td>80</td>
+			<td>394</td>
+		</tr>
+						<tr id="score-25714">
+					<td>]</td>
+			<td>218</td>
+			<td>103</td>
+			<td>70</td>
+			<td>391</td>
+		</tr>
+						<tr id="score-12738">
+					<td>DDDD</td>
+			<td>213</td>
+			<td>97</td>
+			<td>80</td>
+			<td>390</td>
+		</tr>
+						<tr id="score-2925">
+					<td>Poletka</td>
+			<td>202</td>
+			<td>107</td>
+			<td>80</td>
+			<td>389</td>
+		</tr>
+						<tr id="score-14625">
+					<td>chumpy</td>
+			<td>237</td>
+			<td>91</td>
+			<td>60</td>
+			<td>388</td>
+		</tr>
+						<tr id="score-4457">
+					<td>SweetSweetVictory</td>
+			<td>212</td>
+			<td>105</td>
+			<td>70</td>
+			<td>387</td>
+		</tr>
+						<tr id="score-15062">
+					<td>izthebest...</td>
+			<td>211</td>
+			<td>86</td>
+			<td>90</td>
+			<td>387</td>
+		</tr>
+						<tr id="score-2960">
+					<td>BERTRAMHVAAAAS</td>
+			<td>219</td>
+			<td>97</td>
+			<td>70</td>
+			<td>386</td>
+		</tr>
+						<tr id="score-853">
+					<td>D.Billy</td>
+			<td>197</td>
+			<td>107</td>
+			<td>80</td>
+			<td>384</td>
+		</tr>
+						<tr id="score-16115">
+					<td>NaziMasterRace</td>
+			<td>195</td>
+			<td>107</td>
+			<td>80</td>
+			<td>382</td>
+		</tr>
+						<tr id="score-3214">
+					<td>MoFarah</td>
+			<td>225</td>
+			<td>76</td>
+			<td>80</td>
+			<td>381</td>
+		</tr>
+						<tr id="score-4086">
+					<td>cyberx60</td>
+			<td>184</td>
+			<td>106</td>
+			<td>90</td>
+			<td>380</td>
+		</tr>
+						<tr id="score-10557">
+					<td>KackwurstMackwurst</td>
+			<td>184</td>
+			<td>106</td>
+			<td>90</td>
+			<td>380</td>
+		</tr>
+						<tr id="score-2929">
+					<td>BuckFutterman</td>
+			<td>189</td>
+			<td>99</td>
+			<td>90</td>
+			<td>378</td>
+		</tr>
+						<tr id="score-3644">
+					<td>HotSpicyAssNinja</td>
+			<td>200</td>
+			<td>108</td>
+			<td>70</td>
+			<td>378</td>
+		</tr>
+						<tr id="score-20730">
+					<td>jem'appelleaidan</td>
+			<td>179</td>
+			<td>108</td>
+			<td>90</td>
+			<td>377</td>
+		</tr>
+						<tr id="score-1324">
+					<td>ZachHarris</td>
+			<td>195</td>
+			<td>101</td>
+			<td>80</td>
+			<td>376</td>
+		</tr>
+						<tr id="score-2920">
+					<td>Poletka</td>
+			<td>208</td>
+			<td>88</td>
+			<td>80</td>
+			<td>376</td>
+		</tr>
+						<tr id="score-4184">
+					<td>YAYAYAYAYAYAYAYAYAYAYAYAYAYAYA</td>
+			<td>196</td>
+			<td>90</td>
+			<td>90</td>
+			<td>376</td>
+		</tr>
+						<tr id="score-4016">
+					<td>SpicyAssNinja</td>
+			<td>202</td>
+			<td>101</td>
+			<td>70</td>
+			<td>373</td>
+		</tr>
+						<tr id="score-4025">
+					<td>ButtFuckney</td>
+			<td>178</td>
+			<td>101</td>
+			<td>90</td>
+			<td>369</td>
+		</tr>
+						<tr id="score-17831">
+					<td>Aidan</td>
+			<td>190</td>
+			<td>99</td>
+			<td>80</td>
+			<td>369</td>
+		</tr>
+						<tr id="score-2900">
+					<td>Potka</td>
+			<td>196</td>
+			<td>82</td>
+			<td>90</td>
+			<td>368</td>
+		</tr>
+						<tr id="score-12789">
+					<td>Aleksandermelsen</td>
+			<td>237</td>
+			<td>91</td>
+			<td>40</td>
+			<td>368</td>
+		</tr>
+						<tr id="score-12880">
+					<td>Sigurd</td>
+			<td>225</td>
+			<td>103</td>
+			<td>40</td>
+			<td>368</td>
+		</tr>
+						<tr id="score-16112">
+					<td>Aidansuksatdisgame</td>
+			<td>190</td>
+			<td>98</td>
+			<td>80</td>
+			<td>368</td>
+		</tr>
+						<tr id="score-3619">
+					<td>Nah</td>
+			<td>185</td>
+			<td>100</td>
+			<td>80</td>
+			<td>365</td>
+		</tr>
+						<tr id="score-4024">
+					<td>ButtFuckney</td>
+			<td>189</td>
+			<td>96</td>
+			<td>80</td>
+			<td>365</td>
+		</tr>
+						<tr id="score-6105">
+					<td>DJAVE.</td>
+			<td>197</td>
+			<td>107</td>
+			<td>60</td>
+			<td>364</td>
+		</tr>
+						<tr id="score-10519">
+					<td>KackwurstMackwurst</td>
+			<td>167</td>
+			<td>106</td>
+			<td>90</td>
+			<td>363</td>
+		</tr>
+						<tr id="score-20733">
+					<td>aidan</td>
+			<td>177</td>
+			<td>106</td>
+			<td>80</td>
+			<td>363</td>
+		</tr>
+						<tr id="score-9974">
+					<td>Alexc</td>
+			<td>184</td>
+			<td>98</td>
+			<td>80</td>
+			<td>362</td>
+		</tr>
+						<tr id="score-2974">
+					<td>BERTRAMHVAAAAS</td>
+			<td>201</td>
+			<td>90</td>
+			<td>70</td>
+			<td>361</td>
+		</tr>
+						<tr id="score-4456">
+					<td>SweetSweetVictory</td>
+			<td>184</td>
+			<td>96</td>
+			<td>80</td>
+			<td>360</td>
+		</tr>
+						<tr id="score-6375">
+					<td>MILOU777</td>
+			<td>190</td>
+			<td>90</td>
+			<td>80</td>
+			<td>360</td>
+		</tr>
+						<tr id="score-14628">
+					<td>chumpy</td>
+			<td>249</td>
+			<td>80</td>
+			<td>30</td>
+			<td>359</td>
+		</tr>
+						<tr id="score-17815">
+					<td>Aidan</td>
+			<td>174</td>
+			<td>105</td>
+			<td>80</td>
+			<td>359</td>
+		</tr>
+						<tr id="score-2898">
+					<td>BartFuttnam</td>
+			<td>179</td>
+			<td>99</td>
+			<td>80</td>
+			<td>358</td>
+		</tr>
+						<tr id="score-12757">
+					<td>Victor Steiner Kristensen</td>
+			<td>201</td>
+			<td>97</td>
+			<td>60</td>
+			<td>358</td>
+		</tr>
+						<tr id="score-2922">
+					<td>FartBurman</td>
+			<td>179</td>
+			<td>98</td>
+			<td>80</td>
+			<td>357</td>
+		</tr>
+						<tr id="score-3614">
+					<td>Dankey</td>
+			<td>216</td>
+			<td>111</td>
+			<td>30</td>
+			<td>357</td>
+		</tr>
+						<tr id="score-3632">
+					<td>HotSpicyNinja</td>
+			<td>190</td>
+			<td>95</td>
+			<td>70</td>
+			<td>355</td>
+		</tr>
+						<tr id="score-6093">
+					<td>DJAVE.</td>
+			<td>167</td>
+			<td>108</td>
+			<td>80</td>
+			<td>355</td>
+		</tr>
+						<tr id="score-2534">
+					<td>Bitcoin</td>
+			<td>184</td>
+			<td>100</td>
+			<td>70</td>
+			<td>354</td>
+		</tr>
+						<tr id="score-2892">
+					<td>FunkButtney</td>
+			<td>178</td>
+			<td>96</td>
+			<td>80</td>
+			<td>354</td>
+		</tr>
+						<tr id="score-4792">
+					<td>d</td>
+			<td>186</td>
+			<td>108</td>
+			<td>60</td>
+			<td>354</td>
+		</tr>
+						<tr id="score-7212">
+					<td>BrianJames</td>
+			<td>208</td>
+			<td>96</td>
+			<td>50</td>
+			<td>354</td>
+		</tr>
+						<tr id="score-12711">
+					<td>PederW&Atilde;&raquo;rtzki</td>
+			<td>178</td>
+			<td>106</td>
+			<td>70</td>
+			<td>354</td>
+		</tr>
+						<tr id="score-14661">
+					<td>ccc</td>
+			<td>202</td>
+			<td>92</td>
+			<td>60</td>
+			<td>354</td>
+		</tr>
+						<tr id="score-25712">
+					<td>aidan</td>
+			<td>202</td>
+			<td>102</td>
+			<td>50</td>
+			<td>354</td>
+		</tr>
+						<tr id="score-2434">
+					<td>HotSpicyAssNinja</td>
+			<td>178</td>
+			<td>95</td>
+			<td>80</td>
+			<td>353</td>
+		</tr>
+						<tr id="score-10518">
+					<td>KackwurstMackwurst</td>
+			<td>166</td>
+			<td>106</td>
+			<td>80</td>
+			<td>352</td>
+		</tr>
+						<tr id="score-12598">
+					<td>MagnusThomsen</td>
+			<td>179</td>
+			<td>92</td>
+			<td>80</td>
+			<td>351</td>
+		</tr>
+						<tr id="score-25918">
+					<td>chenyan</td>
+			<td>219</td>
+			<td>72</td>
+			<td>60</td>
+			<td>351</td>
+		</tr>
+						<tr id="score-3752">
+					<td>Rimjob</td>
+			<td>196</td>
+			<td>94</td>
+			<td>60</td>
+			<td>350</td>
+		</tr>
+						<tr id="score-16010">
+					<td>bbbbbbbbbbooooooooooiiiiiiii</td>
+			<td>173</td>
+			<td>97</td>
+			<td>80</td>
+			<td>350</td>
+		</tr>
+						<tr id="score-16008">
+					<td>pascal</td>
+			<td>167</td>
+			<td>91</td>
+			<td>90</td>
+			<td>348</td>
+		</tr>
+						<tr id="score-21428">
+					<td>ktpppppppppppppppppppppppppppp</td>
+			<td>173</td>
+			<td>95</td>
+			<td>80</td>
+			<td>348</td>
+		</tr>
+						<tr id="score-12718">
+					<td>hampen</td>
+			<td>196</td>
+			<td>101</td>
+			<td>50</td>
+			<td>347</td>
+		</tr>
+						<tr id="score-16113">
+					<td>moses</td>
+			<td>166</td>
+			<td>101</td>
+			<td>80</td>
+			<td>347</td>
+		</tr>
+						<tr id="score-4084">
+					<td>cyberx60</td>
+			<td>154</td>
+			<td>101</td>
+			<td>90</td>
+			<td>345</td>
+		</tr>
+						<tr id="score-12717">
+					<td>NicoRavn</td>
+			<td>182</td>
+			<td>93</td>
+			<td>70</td>
+			<td>345</td>
+		</tr>
+						<tr id="score-25887">
+					<td>goderbug</td>
+			<td>184</td>
+			<td>89</td>
+			<td>70</td>
+			<td>343</td>
+		</tr>
+						<tr id="score-5910">
+					<td>Stalk</td>
+			<td>179</td>
+			<td>93</td>
+			<td>70</td>
+			<td>342</td>
+		</tr>
+						<tr id="score-2893">
+					<td>Potka</td>
+			<td>196</td>
+			<td>85</td>
+			<td>60</td>
+			<td>341</td>
+		</tr>
+						<tr id="score-9969">
+					<td>Alexc</td>
+			<td>173</td>
+			<td>88</td>
+			<td>80</td>
+			<td>341</td>
+		</tr>
+						<tr id="score-17865">
+					<td>ulikejazzzzzzz</td>
+			<td>167</td>
+			<td>93</td>
+			<td>80</td>
+			<td>340</td>
+		</tr>
+						<tr id="score-4675">
+					<td>hello9)))))))))))))))))</td>
+			<td>166</td>
+			<td>103</td>
+			<td>70</td>
+			<td>339</td>
+		</tr>
+						<tr id="score-12736">
+					<td>D</td>
+			<td>178</td>
+			<td>91</td>
+			<td>70</td>
+			<td>339</td>
+		</tr>
+						<tr id="score-18516">
+					<td>ChristopherMillan</td>
+			<td>167</td>
+			<td>102</td>
+			<td>70</td>
+			<td>339</td>
+		</tr>
+						<tr id="score-17617">
+					<td>tttttttttttiiiiiiiiiiiiiiimmmm</td>
+			<td>154</td>
+			<td>104</td>
+			<td>80</td>
+			<td>338</td>
+		</tr>
+						<tr id="score-971">
+					<td>LKT</td>
+			<td>161</td>
+			<td>96</td>
+			<td>80</td>
+			<td>337</td>
+		</tr>
+						<tr id="score-3615">
+					<td>Nah</td>
+			<td>172</td>
+			<td>85</td>
+			<td>80</td>
+			<td>337</td>
+		</tr>
+						<tr id="score-3925">
+					<td>LILY</td>
+			<td>172</td>
+			<td>95</td>
+			<td>70</td>
+			<td>337</td>
+		</tr>
+						<tr id="score-2634">
+					<td>FartBuckman</td>
+			<td>179</td>
+			<td>87</td>
+			<td>70</td>
+			<td>336</td>
+		</tr>
+						<tr id="score-12811">
+					<td>NicoRavn</td>
+			<td>183</td>
+			<td>92</td>
+			<td>60</td>
+			<td>335</td>
+		</tr>
+						<tr id="score-12818">
+					<td>NicoRavn</td>
+			<td>182</td>
+			<td>92</td>
+			<td>60</td>
+			<td>334</td>
+		</tr>
+						<tr id="score-13584">
+					<td>DLUKE</td>
+			<td>172</td>
+			<td>72</td>
+			<td>90</td>
+			<td>334</td>
+		</tr>
+						<tr id="score-2652">
+					<td>BretFarnstrom</td>
+			<td>173</td>
+			<td>89</td>
+			<td>70</td>
+			<td>332</td>
+		</tr>
+						<tr id="score-614">
+					<td>Lewis Kay-Thatcher</td>
+			<td>154</td>
+			<td>97</td>
+			<td>80</td>
+			<td>331</td>
+		</tr>
+						<tr id="score-2708">
+					<td>BrokForeman</td>
+			<td>172</td>
+			<td>89</td>
+			<td>70</td>
+			<td>331</td>
+		</tr>
+						<tr id="score-879">
+					<td>Bossman.</td>
+			<td>179</td>
+			<td>101</td>
+			<td>50</td>
+			<td>330</td>
+		</tr>
+						<tr id="score-1309">
+					<td>ZachHarris</td>
+			<td>149</td>
+			<td>101</td>
+			<td>80</td>
+			<td>330</td>
+		</tr>
+						<tr id="score-16000">
+					<td>annedank</td>
+			<td>156</td>
+			<td>94</td>
+			<td>80</td>
+			<td>330</td>
+		</tr>
+						<tr id="score-17835">
+					<td>iosif,goodluck</td>
+			<td>173</td>
+			<td>77</td>
+			<td>80</td>
+			<td>330</td>
+		</tr>
+						<tr id="score-5918">
+					<td>MILOU777</td>
+			<td>155</td>
+			<td>94</td>
+			<td>80</td>
+			<td>329</td>
+		</tr>
+						<tr id="score-25711">
+					<td>aidan</td>
+			<td>184</td>
+			<td>105</td>
+			<td>40</td>
+			<td>329</td>
+		</tr>
+						<tr id="score-3966">
+					<td>Ricky_Grudd</td>
+			<td>143</td>
+			<td>105</td>
+			<td>80</td>
+			<td>328</td>
+		</tr>
+						<tr id="score-16003">
+					<td>booiiiiii</td>
+			<td>161</td>
+			<td>87</td>
+			<td>80</td>
+			<td>328</td>
+		</tr>
+						<tr id="score-19838">
+					<td>itisme</td>
+			<td>178</td>
+			<td>90</td>
+			<td>60</td>
+			<td>328</td>
+		</tr>
+						<tr id="score-895">
+					<td>tonysandwich</td>
+			<td>154</td>
+			<td>103</td>
+			<td>70</td>
+			<td>327</td>
+		</tr>
+						<tr id="score-1938">
+					<td>ButtFeckman</td>
+			<td>173</td>
+			<td>84</td>
+			<td>70</td>
+			<td>327</td>
+		</tr>
+						<tr id="score-2153">
+					<td>ButtFeckman</td>
+			<td>178</td>
+			<td>89</td>
+			<td>60</td>
+			<td>327</td>
+		</tr>
+						<tr id="score-4448">
+					<td>TheManEric</td>
+			<td>178</td>
+			<td>89</td>
+			<td>60</td>
+			<td>327</td>
+		</tr>
+						<tr id="score-2647">
+					<td>FordBartman</td>
+			<td>160</td>
+			<td>86</td>
+			<td>80</td>
+			<td>326</td>
+		</tr>
+						<tr id="score-1426">
+					<td>JohanLindell</td>
+			<td>168</td>
+			<td>97</td>
+			<td>60</td>
+			<td>325</td>
+		</tr>
+						<tr id="score-4452">
+					<td>Cristoballz</td>
+			<td>166</td>
+			<td>99</td>
+			<td>60</td>
+			<td>325</td>
+		</tr>
+						<tr id="score-12821">
+					<td>Nicolasse</td>
+			<td>170</td>
+			<td>85</td>
+			<td>70</td>
+			<td>325</td>
+		</tr>
+						<tr id="score-2649">
+					<td>BerdFarnham</td>
+			<td>166</td>
+			<td>88</td>
+			<td>70</td>
+			<td>324</td>
+		</tr>
+						<tr id="score-2977">
+					<td>ffre</td>
+			<td>172</td>
+			<td>82</td>
+			<td>70</td>
+			<td>324</td>
+		</tr>
+						<tr id="score-6474">
+					<td>Bobanoid</td>
+			<td>160</td>
+			<td>93</td>
+			<td>70</td>
+			<td>323</td>
+		</tr>
+						<tr id="score-10370">
+					<td>KackwurstMackwurst</td>
+			<td>126</td>
+			<td>107</td>
+			<td>90</td>
+			<td>323</td>
+		</tr>
+						<tr id="score-2202">
+					<td>BeckFuttman</td>
+			<td>172</td>
+			<td>80</td>
+			<td>70</td>
+			<td>322</td>
+		</tr>
+						<tr id="score-9958">
+					<td>AlexC</td>
+			<td>166</td>
+			<td>96</td>
+			<td>60</td>
+			<td>322</td>
+		</tr>
+						<tr id="score-18686">
+					<td>Datboi</td>
+			<td>172</td>
+			<td>80</td>
+			<td>70</td>
+			<td>322</td>
+		</tr>
+						<tr id="score-18688">
+					<td>Datboi</td>
+			<td>172</td>
+			<td>80</td>
+			<td>70</td>
+			<td>322</td>
+		</tr>
+						<tr id="score-9397">
+					<td>MickeyLee</td>
+			<td>168</td>
+			<td>83</td>
+			<td>70</td>
+			<td>321</td>
+		</tr>
+						<tr id="score-4092">
+					<td>dsa</td>
+			<td>158</td>
+			<td>72</td>
+			<td>90</td>
+			<td>320</td>
+		</tr>
+						<tr id="score-17623">
+					<td>hiiiiiiiiiiiiiiiiiiiiiiiiiiiii</td>
+			<td>167</td>
+			<td>92</td>
+			<td>60</td>
+			<td>319</td>
+		</tr>
+						<tr id="score-17795">
+					<td>iosif</td>
+			<td>149</td>
+			<td>90</td>
+			<td>80</td>
+			<td>319</td>
+		</tr>
+						<tr id="score-3010">
+					<td>KLICKEN!SWE</td>
+			<td>147</td>
+			<td>91</td>
+			<td>80</td>
+			<td>318</td>
+		</tr>
+						<tr id="score-14254">
+					<td>LukeK</td>
+			<td>149</td>
+			<td>89</td>
+			<td>80</td>
+			<td>318</td>
+		</tr>
+						<tr id="score-4079">
+					<td>cyberx60</td>
+			<td>142</td>
+			<td>95</td>
+			<td>80</td>
+			<td>317</td>
+		</tr>
+						<tr id="score-4450">
+					<td>Cristoballz</td>
+			<td>161</td>
+			<td>96</td>
+			<td>60</td>
+			<td>317</td>
+		</tr>
+						<tr id="score-12731">
+					<td>Rasmus</td>
+			<td>164</td>
+			<td>83</td>
+			<td>70</td>
+			<td>317</td>
+		</tr>
+						<tr id="score-18685">
+					<td>datboi</td>
+			<td>165</td>
+			<td>82</td>
+			<td>70</td>
+			<td>317</td>
+		</tr>
+						<tr id="score-1922">
+					<td>ButtFeckman</td>
+			<td>185</td>
+			<td>81</td>
+			<td>50</td>
+			<td>316</td>
+		</tr>
+						<tr id="score-2967">
+					<td>BERTRAMHVAAAAS</td>
+			<td>184</td>
+			<td>92</td>
+			<td>40</td>
+			<td>316</td>
+		</tr>
+						<tr id="score-4674">
+					<td>hello9)))))))))))))))))</td>
+			<td>166</td>
+			<td>90</td>
+			<td>60</td>
+			<td>316</td>
+		</tr>
+						<tr id="score-12613">
+					<td>NicolajKuno</td>
+			<td>193</td>
+			<td>83</td>
+			<td>40</td>
+			<td>316</td>
+		</tr>
+						<tr id="score-21244">
+					<td>JulianFranco</td>
+			<td>161</td>
+			<td>85</td>
+			<td>70</td>
+			<td>316</td>
+		</tr>
+						<tr id="score-25885">
+					<td>goderbug</td>
+			<td>190</td>
+			<td>96</td>
+			<td>30</td>
+			<td>316</td>
+		</tr>
+						<tr id="score-849">
+					<td>Bossman.</td>
+			<td>136</td>
+			<td>99</td>
+			<td>80</td>
+			<td>315</td>
+		</tr>
+						<tr id="score-2608">
+					<td>DwarfFighter</td>
+			<td>166</td>
+			<td>89</td>
+			<td>60</td>
+			<td>315</td>
+		</tr>
+						<tr id="score-6478">
+					<td>Bobanoid</td>
+			<td>160</td>
+			<td>84</td>
+			<td>70</td>
+			<td>314</td>
+		</tr>
+						<tr id="score-9415">
+					<td>bigtalldan</td>
+			<td>167</td>
+			<td>87</td>
+			<td>60</td>
+			<td>314</td>
+		</tr>
+						<tr id="score-9962">
+					<td>AlexC</td>
+			<td>172</td>
+			<td>82</td>
+			<td>60</td>
+			<td>314</td>
+		</tr>
+						<tr id="score-3793">
+					<td>a</td>
+			<td>140</td>
+			<td>103</td>
+			<td>70</td>
+			<td>313</td>
+		</tr>
+						<tr id="score-612">
+					<td>Lewis Kay-Thatcher</td>
+			<td>143</td>
+			<td>99</td>
+			<td>70</td>
+			<td>312</td>
+		</tr>
+						<tr id="score-2100">
+					<td>ThePoleVaulter'sPole</td>
+			<td>143</td>
+			<td>99</td>
+			<td>70</td>
+			<td>312</td>
+		</tr>
+						<tr id="score-4441">
+					<td>TheManEric</td>
+			<td>149</td>
+			<td>93</td>
+			<td>70</td>
+			<td>312</td>
+		</tr>
+						<tr id="score-10517">
+					<td>KackwurstMackwurst</td>
+			<td>137</td>
+			<td>105</td>
+			<td>70</td>
+			<td>312</td>
+		</tr>
+						<tr id="score-17661">
+					<td>TIMMY</td>
+			<td>148</td>
+			<td>94</td>
+			<td>70</td>
+			<td>312</td>
+		</tr>
+						<tr id="score-12714">
+					<td>NicoRavn</td>
+			<td>152</td>
+			<td>88</td>
+			<td>70</td>
+			<td>310</td>
+		</tr>
+						<tr id="score-4449">
+					<td>Cristoballz</td>
+			<td>161</td>
+			<td>98</td>
+			<td>50</td>
+			<td>309</td>
+		</tr>
+						<tr id="score-6950">
+					<td>Petar</td>
+			<td>138</td>
+			<td>91</td>
+			<td>80</td>
+			<td>309</td>
+		</tr>
+						<tr id="score-12768">
+					<td>jakobnielsen</td>
+			<td>166</td>
+			<td>83</td>
+			<td>60</td>
+			<td>309</td>
+		</tr>
+						<tr id="score-2175">
+					<td>ButtFeckman</td>
+			<td>166</td>
+			<td>82</td>
+			<td>60</td>
+			<td>308</td>
+		</tr>
+						<tr id="score-17692">
+					<td>vbvbvbvbvbvbvbvbvbvbvb</td>
+			<td>144</td>
+			<td>94</td>
+			<td>70</td>
+			<td>308</td>
+		</tr>
+						<tr id="score-2533">
+					<td>ASDFASDFASDF</td>
+			<td>136</td>
+			<td>91</td>
+			<td>80</td>
+			<td>307</td>
+		</tr>
+						<tr id="score-21425">
+					<td>hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</td>
+			<td>153</td>
+			<td>84</td>
+			<td>70</td>
+			<td>307</td>
+		</tr>
+						<tr id="score-2888">
+					<td>FunkButtney</td>
+			<td>149</td>
+			<td>87</td>
+			<td>70</td>
+			<td>306</td>
+		</tr>
+						<tr id="score-3107">
+					<td>KingHydrae1234</td>
+			<td>173</td>
+			<td>83</td>
+			<td>50</td>
+			<td>306</td>
+		</tr>
+						<tr id="score-3751">
+					<td>Rimjob</td>
+			<td>172</td>
+			<td>84</td>
+			<td>50</td>
+			<td>306</td>
+		</tr>
+						<tr id="score-12705">
+					<td>Rasmus</td>
+			<td>148</td>
+			<td>88</td>
+			<td>70</td>
+			<td>306</td>
+		</tr>
+						<tr id="score-14623">
+					<td>chumpy</td>
+			<td>179</td>
+			<td>87</td>
+			<td>40</td>
+			<td>306</td>
+		</tr>
+						<tr id="score-3750">
+					<td>Rimjob</td>
+			<td>173</td>
+			<td>82</td>
+			<td>50</td>
+			<td>305</td>
+		</tr>
+						<tr id="score-4157">
+					<td>Nelson</td>
+			<td>142</td>
+			<td>83</td>
+			<td>80</td>
+			<td>305</td>
+		</tr>
+						<tr id="score-17096">
+					<td>HalasiTamas</td>
+			<td>142</td>
+			<td>103</td>
+			<td>60</td>
+			<td>305</td>
+		</tr>
+						<tr id="score-887">
+					<td>tonysandwich</td>
+			<td>155</td>
+			<td>89</td>
+			<td>60</td>
+			<td>304</td>
+		</tr>
+						<tr id="score-2211">
+					<td>BuckFettman</td>
+			<td>160</td>
+			<td>84</td>
+			<td>60</td>
+			<td>304</td>
+		</tr>
+						<tr id="score-16114">
+					<td>you</td>
+			<td>166</td>
+			<td>78</td>
+			<td>60</td>
+			<td>304</td>
+		</tr>
+						<tr id="score-13658">
+					<td>HelloHello2</td>
+			<td>141</td>
+			<td>102</td>
+			<td>60</td>
+			<td>303</td>
+		</tr>
+						<tr id="score-14622">
+					<td>chumpy</td>
+			<td>167</td>
+			<td>86</td>
+			<td>50</td>
+			<td>303</td>
+		</tr>
+						<tr id="score-4389">
+					<td>lol</td>
+			<td>157</td>
+			<td>85</td>
+			<td>60</td>
+			<td>302</td>
+		</tr>
+						<tr id="score-4828">
+					<td>asfeOne</td>
+			<td>189</td>
+			<td>83</td>
+			<td>30</td>
+			<td>302</td>
+		</tr>
+						<tr id="score-12780">
+					<td>Aleksandermelsen</td>
+			<td>258</td>
+			<td>44</td>
+			<td>0</td>
+			<td>302</td>
+		</tr>
+						<tr id="score-13657">
+					<td>HelloHello</td>
+			<td>119</td>
+			<td>103</td>
+			<td>80</td>
+			<td>302</td>
+		</tr>
+						<tr id="score-17614">
+					<td>bigtim</td>
+			<td>132</td>
+			<td>79</td>
+			<td>90</td>
+			<td>301</td>
+		</tr>
+						<tr id="score-17675">
+					<td>Thomas</td>
+			<td>154</td>
+			<td>87</td>
+			<td>60</td>
+			<td>301</td>
+		</tr>
+						<tr id="score-2194">
+					<td>FuttBeckman</td>
+			<td>155</td>
+			<td>85</td>
+			<td>60</td>
+			<td>300</td>
+		</tr>
+						<tr id="score-2598">
+					<td>BEEEESHYYYY</td>
+			<td>133</td>
+			<td>86</td>
+			<td>80</td>
+			<td>299</td>
+		</tr>
+						<tr id="score-2578">
+					<td>MikeIsMyIke</td>
+			<td>103</td>
+			<td>105</td>
+			<td>90</td>
+			<td>298</td>
+		</tr>
+						<tr id="score-12730">
+					<td>ddd</td>
+			<td>160</td>
+			<td>78</td>
+			<td>60</td>
+			<td>298</td>
+		</tr>
+						<tr id="score-20671">
+					<td>john</td>
+			<td>166</td>
+			<td>82</td>
+			<td>50</td>
+			<td>298</td>
+		</tr>
+						<tr id="score-687">
+					<td>JohnstonMcroy</td>
+			<td>125</td>
+			<td>82</td>
+			<td>90</td>
+			<td>297</td>
+		</tr>
+						<tr id="score-1926">
+					<td>ButtFeckman</td>
+			<td>166</td>
+			<td>81</td>
+			<td>50</td>
+			<td>297</td>
+		</tr>
+						<tr id="score-4022">
+					<td>ButtFuckney</td>
+			<td>155</td>
+			<td>72</td>
+			<td>70</td>
+			<td>297</td>
+		</tr>
+						<tr id="score-12471">
+					<td>JakobNielsen</td>
+			<td>132</td>
+			<td>85</td>
+			<td>80</td>
+			<td>297</td>
+		</tr>
+						<tr id="score-16001">
+					<td>pascal</td>
+			<td>143</td>
+			<td>74</td>
+			<td>80</td>
+			<td>297</td>
+		</tr>
+						<tr id="score-13583">
+					<td>DLUKE</td>
+			<td>131</td>
+			<td>85</td>
+			<td>80</td>
+			<td>296</td>
+		</tr>
+						<tr id="score-20021">
+					<td>Soundison</td>
+			<td>148</td>
+			<td>98</td>
+			<td>50</td>
+			<td>296</td>
+		</tr>
+						<tr id="score-23269">
+					<td>crsi</td>
+			<td>130</td>
+			<td>106</td>
+			<td>60</td>
+			<td>296</td>
+		</tr>
+						<tr id="score-25881">
+					<td>lizige</td>
+			<td>149</td>
+			<td>97</td>
+			<td>50</td>
+			<td>296</td>
+		</tr>
+						<tr id="score-1298">
+					<td>BarpoNarpo</td>
+			<td>168</td>
+			<td>87</td>
+			<td>40</td>
+			<td>295</td>
+		</tr>
+						<tr id="score-2437">
+					<td>UsianBolt</td>
+			<td>185</td>
+			<td>70</td>
+			<td>40</td>
+			<td>295</td>
+		</tr>
+						<tr id="score-3067">
+					<td>LMPICS</td>
+			<td>165</td>
+			<td>80</td>
+			<td>50</td>
+			<td>295</td>
+		</tr>
+						<tr id="score-18680">
+					<td>datboi</td>
+			<td>143</td>
+			<td>82</td>
+			<td>70</td>
+			<td>295</td>
+		</tr>
+						<tr id="score-542">
+					<td>Lewis Kay-Thatcher</td>
+			<td>133</td>
+			<td>81</td>
+			<td>80</td>
+			<td>294</td>
+		</tr>
+						<tr id="score-2529">
+					<td>tom</td>
+			<td>124</td>
+			<td>99</td>
+			<td>70</td>
+			<td>293</td>
+		</tr>
+						<tr id="score-4527">
+					<td>rex</td>
+			<td>144</td>
+			<td>78</td>
+			<td>70</td>
+			<td>292</td>
+		</tr>
+						<tr id="score-18678">
+					<td>datboi</td>
+			<td>160</td>
+			<td>82</td>
+			<td>50</td>
+			<td>292</td>
+		</tr>
+						<tr id="score-18726">
+					<td>Datboi</td>
+			<td>137</td>
+			<td>74</td>
+			<td>80</td>
+			<td>291</td>
+		</tr>
+						<tr id="score-12393">
+					<td>Muensty</td>
+			<td>149</td>
+			<td>81</td>
+			<td>60</td>
+			<td>290</td>
+		</tr>
+						<tr id="score-18679">
+					<td>datboi</td>
+			<td>148</td>
+			<td>72</td>
+			<td>70</td>
+			<td>290</td>
+		</tr>
+						<tr id="score-691">
+					<td>JohnstonMcroy</td>
+			<td>125</td>
+			<td>84</td>
+			<td>80</td>
+			<td>289</td>
+		</tr>
+						<tr id="score-1316">
+					<td>CoolGuy</td>
+			<td>161</td>
+			<td>68</td>
+			<td>60</td>
+			<td>289</td>
+		</tr>
+						<tr id="score-4211">
+					<td>Rrrr</td>
+			<td>124</td>
+			<td>95</td>
+			<td>70</td>
+			<td>289</td>
+		</tr>
+						<tr id="score-4817">
+					<td>Keklord</td>
+			<td>161</td>
+			<td>68</td>
+			<td>60</td>
+			<td>289</td>
+		</tr>
+						<tr id="score-10307">
+					<td>KackwurstMackwurst</td>
+			<td>107</td>
+			<td>102</td>
+			<td>80</td>
+			<td>289</td>
+		</tr>
+						<tr id="score-25880">
+					<td>123123123</td>
+			<td>194</td>
+			<td>45</td>
+			<td>50</td>
+			<td>289</td>
+		</tr>
+						<tr id="score-2519">
+					<td>thisisacoolwebsite</td>
+			<td>157</td>
+			<td>71</td>
+			<td>60</td>
+			<td>288</td>
+		</tr>
+						<tr id="score-3789">
+					<td>DirkDigler</td>
+			<td>108</td>
+			<td>90</td>
+			<td>90</td>
+			<td>288</td>
+		</tr>
+						<tr id="score-4019">
+					<td>d</td>
+			<td>125</td>
+			<td>73</td>
+			<td>90</td>
+			<td>288</td>
+		</tr>
+						<tr id="score-6476">
+					<td>ZovutNikita</td>
+			<td>96</td>
+			<td>102</td>
+			<td>90</td>
+			<td>288</td>
+		</tr>
+						<tr id="score-10291">
+					<td>KackwurstMackwurst</td>
+			<td>107</td>
+			<td>101</td>
+			<td>80</td>
+			<td>288</td>
+		</tr>
+						<tr id="score-12676">
+					<td>Victor Steiner Kristensen</td>
+			<td>154</td>
+			<td>93</td>
+			<td>40</td>
+			<td>287</td>
+		</tr>
+						<tr id="score-2867">
+					<td>BERTRAMHVAAAAAS</td>
+			<td>114</td>
+			<td>101</td>
+			<td>70</td>
+			<td>285</td>
+		</tr>
+						<tr id="score-2536">
+					<td>eygo_prep</td>
+			<td>108</td>
+			<td>96</td>
+			<td>80</td>
+			<td>284</td>
+		</tr>
+						<tr id="score-10082">
+					<td>RJP</td>
+			<td>100</td>
+			<td>104</td>
+			<td>80</td>
+			<td>284</td>
+		</tr>
+						<tr id="score-21896">
+					<td>sebmat</td>
+			<td>126</td>
+			<td>88</td>
+			<td>70</td>
+			<td>284</td>
+		</tr>
+						<tr id="score-1890">
+					<td>jhv</td>
+			<td>125</td>
+			<td>78</td>
+			<td>80</td>
+			<td>283</td>
+		</tr>
+						<tr id="score-25882">
+					<td>myse1f</td>
+			<td>208</td>
+			<td>75</td>
+			<td>0</td>
+			<td>283</td>
+		</tr>
+						<tr id="score-2609">
+					<td>Zombiebaby</td>
+			<td>108</td>
+			<td>104</td>
+			<td>70</td>
+			<td>282</td>
+		</tr>
+						<tr id="score-3869">
+					<td>shitonthefloor</td>
+			<td>165</td>
+			<td>67</td>
+			<td>50</td>
+			<td>282</td>
+		</tr>
+						<tr id="score-27120">
+					<td>AAAA</td>
+			<td>127</td>
+			<td>95</td>
+			<td>60</td>
+			<td>282</td>
+		</tr>
+						<tr id="score-9020">
+					<td>xzor0aster</td>
+			<td>126</td>
+			<td>85</td>
+			<td>70</td>
+			<td>281</td>
+		</tr>
+						<tr id="score-9954">
+					<td>AlexC</td>
+			<td>113</td>
+			<td>88</td>
+			<td>80</td>
+			<td>281</td>
+		</tr>
+						<tr id="score-12590">
+					<td>a</td>
+			<td>96</td>
+			<td>105</td>
+			<td>80</td>
+			<td>281</td>
+		</tr>
+						<tr id="score-2449">
+					<td>A_Sexy_Penguin</td>
+			<td>130</td>
+			<td>80</td>
+			<td>70</td>
+			<td>280</td>
+		</tr>
+						<tr id="score-12468">
+					<td>JakobNielsen</td>
+			<td>137</td>
+			<td>83</td>
+			<td>60</td>
+			<td>280</td>
+		</tr>
+						<tr id="score-14305">
+					<td>jumbo</td>
+			<td>144</td>
+			<td>86</td>
+			<td>50</td>
+			<td>280</td>
+		</tr>
+						<tr id="score-2050">
+					<td>Tenebrity</td>
+			<td>94</td>
+			<td>105</td>
+			<td>80</td>
+			<td>279</td>
+		</tr>
+						<tr id="score-9952">
+					<td>AlexC</td>
+			<td>101</td>
+			<td>97</td>
+			<td>80</td>
+			<td>278</td>
+		</tr>
+						<tr id="score-14660">
+					<td>ccc</td>
+			<td>154</td>
+			<td>84</td>
+			<td>40</td>
+			<td>278</td>
+		</tr>
+						<tr id="score-868">
+					<td>Cheryl</td>
+			<td>132</td>
+			<td>75</td>
+			<td>70</td>
+			<td>277</td>
+		</tr>
+						<tr id="score-1111">
+					<td>mutoid</td>
+			<td>134</td>
+			<td>83</td>
+			<td>60</td>
+			<td>277</td>
+		</tr>
+						<tr id="score-2204">
+					<td>Priapism</td>
+			<td>97</td>
+			<td>90</td>
+			<td>90</td>
+			<td>277</td>
+		</tr>
+						<tr id="score-2952">
+					<td>BERTRAMHVAAAAS</td>
+			<td>107</td>
+			<td>90</td>
+			<td>80</td>
+			<td>277</td>
+		</tr>
+						<tr id="score-3680">
+					<td>Yosef</td>
+			<td>143</td>
+			<td>74</td>
+			<td>60</td>
+			<td>277</td>
+		</tr>
+						<tr id="score-3748">
+					<td>DUde</td>
+			<td>166</td>
+			<td>81</td>
+			<td>30</td>
+			<td>277</td>
+		</tr>
+						<tr id="score-4188">
+					<td>MOfarah</td>
+			<td>119</td>
+			<td>88</td>
+			<td>70</td>
+			<td>277</td>
+		</tr>
+						<tr id="score-4400">
+					<td>moooooooooo</td>
+			<td>131</td>
+			<td>86</td>
+			<td>60</td>
+			<td>277</td>
+		</tr>
+						<tr id="score-5912">
+					<td>craolin</td>
+			<td>125</td>
+			<td>102</td>
+			<td>50</td>
+			<td>277</td>
+		</tr>
+						<tr id="score-6630">
+					<td>TomazSaavedra2</td>
+			<td>125</td>
+			<td>82</td>
+			<td>70</td>
+			<td>277</td>
+		</tr>
+						<tr id="score-12479">
+					<td>KAlle</td>
+			<td>102</td>
+			<td>95</td>
+			<td>80</td>
+			<td>277</td>
+		</tr>
+						<tr id="score-2726">
+					<td>aaas</td>
+			<td>125</td>
+			<td>81</td>
+			<td>70</td>
+			<td>276</td>
+		</tr>
+						<tr id="score-4437">
+					<td>TheManEric</td>
+			<td>113</td>
+			<td>93</td>
+			<td>70</td>
+			<td>276</td>
+		</tr>
+						<tr id="score-12829">
+					<td>Magnus</td>
+			<td>102</td>
+			<td>94</td>
+			<td>80</td>
+			<td>276</td>
+		</tr>
+						<tr id="score-13653">
+					<td>Dude</td>
+			<td>95</td>
+			<td>101</td>
+			<td>80</td>
+			<td>276</td>
+		</tr>
+						<tr id="score-14362">
+					<td>chumpy</td>
+			<td>167</td>
+			<td>69</td>
+			<td>40</td>
+			<td>276</td>
+		</tr>
+						<tr id="score-26527">
+					<td>aidan</td>
+			<td>136</td>
+			<td>70</td>
+			<td>70</td>
+			<td>276</td>
+		</tr>
+						<tr id="score-536">
+					<td>Cameron Clarke</td>
+			<td>113</td>
+			<td>82</td>
+			<td>80</td>
+			<td>275</td>
+		</tr>
+						<tr id="score-3963">
+					<td>Ricky_Grudd</td>
+			<td>107</td>
+			<td>98</td>
+			<td>70</td>
+			<td>275</td>
+		</tr>
+						<tr id="score-12703">
+					<td>NicoRavn</td>
+			<td>110</td>
+			<td>95</td>
+			<td>70</td>
+			<td>275</td>
+		</tr>
+						<tr id="score-13780">
+					<td>SilentMan</td>
+			<td>88</td>
+			<td>117</td>
+			<td>70</td>
+			<td>275</td>
+		</tr>
+						<tr id="score-2688">
+					<td>meh</td>
+			<td>172</td>
+			<td>82</td>
+			<td>20</td>
+			<td>274</td>
+		</tr>
+						<tr id="score-3327">
+					<td>plop</td>
+			<td>108</td>
+			<td>96</td>
+			<td>70</td>
+			<td>274</td>
+		</tr>
+						<tr id="score-7321">
+					<td>Olaf</td>
+			<td>108</td>
+			<td>106</td>
+			<td>60</td>
+			<td>274</td>
+		</tr>
+						<tr id="score-18513">
+					<td>DangerRuss</td>
+			<td>143</td>
+			<td>61</td>
+			<td>70</td>
+			<td>274</td>
+		</tr>
+						<tr id="score-25883">
+					<td>123123123</td>
+			<td>178</td>
+			<td>76</td>
+			<td>20</td>
+			<td>274</td>
+		</tr>
+						<tr id="score-9389">
+					<td>bigtalldan</td>
+			<td>161</td>
+			<td>52</td>
+			<td>60</td>
+			<td>273</td>
+		</tr>
+						<tr id="score-11614">
+					<td>BettySpaghetti</td>
+			<td>95</td>
+			<td>98</td>
+			<td>80</td>
+			<td>273</td>
+		</tr>
+						<tr id="score-12980">
+					<td>DangerRuss</td>
+			<td>125</td>
+			<td>78</td>
+			<td>70</td>
+			<td>273</td>
+		</tr>
+						<tr id="score-572">
+					<td>Craig Bell</td>
+			<td>101</td>
+			<td>91</td>
+			<td>80</td>
+			<td>272</td>
+		</tr>
+						<tr id="score-2521">
+					<td>ASDFASDFASDF</td>
+			<td>112</td>
+			<td>90</td>
+			<td>70</td>
+			<td>272</td>
+		</tr>
+						<tr id="score-3954">
+					<td>Ricky_Grudd</td>
+			<td>101</td>
+			<td>91</td>
+			<td>80</td>
+			<td>272</td>
+		</tr>
+						<tr id="score-13161">
+					<td>Marco</td>
+			<td>101</td>
+			<td>91</td>
+			<td>80</td>
+			<td>272</td>
+		</tr>
+						<tr id="score-21243">
+					<td>JulianFranco</td>
+			<td>120</td>
+			<td>82</td>
+			<td>70</td>
+			<td>272</td>
+		</tr>
+						<tr id="score-25876">
+					<td>lizige</td>
+			<td>118</td>
+			<td>84</td>
+			<td>70</td>
+			<td>272</td>
+		</tr>
+						<tr id="score-2532">
+					<td>eygo_prep</td>
+			<td>107</td>
+			<td>94</td>
+			<td>70</td>
+			<td>271</td>
+		</tr>
+						<tr id="score-3168">
+					<td>Elliot</td>
+			<td>97</td>
+			<td>94</td>
+			<td>80</td>
+			<td>271</td>
+		</tr>
+						<tr id="score-4928">
+					<td>MartijnBakker</td>
+			<td>131</td>
+			<td>60</td>
+			<td>80</td>
+			<td>271</td>
+		</tr>
+						<tr id="score-7062">
+					<td>Daniel</td>
+			<td>130</td>
+			<td>81</td>
+			<td>60</td>
+			<td>271</td>
+		</tr>
+						<tr id="score-18382">
+					<td>J</td>
+			<td>119</td>
+			<td>82</td>
+			<td>70</td>
+			<td>271</td>
+		</tr>
+						<tr id="score-1222">
+					<td>sitefall.com</td>
+			<td>113</td>
+			<td>97</td>
+			<td>60</td>
+			<td>270</td>
+		</tr>
+						<tr id="score-2558">
+					<td>BEEEESHYYYY</td>
+			<td>101</td>
+			<td>99</td>
+			<td>70</td>
+			<td>270</td>
+		</tr>
+						<tr id="score-3635">
+					<td>moxBuncher</td>
+			<td>120</td>
+			<td>80</td>
+			<td>70</td>
+			<td>270</td>
+		</tr>
+						<tr id="score-4691">
+					<td>Ganz</td>
+			<td>118</td>
+			<td>92</td>
+			<td>60</td>
+			<td>270</td>
+		</tr>
+						<tr id="score-4773">
+					<td>ghkgkkgjkhkjhjk</td>
+			<td>106</td>
+			<td>94</td>
+			<td>70</td>
+			<td>270</td>
+		</tr>
+						<tr id="score-6956">
+					<td>Clandestein</td>
+			<td>124</td>
+			<td>66</td>
+			<td>80</td>
+			<td>270</td>
+		</tr>
+						<tr id="score-2622">
+					<td>TeddyBearly</td>
+			<td>135</td>
+			<td>74</td>
+			<td>60</td>
+			<td>269</td>
+		</tr>
+						<tr id="score-4277">
+					<td>Poopooface</td>
+			<td>126</td>
+			<td>73</td>
+			<td>70</td>
+			<td>269</td>
+		</tr>
+						<tr id="score-5574">
+					<td>MILOU777</td>
+			<td>101</td>
+			<td>88</td>
+			<td>80</td>
+			<td>269</td>
+		</tr>
+						<tr id="score-9945">
+					<td>AlexC</td>
+			<td>113</td>
+			<td>86</td>
+			<td>70</td>
+			<td>269</td>
+		</tr>
+	</table>		</div>
+
+		<nav class="share text-right">
+			<ul>
+				<li id="share-text">Share</li>
+				<li><a id="facebook-share" href="https://www.facebook.com/sharer.php?u=http://8bitgames.eightarms.co.uk/" target="_blank"><img src="img/facebook.png" alt=""></a></li>
+				<li><a id="twitter-share" href="https://twitter.com/intent/tweet?url=http://8bitgames.eightarms.co.uk/&amp;text=Challenge your coordination, dexterity and patience!&amp;via=eightarmshq&amp;hashtags=Rio2016" target="_blank"><img src="img/twitter.png" alt=""></a></li>
+			</ul>
+		</nav>
+		<p>
+			<a href="#" class="uia button" data-page="intro">Home</a>
+		</p>
+	</div>
+</div>
+			<div class="page blue-bg no-min full-scroll" id="page-rules">
+	<p><a href="#" class="uia close" data-page="intro">X Close</a>
+	<div class="container">
+		<h2 class="h1">How to play</h2>
+		<h2>Triple jump</h2>
+		<div class='touch-instructions'>
+							<h3>Keyboard</h3>
+						</div>
+						<ul class='instructions'>
+							<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Any key<li>
+							<li><span>Hop</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+							<li><span>Step</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+							<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+						</ul>
+						<div class='touch-instructions'>
+							<h3>Touch</h3>
+							<ul class='instructions'>
+								<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the left of the screen<li>
+								<li><span>Hop</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+								<li><span>Step</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+								<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+							</ul>
+						</div>
+						<p>Pro tip: If you don't hit space soon enough after landing you'll trip, if you hit it exactly as you land you'll get a height boost. Good Luck!</p>		<p>-</p>
+		<h2>Hurdles</h2>
+		<div class='touch-instructions'>
+							<h3>Keyboard</h3>
+						</div>
+						<ul class='instructions'>
+							<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Any key<li>
+							<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+						</ul>
+						<div class='touch-instructions'>
+							<h3>Touch</h3>
+							<ul class='instructions'>
+								<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the left of the screen</li>
+								<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+							</ul>
+						</div>
+						<p>Pro tip: Hitting a hurdle will slow you down, the longer you hold down the spacebar the higher you jump. Good Luck!</p>		<p>-</p>
+		<h2>Archery</h2>
+		<div class='touch-instructions'>
+							<h3>Keyboard</h3>
+						</div>
+						<ul class='instructions'>
+							<li><span>Shoot</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+						</ul>
+						<div class='touch-instructions'>
+							<h3>Touch</h3>
+							<ul class='instructions'>
+								<li><span>Shoot</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap anywhere</li>
+							</ul>
+						</div>
+						<p>Pro tip: Make sure you time it right! Retry if you think you can better your score.</p>		<p>-</p>
+		<p><a href="#" class="uia button" data-page="intro">Back</a>
+		<a href="#" class="uia button" data-page="triplejump-intro">Start</a></p>
+	</div>
+</div>
+			<div class="page blue-bg full-scroll" id="page-hurdles-intro">
+	<div class="container">
+		<h2>2/3 Hurdles</h2>
+		<div class='touch-instructions'>
+							<h3>Keyboard</h3>
+						</div>
+						<ul class='instructions'>
+							<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Any key<li>
+							<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+						</ul>
+						<div class='touch-instructions'>
+							<h3>Touch</h3>
+							<ul class='instructions'>
+								<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the left of the screen</li>
+								<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+							</ul>
+						</div>
+						<p>Pro tip: Hitting a hurdle will slow you down, the longer you hold down the spacebar the higher you jump. Good Luck!</p>		<p>-</p>
+		<p><a href="#" class="uia button" data-page='hurdles' data-actions="hurdles">Start</a></p>
+	</div>
+</div>
+
+<div class="page blue-bg full-scroll" id="page-hurdles-pause">
+	<div class="container">
+		<h2>Paused</h2>
+		<div class='touch-instructions'>
+							<h3>Keyboard</h3>
+						</div>
+						<ul class='instructions'>
+							<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Any key<li>
+							<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+						</ul>
+						<div class='touch-instructions'>
+							<h3>Touch</h3>
+							<ul class='instructions'>
+								<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the left of the screen</li>
+								<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+							</ul>
+						</div>
+						<p>Pro tip: Hitting a hurdle will slow you down, the longer you hold down the spacebar the higher you jump. Good Luck!</p>		<p>-</p>
+		<p><a href="#" class="uia button" data-page='hurdles' data-actions="resume">Resume</a>
+		<a href="#" class="uia button" data-page='hurdles' data-actions="hurdles">Retry</a>
+		<a href="#" class="uia button warning" data-page='intro' data-actions="quit">Quit</a>
+	</div>
+</div>
+
+
+<div class="page" id="page-hurdles">
+
+	<div id="hurdles-info" class="ui-info">
+		<p><span id="feedback-hurdles-passed">0</span> hurdles jumped</p>
+	</div>
+
+	<div id="hurdles-score" class="ui-score">
+		<p>Time <span id="timer" class="feedback-score">3</span></p>
+		<p>Total <span class="feedback-total">3</span></p>
+	</div>
+
+	<header class="absolute ux">
+		<h1>The Eight Arms <span class="olympics-text">8 Bit Games</span></h1>
+		<img src="img/eightarms-8bit-games-logo.png" alt="Eight Arms Olympics">
+		<a href="#" class="uia button" data-page='hurdles-pause' data-actions="pause">Pause</a>
+	</header>
+
+	<div id="hurdles-pause" class="uia ui-pause" data-page='hurdles-pause' data-actions="pause"></div>
+	
+	<div class="stadium">
+		<div class="grass-top"></div>
+		<div class="track">
+		</div>
+		<div class="grass-bottom"></div>
+	</div>
+	
+	<div id="hurdles-message" class="ui-message" style="display:none;"></div>
+
+	<div class="mobile-interface">
+		<div id="c-hurdles-run"></div>
+		<div id="c-hurdles-jump"></div>
+	</div>
+	<canvas id="canvas-hurdles" width='800' height='500'></canvas>
+
+</div>
+
+<div class="overlay full-scroll" id="page-hurdles-score">
+	<div class="vertical-contain">
+		<div class="vertical-center text-center">
+			<div class="container">
+				<p id="hurdles-commentary"></p>
+				<p class="hurdles-score">&nbsp;</p>
+				<p>
+					<a href="#" class="uia button" data-page='hurdles' data-actions="hurdles">Retry</a>
+					<a href="#" class="uia button" data-page='archery-intro' data-actions="pause">Next</a>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>			<div class="page blue-bg full-scroll" id="page-triplejump-intro">
+	<div class="container">
+		<h2>1/3 Triple Jump</h2>
+		<div class='touch-instructions'>
+							<h3>Keyboard</h3>
+						</div>
+						<ul class='instructions'>
+							<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Any key<li>
+							<li><span>Hop</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+							<li><span>Step</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+							<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+						</ul>
+						<div class='touch-instructions'>
+							<h3>Touch</h3>
+							<ul class='instructions'>
+								<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the left of the screen<li>
+								<li><span>Hop</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+								<li><span>Step</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+								<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+							</ul>
+						</div>
+						<p>Pro tip: If you don't hit space soon enough after landing you'll trip, if you hit it exactly as you land you'll get a height boost. Good Luck!</p>		<p>-</p>
+		<p><a href="#" class="uia button" data-page='triplejump' data-actions="triplejump">Start</a></p>
+	</div>
+</div>
+
+<div id="page-triplejump-pause" class="page blue-bg full-scroll">
+	<div class="container">
+		<h2>Paused</h2>
+		<div class='touch-instructions'>
+							<h3>Keyboard</h3>
+						</div>
+						<ul class='instructions'>
+							<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Any key<li>
+							<li><span>Hop</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+							<li><span>Step</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+							<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+						</ul>
+						<div class='touch-instructions'>
+							<h3>Touch</h3>
+							<ul class='instructions'>
+								<li><span>Run</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the left of the screen<li>
+								<li><span>Hop</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+								<li><span>Step</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+								<li><span>Jump</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap the right of the screen</li>
+							</ul>
+						</div>
+						<p>Pro tip: If you don't hit space soon enough after landing you'll trip, if you hit it exactly as you land you'll get a height boost. Good Luck!</p>		<p>-</p>
+		<p>
+			<a href="#" class="uia button" data-page='triplejump' data-actions="resume">Resume</a>
+			<a href="#" class="uia button" data-page='triplejump' data-actions="triplejump">Restart</a>
+			<a href="#" class="uia button warning" data-page='intro' data-actions="quit">Quit</a>
+		</p>
+	</div>
+</div>
+
+<div class="page" id="page-triplejump">
+	<div id="triplejump-info" class="ui-info">
+		<p><span class="feedback-jumps-made">0</span> Jumps</p>
+	</div>
+	<div id="triplejump-score" class="ui-score">
+		<p>Distance <span class="feedback-distance">0</span></p>
+		<p>Total <span class="feedback-total"></span></p>
+	</div>
+	
+	<header class="absolute ux">
+		<h1>The Eight Arms <span class="olympics-text">8 Bit Games</span></h1>
+		<img src="img/eightarms-8bit-games-logo.png" alt="Eight Arms Olympics">
+		<a href="#" class="uia button" data-page='triplejump-pause' data-actions="pause">Pause</a>
+	</header>
+	
+	<div class="stadium">
+		<div class="grass-top"></div>
+		<div class="track">
+		</div>
+		<div class="grass-bottom"></div>
+	</div>
+	
+	<div id="triplejump-message" class="ui-message" style="display:none;"></div>
+	<div class="mobile-interface">
+		<div id="c-triplejump-run"></div>
+		<div id="c-triplejump-jump"></div>
+	</div>
+	<canvas id="canvas-triplejump" width='800' height='500'></canvas>
+</div><!-- #page-triplejump -->
+
+<div class="page" id="page-triplejump-trip">
+	<h2>You were disqualified!</h2>
+	<p>Your second and third jumps must happen the second you hit the ground!</p>
+	<p><a href="#" class="uia button" data-page='triplejump' data-actions="triplejump">Retry</a>
+	<a href="#" class="uia button" data-page='intro' data-actions="quit">Quit</a></p>
+</div><!-- .page -->
+
+
+<div class="overlay full-scroll" id="page-triplejump-score">
+	<div class="vertical-contain">
+		<div class="vertical-center text-center">
+			<div class="container">
+				<p id="triplejump-commentary">Hmm... Not bad, not bad at all</p>
+				<p class="triplejump-score">&nbsp;</p>
+				<p>
+					<a href="#" class="uia button" data-page='triplejump' data-actions="triplejump">Retry</a>
+					<a href="#" class="uia button" data-page='hurdles-intro' data-actions="pause">Next</a>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>			<div class="page blue-bg full-scroll" id="page-archery-intro">
+	<div class="container">
+		<h2>Final round! Archery</h2>
+		<div class='touch-instructions'>
+							<h3>Keyboard</h3>
+						</div>
+						<ul class='instructions'>
+							<li><span>Shoot</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+						</ul>
+						<div class='touch-instructions'>
+							<h3>Touch</h3>
+							<ul class='instructions'>
+								<li><span>Shoot</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap anywhere</li>
+							</ul>
+						</div>
+						<p>Pro tip: Make sure you time it right! Retry if you think you can better your score.</p>		<p>-</p>
+		<p><a href="#" class="uia button" data-page='archery' data-actions="archery">Next</a></p>
+	</div>
+</div><!-- .page.blue-bg#page-archery-intro -->
+
+
+<div id="page-archery-pause" class="page blue-bg full-scroll">
+	<div class="container">
+		<h2>Paused</h2>
+		<p>
+			<a href="#" class="uia button" data-page='archery' data-actions="resume">Resume</a>
+			<a href="#" class="uia button" data-page='archery' data-actions="archery">Retry</a>
+			<a href="#" class="uia button warning" data-page='intro' data-actions="quit">Quit</a>
+		</p>
+		<p>-</p>
+		<div class='touch-instructions'>
+							<h3>Keyboard</h3>
+						</div>
+						<ul class='instructions'>
+							<li><span>Shoot</span>&nbsp;&nbsp;=&nbsp;&nbsp;Spacebar</li>
+						</ul>
+						<div class='touch-instructions'>
+							<h3>Touch</h3>
+							<ul class='instructions'>
+								<li><span>Shoot</span>&nbsp;&nbsp;=&nbsp;&nbsp;Tap anywhere</li>
+							</ul>
+						</div>
+						<p>Pro tip: Make sure you time it right! Retry if you think you can better your score.</p>	</div>
+</div><!-- .page #page-archery-pause -->
+
+
+<div class="page" id="page-archery">
+
+	<div id="archery-info" class="ui-info">
+		<p><span class="feedback-arrows-left">3</span> Arrows left</p>
+	</div>
+
+	<div id="archery-score" class="ui-score">
+		<p>Archery <span class="feedback-score">3</span>
+		Total <span class="feedback-total">3</span></p>
+	</div>
+
+	<header class="absolute ux">
+		<h1>The Eight Arms <span class="olympics-text">8 Bit Games</span></h1>
+		<img src="img/eightarms-8bit-games-logo.png" alt="Eight Arms Olympics">
+		<a href="#" class="uia button" data-page='archery-pause' data-actions="pause">Pause</a>
+		<!-- <a href="#" class="uia button" data-page='triplejump-pause' data-actions="pause">Pause</a> -->
+	</header>
+
+	<div class="stadium">
+		<div class="mountains">
+			<div class="mountains-bg"></div>
+		</div>
+		
+		<div class="flags">
+			<div class="flags-bg"></div>
+		</div>
+		
+		<div class="crowd">
+			<div class="crowd-bg"></div>
+		</div>
+		<div class="grass-top"></div>
+		<div class="track">
+		</div>
+		<div class="grass-bottom"></div>
+	</div>
+
+	<div id="archery-message" class="ui-message archery-message">
+	</div>
+
+	<div class="mobile-interface">
+		<div id="c-archery-fire"></div>
+	</div>
+	<canvas id="canvas-archery" width='800' height='500'></canvas>
+
+</div><!-- .page #page-archery -->
+
+<div class="overlay full-scroll" id="page-archery-score">
+	<div class="vertical-contain">
+		<div class="vertical-center text-center">
+			<div class="container">
+				<p id="archery-commentary"></p>
+				<p class="archery-score">&nbsp;</p>
+				<p><a href="#" class="uia button" data-page='archery' data-actions="archery">Retry</a>
+				<a href="#" class="uia button" data-page='save' data-actions="save">Finish</a></p>
+			</div>
+		</div>
+	</div><!-- .overlay #page-archery-score -->
+</div>			<div class="page" id="page-save">
+	<canvas id="canvas-confetti"></canvas>
+	<div class="blue-bg full-scroll">
+		<div class="container">
+			<h2>Save</h2>
+			<form action="#">
+				<div>
+					<p>Your name (required):</p>
+										<p><input type="text" id="name" placeholder="Mo Farah" maxlength="30"/></p>
+					<div class="warning" style="display:none;">Hey! You have to enter a name!</div>
+				</div>
+				<div>
+					<p>Your email:</p>
+					<p><input type="text" id="email" placeholder="fo.mo@example.com"/></p>
+					<p> &uarr; this won't be shared, but if you like we'll very rarely email you about future games and updates!</p>
+				</div>
+								<p >
+					<a class="button" id="save-button" type="submit">Save</a>
+				</p>
+			</form>
+		</div>
+	</div>
+</div>
+			<div id="music-feedback" class="music-feedback"></div>
+			<div class="made-by-eight-arms">Made by <a href="http://eightarms.co.uk" target="_blank" title="Eight Arms">Eight Arms</a></div>
+		</div>
+
+		<script src='js/fastclick.js'></script>
+		<script type="application/javascript">
+			window.addEventListener('load', function () {
+				FastClick.attach(document.body);
+			}, false);
+		</script> 
+		<script src="js/dist/min/script-min.js"></script>
+				
+				
+				<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+			ga('create', 'UA-46071890-15', 'auto');
+			ga('send', 'pageview');
+		</script>
+	<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"6f27ac67f5764f0c8fa864dd811029b6","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

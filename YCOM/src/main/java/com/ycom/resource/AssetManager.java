@@ -36,6 +36,17 @@ public class AssetManager {
         loadImage("container_front", "container_front.jpg");
         loadImage("container_side", "container_side.jpg");
         loadImage("container_top", "container_top.jpg");
+        loadImage("menu_bg", "主界面背景.png");
+        loadImage("game_over_bg", "终界面.png");
+        
+        loadImage("cheryl_run_1", "runners/cheryl_run-1.png");
+        loadImage("cheryl_run_2", "runners/cheryl_run-2.png");
+        loadImage("dave_run_1", "runners/dave_run-1.png");
+        loadImage("dave_run_2", "runners/dave_run-2.png");
+        loadImage("matt_run_1", "runners/matt_run-1.png");
+        loadImage("matt_run_2", "runners/matt_run-2.png");
+        loadImage("mazz_run_1", "runners/mazz_run-1.png");
+        loadImage("mazz_run_2", "runners/mazz_run-2.png");
     }
 
     public static Image ascensionImage() {
@@ -63,6 +74,10 @@ public class AssetManager {
 
     public static Image background() {
         return getImage("background");
+    }
+
+    public static Image gameOverBg() {
+        return getImage("game_over_bg");
     }
 
     public static Image playerImage() {
@@ -141,6 +156,13 @@ public class AssetManager {
         return getImage("container_top");
     }
 
+    public static Image menuBg() {
+        return getImage("menu_bg");
+    }
+
+    public static Image runnerFrame(String character, int frame) {
+        return getImage(character + "_run_" + frame);
+    }
 
     private static void loadImage(String key, String fileName) {
         Path path = resolve(fileName);

@@ -58,6 +58,7 @@ public class GameLoop extends AnimationTimer {
 
     private GraphicsContext getGraphicsContext() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setImageSmoothing(false);
 
         double scaleX = canvas.getWidth() / Config.LOGICAL_WIDTH;
         double scaleY = canvas.getHeight() / Config.LOGICAL_HEIGHT;
