@@ -19,6 +19,8 @@ public class Player extends Actor {
     private double magnetMax;
     private double boostTimer;
     private double boostMax;
+    private double reviveInvincibleTimer;
+    private double reviveInvincibleMax;
     private double scoreMultiplierTimer;
     private double scoreMultiplierMax;
     private double scoreMultiplier = 1.0;
@@ -137,6 +139,14 @@ public class Player extends Actor {
             }
         }
 
+        if (reviveInvincibleTimer > 0.0) {
+            reviveInvincibleTimer -= realDt;
+            if (reviveInvincibleTimer <= 0.0) {
+                reviveInvincibleTimer = 0.0;
+                reviveInvincibleMax = 0.0;
+            }
+        }
+
         if (scoreMultiplierTimer > 0.0) {
             scoreMultiplierTimer -= realDt;
             if (scoreMultiplierTimer <= 0.0) {
@@ -166,6 +176,27 @@ public class Player extends Actor {
         boostTimer = Math.max(boostTimer, duration);
         boostMax = Math.max(boostMax, duration);
         state = PlayerState.BOOSTED_INVINCIBLE;
+    }
+
+    public void activateReviveInvincibility(double duration) {
+        reviveInvincibleTimer = Math.max(reviveInvincibleTimer, duration);
+        reviveInvincibleMax = Math.max(reviveInvincibleMax, duration);
+    }
+
+    public boolean isReviveInvincible() {
+        return reviveInvincibleTimer > 0.0;
+    }
+
+    public double reviveInvincibleTimer() {
+        return reviveInvincibleTimer;
+    }
+
+    public double reviveInvincibleMaxDuration() {
+        return reviveInvincibleMax;
+    }
+
+    public boolean isInvulnerable() {
+        return isBoosted() || isReviveInvincible();
     }
 
     public boolean hasMagnet() {
@@ -258,7 +289,7 @@ public class Player extends Actor {
         slideTimer = 0.0;
         height = Config.PLAYER_STANDING_HEIGHT;
         state = PlayerState.RUNNING;
-        activateBoost(Config.REVIVE_INVINCIBLE_DURATION);
+        activateReviveInvincibility(Config.REVIVE_INVINCIBLE_DURATION);
     }
 
     public double floorY() {

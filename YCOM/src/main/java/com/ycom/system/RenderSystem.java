@@ -133,7 +133,10 @@ public class RenderSystem {
     }
 
     private void drawPlayer(GraphicsContext gc, Player player, Projection p) {
-        if (player.isBoosted()) {
+        if (player.isReviveInvincible()) {
+            gc.setFill(Color.rgb(255, 200, 50, 0.32));
+            gc.fillOval(p.x - p.width * 0.95, p.y - p.height * 0.9, p.width * 1.9, p.height * 1.8);
+        } else if (player.isBoosted()) {
             gc.setFill(Color.rgb(155, 89, 182, 0.25));
             gc.fillOval(p.x - p.width * 0.95, p.y - p.height * 0.9, p.width * 1.9, p.height * 1.8);
         }
@@ -534,6 +537,12 @@ public class RenderSystem {
         if (player.hasMagnet()) {
             drawBuffTimer(gc, AssetManager.magnetIcon(), player.magnetTimer(), player.magnetMaxDuration(),
                     Color.rgb(155, 89, 182), bcx, bcy, size);
+            bcy -= stride;
+        }
+        if (player.isReviveInvincible()) {
+            drawBuffTimer(gc, AssetManager.revivalIcon(),
+                    player.reviveInvincibleTimer(), player.reviveInvincibleMaxDuration(),
+                    Color.rgb(255, 200, 50), bcx, bcy, size);
             bcy -= stride;
         }
         if (player.isBoosted()) {
