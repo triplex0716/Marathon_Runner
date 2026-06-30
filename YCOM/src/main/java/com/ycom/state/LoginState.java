@@ -434,7 +434,7 @@ public class LoginState implements GameState {
         gc.setFont(Font.font("Arial", FontWeight.NORMAL, 22));
         gc.setFill(Color.rgb(200, 215, 240, 0.85));
         gc.fillText(mode == Mode.REGISTER
-                        ? "Use A-Z, a-z, and 0-9 only  |  password >= 6 chars"
+                        ? "Use A-Z, a-z, and 0-9 only  |  username >= 3, password >= 6"
                         : "Use A-Z, a-z, and 0-9 only",
                 x + PANEL_W / 2.0, y + 100);
 
@@ -449,7 +449,7 @@ public class LoginState implements GameState {
                     focus == Focus.CONFIRM, !passwordVisible, FieldIcon.LOCK, true);
         }
 
-        drawPrimaryButton(gc, loginButton(), "LOGIN");
+        drawPrimaryButton(gc, loginButton(), mode == Mode.REGISTER ? "REGISTER" : "LOGIN");
     }
 
     private void drawLabeledField(GraphicsContext gc, String label, ButtonRect r,
@@ -661,7 +661,7 @@ public class LoginState implements GameState {
     }
 
     private void drawBottomButtons(GraphicsContext gc) {
-        drawSecondaryButton(gc, registerButton(), "REGISTER", false);
+        drawSecondaryButton(gc, registerButton(), mode == Mode.REGISTER ? "LOGIN" : "REGISTER", false);
         drawSecondaryButton(gc, guestButton(), "GUEST", true);
     }
 
@@ -693,10 +693,9 @@ public class LoginState implements GameState {
     private void drawErrorMessage(GraphicsContext gc) {
         if (errorMessage.isEmpty()) return;
         gc.setFill(Color.rgb(255, 110, 110));
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 26));
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         gc.setTextAlign(TextAlignment.CENTER);
-        double y = registerButton().y + SECONDARY_BTN_H + 42.0;
-        if (y > Config.LOGICAL_HEIGHT - 22.0) y = Config.LOGICAL_HEIGHT - 22.0;
+        double y = loginButton().y - 14.0;
         gc.fillText(errorMessage, Config.LOGICAL_WIDTH / 2.0, y);
     }
 
@@ -742,26 +741,20 @@ public class LoginState implements GameState {
     }
 
     private void onLoginButton() {
-        if (mode == Mode.LOGIN) {
-            tryLogin();
-        } else {
-            switchMode(Mode.LOGIN);
-        }
+        submitCurrentMode();
     }
 
     private void onRegisterButton() {
-        if (mode == Mode.REGISTER) {
-            tryRegister();
-        } else {
-            switchMode(Mode.REGISTER);
-        }
+        switchMode(mode == Mode.REGISTER ? Mode.LOGIN : Mode.REGISTER);
     }
 
     private void switchMode(Mode m) {
         mode = m;
         errorMessage = "";
+        username.setLength(0);
+        password.setLength(0);
         confirm.setLength(0);
-        if (focus == Focus.CONFIRM) focus = Focus.USERNAME;
+        focus = Focus.USERNAME;
     }
 
     private void tryLogin() {
@@ -799,6 +792,7 @@ public class LoginState implements GameState {
         } catch (IllegalArgumentException bad) {
             switch (bad.getMessage()) {
                 case "SHORT" -> errorMessage = "Password must be at least 6 characters.";
+                case "USER_SHORT" -> errorMessage = "Username must be at least 3 characters.";
                 case "TOO_LONG" -> errorMessage = "Username/password too long.";
                 case "BAD_CHAR" -> errorMessage = "Username has invalid characters.";
                 default -> errorMessage = "Invalid username or password.";
