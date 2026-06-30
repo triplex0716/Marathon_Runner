@@ -11,88 +11,103 @@ import com.ycom.entity.RevivalCapsule;
 import com.ycom.entity.Treadmill;
 import com.ycom.world.GameWorld;
 import javafx.scene.paint.Color;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class SpawnSystem {
+    private static final double CHUNK_BUFFER_GAP = 6.0;
+    private static final double SPAWN_LOOKAHEAD = 230.0;
+
     private final GameWorld world;
-    private final Config.Difficulty difficulty;
+    private final SceneScheduler scheduler;
     private final Random rand = new Random();
     private double nextSpawnZ = 50.0;
 
     public SpawnSystem(GameWorld world, Config.Difficulty difficulty) {
         this.world = world;
-        this.difficulty = difficulty == null ? Config.DEFAULT_DIFFICULTY : difficulty;
+        Config.Difficulty diff = difficulty == null ? Config.DEFAULT_DIFFICULTY : difficulty;
+        this.scheduler = new SceneScheduler(diff);
     }
 
     public void update(double playerZ) {
-        while (playerZ + 230.0 > nextSpawnZ) {
-            spawnRow(nextSpawnZ);
-            double density = Math.min(1.0, (TimeManager.getElapsedTime() / 120.0));
-            nextSpawnZ += Math.max(7.5, difficulty.spawnBaseGap - density * 3.0 + rand.nextDouble() * difficulty.spawnRandomGap);
+        while (playerZ + SPAWN_LOOKAHEAD > nextSpawnZ) {
+            Chunk c = scheduler.next(TimeManager.getElapsedTime());
+            spawnChunk(c, nextSpawnZ);
+            nextSpawnZ += c.length + CHUNK_BUFFER_GAP;
         }
     }
 
-    private void spawnRow(double z) {
-        int lane = rand.nextInt(3) - 1;
-        double x = lane * Config.LANE_WIDTH;
+    private void spawnChunk(Chunk c, double baseZ) {
+        int[] resolved = resolveLaneTransform(c);
+        int shift = resolved[0];
+        boolean mirror = resolved[1] == 1;
 
-        double roll = rand.nextDouble();
-        double elapsed = TimeManager.getElapsedTime();
-
-        double laneBlockChance = elapsed >= difficulty.laneBlockUnlockSeconds ? difficulty.laneBlockObstacleChance : 0.0;
-        double jumpThreshold = difficulty.jumpObstacleChance;
-        double slideThreshold = jumpThreshold + difficulty.slideObstacleChance;
-        double blockThreshold = slideThreshold + laneBlockChance;
-        double magnetThreshold = blockThreshold + difficulty.magnetChance;
-        double energyThreshold = magnetThreshold + difficulty.energyDrinkChance;
-        double treadmillThreshold = energyThreshold + difficulty.treadmillChance;
-        double revivalThreshold = treadmillThreshold + difficulty.revivalChance;
-        double randomItemThreshold = revivalThreshold + difficulty.randomItemChance;
-
-        if (roll < jumpThreshold) {
-            world.addObject(new Obstacle(x, 0.0, z, 2.1, 1.0, 1.2, Color.ORANGE, Obstacle.AvoidMethod.JUMP));
-        } else if (roll < slideThreshold) {
-            world.addObject(new Obstacle(x, 1.25, z, 2.2, 1.0, 1.1, Color.CRIMSON, Obstacle.AvoidMethod.SLIDE));
-        } else if (roll < blockThreshold) {
-            if (rand.nextBoolean()) {
-                world.addObject(new Obstacle(x, 0.0, z, 2.4, 3.0, 7.0, Color.DARKRED, Obstacle.AvoidMethod.CHANGE_LANE));
-            } else {
-                world.addObject(new Obstacle(x, 0.0, z, 2.4, 3.0, 7.0, Color.DARKBLUE, Obstacle.AvoidMethod.CONTAINER));
-                world.addObject(new Obstacle(x, 0.0, z - 5.5, 2.4, 3.0, 4.0, Color.GRAY, Obstacle.AvoidMethod.RAMP));
+        for (EntitySpec spec : c.entities) {
+            int lane = spec.lane;
+            if (mirror) lane = -lane;
+            lane += shift;
+            double x = lane * Config.LANE_WIDTH;
+            double z = baseZ + spec.relZ;
+            switch (spec.type) {
+                case JUMP_OBSTACLE -> world.addObject(new Obstacle(
+                        x, 0.0, z, 2.1, 1.0, 1.2, Color.ORANGE, Obstacle.AvoidMethod.JUMP));
+                case SLIDE_OBSTACLE -> world.addObject(new Obstacle(
+                        x, 1.25, z, 2.2, 1.0, 1.1, Color.CRIMSON, Obstacle.AvoidMethod.SLIDE));
+                case LANE_BLOCK -> world.addObject(new Obstacle(
+                        x, 0.0, z, 2.4, 3.0, 7.0, Color.DARKRED, Obstacle.AvoidMethod.CHANGE_LANE));
+                case CONTAINER_WITH_RAMP -> {
+                    world.addObject(new Obstacle(
+                            x, 0.0, z, 2.4, 3.0, 7.0, Color.DARKBLUE, Obstacle.AvoidMethod.CONTAINER));
+                    world.addObject(new Obstacle(
+                            x, 0.0, z - 5.5, 2.4, 3.0, 4.0, Color.GRAY, Obstacle.AvoidMethod.RAMP));
+                }
+                case COIN -> {
+                    double y = spec.y > 0.0 ? spec.y : 0.65;
+                    world.addObject(new Coin(x, y, z));
+                }
+                case MAGNET -> world.addObject(new Magnet(x, 0.6, z));
+                case ENERGY_DRINK -> world.addObject(new EnergyDrink(x, 0.4, z));
+                case TREADMILL -> world.addObject(new Treadmill(x, 0.45, z));
+                case REVIVAL_CAPSULE -> world.addObject(new RevivalCapsule(x, 0.55, z));
+                case RANDOM_ITEM -> world.addObject(new RandomItem(x, 0.5, z));
             }
-        } else if (roll < magnetThreshold) {
-            world.addObject(new Magnet(x, 0.6, z));
-        } else if (roll < energyThreshold) {
-            world.addObject(new EnergyDrink(x, 0.4, z));
-        } else if (roll < treadmillThreshold) {
-            world.addObject(new Treadmill(x, 0.45, z));
-        } else if (roll < revivalThreshold) {
-            world.addObject(new RevivalCapsule(x, 0.55, z));
-        } else if (roll < randomItemThreshold) {
-            world.addObject(new RandomItem(x, 0.5, z));
+        }
+    }
+
+    private int[] resolveLaneTransform(Chunk c) {
+        if (!c.laneShiftable && !c.mirrorable) {
+            return new int[]{0, 0};
+        }
+        List<int[]> candidates = new ArrayList<>();
+        if (c.laneShiftable && c.mirrorable) {
+            for (int s = -1; s <= 1; s++) {
+                candidates.add(new int[]{s, 0});
+                candidates.add(new int[]{s, 1});
+            }
+        } else if (c.laneShiftable) {
+            for (int s = -1; s <= 1; s++) candidates.add(new int[]{s, 0});
         } else {
-            spawnCoinLine(lane, z);
+            candidates.add(new int[]{0, 0});
+            candidates.add(new int[]{0, 1});
         }
-
-        if (elapsed > 70.0 && rand.nextDouble() < difficulty.lateExtraObstacleChance) {
-            int secondLane = pickDifferentLane(lane);
-            double secondX = secondLane * Config.LANE_WIDTH;
-            world.addObject(new Obstacle(secondX, 0.0, z + 2.5, 2.1, 1.0, 1.2, Color.DARKORANGE, Obstacle.AvoidMethod.JUMP));
+        Collections.shuffle(candidates, rand);
+        for (int[] cand : candidates) {
+            if (isValidTransform(c, cand[0], cand[1] == 1)) {
+                return cand;
+            }
         }
+        return new int[]{0, 0};
     }
 
-    private void spawnCoinLine(int lane, double z) {
-        double x = lane * Config.LANE_WIDTH;
-        for (int i = 0; i < 5; i++) {
-            world.addObject(new Coin(x, 0.65, z + i * 2.0));
+    private boolean isValidTransform(Chunk c, int shift, boolean mirror) {
+        for (EntitySpec spec : c.entities) {
+            int lane = spec.lane;
+            if (mirror) lane = -lane;
+            lane += shift;
+            if (lane < -1 || lane > 1) return false;
         }
-    }
-
-    private int pickDifferentLane(int lane) {
-        int secondLane;
-        do {
-            secondLane = rand.nextInt(3) - 1;
-        } while (secondLane == lane);
-        return secondLane;
+        return true;
     }
 }

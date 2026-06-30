@@ -285,8 +285,9 @@ public class PlayingState implements GameState {
         double playerZ = world.getPlayer().z;
         double radius = Config.REVIVE_CLEAR_RADIUS;
         for (GameObject obj : world.getObjects()) {
-            if (obj.kind() == GameObject.ObjectKind.OBSTACLE
-                    && Math.abs(obj.z - playerZ) <= radius) {
+            if (obj.kind() != GameObject.ObjectKind.OBSTACLE) continue;
+            double dz = obj.z - playerZ;
+            if (dz >= -1.5 && dz <= radius) {
                 obj.active = false;
             }
         }

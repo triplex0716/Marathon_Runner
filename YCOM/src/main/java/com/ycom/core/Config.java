@@ -16,7 +16,7 @@ public class Config {
     public static final double TREADMILL_DURATION = 10.0;
     public static final double SCORE_MULTIPLIER = 2.0;
     public static final double REVIVE_INVINCIBLE_DURATION = 5.0;
-    public static final double REVIVE_CLEAR_RADIUS = 8.0;
+    public static final double REVIVE_CLEAR_RADIUS = 20.0;
     public static final int COIN_REVIVE_COST = 300;
     public static final double BGM_VOLUME = 0.85;
     public static final double SFX_VOLUME = 0.38;
