@@ -56,9 +56,11 @@ public class ParticleSystem {
             double w = Math.max(2.0, s.size * scale);
             double alpha = Math.min(1.0, Math.max(0.0, s.life / 0.5));
             Color c = s.color;
-            gc.setFill(Color.color(c.getRed(), c.getGreen(), c.getBlue(), alpha));
+            gc.setGlobalAlpha(alpha);
+            gc.setFill(c);
             gc.fillRect(screenX - w / 2.0, screenY - w / 2.0, w, w);
         }
+        gc.setGlobalAlpha(1.0); // Reset alpha when done
     }
 
     public void clear() {

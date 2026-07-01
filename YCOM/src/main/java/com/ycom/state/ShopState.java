@@ -47,13 +47,13 @@ public class ShopState implements GameState {
         if (flashTimer > 0.0) flashTimer = Math.max(0.0, flashTimer - dt);
 
         if (input.isKeyJustPressed(KeyCode.ESCAPE) || input.isKeyJustPressed(KeyCode.Q)) {
-            gsm.setState("MENU");
+            gsm.setState(StateId.MENU);
             return;
         }
         if (!input.isMouseJustClicked()) return;
 
         if (btnBack().contains(input.getMouseX(), input.getMouseY())) {
-            gsm.setState("MENU");
+            gsm.setState(StateId.MENU);
             return;
         }
         if (btnBuyCapsule().contains(input.getMouseX(), input.getMouseY())) {
@@ -67,12 +67,12 @@ public class ShopState implements GameState {
             return;
         }
         Account acc = Session.current();
-        if (acc.coins < CAPSULE_PRICE) {
+        if (acc.getCoins() < CAPSULE_PRICE) {
             flash("Not enough coins");
             return;
         }
-        acc.coins -= CAPSULE_PRICE;
-        acc.capsules += 1;
+        acc.trySpendCoins(CAPSULE_PRICE);
+        acc.addCapsules(1);
         AccountStore.save();
         AudioManager.playSfx("coin");
         flash("Capsule purchased!");
@@ -119,7 +119,7 @@ public class ShopState implements GameState {
             text = "GUEST MODE (LOGIN TO BUY)";
         } else {
             Account acc = Session.current();
-            text = "COINS: " + acc.coins + "    CAPSULES: " + acc.capsules;
+            text = "COINS: " + acc.getCoins() + "    CAPSULES: " + acc.getCapsules();
         }
         
         double w = 900, h = 68;

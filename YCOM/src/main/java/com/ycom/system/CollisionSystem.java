@@ -21,7 +21,7 @@ public class CollisionSystem {
         List<GameObject> objects = world.getObjects();
 
         for (GameObject obj : objects) {
-            if (!obj.active) {
+            if (!obj.isActive()) {
                 continue;
             }
 

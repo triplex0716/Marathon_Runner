@@ -105,7 +105,7 @@ public class LoginState implements GameState {
         }
         else if (btnGuest().contains(mx, my)) {
             Session.enterAsGuest();
-            gsm.setState("MENU");
+            gsm.setState(StateId.MENU);
         }
     }
 
@@ -228,7 +228,7 @@ public class LoginState implements GameState {
             errorMessage = "Wrong username or password."; password.setLength(0); return;
         }
         Session.login(acc);
-        gsm.setState("MENU");
+        gsm.setState(StateId.MENU);
     }
 
     private void tryRegister() {
@@ -241,7 +241,7 @@ public class LoginState implements GameState {
         try {
             Account acc = AccountStore.register(username.toString(), password.toString());
             Session.login(acc);
-            gsm.setState("MENU");
+            gsm.setState(StateId.MENU);
         } catch (IllegalStateException dup) {
             errorMessage = "Username already taken.";
         } catch (IllegalArgumentException bad) {

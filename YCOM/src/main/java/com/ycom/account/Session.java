@@ -6,12 +6,12 @@ public class Session {
 
     public static void login(Account acc) {
         current = acc;
-        AccountStore.saveLastUsername(acc.username);
+        AccountStore.saveLastUsername(acc.getUsername());
     }
 
     public static void enterAsGuest() {
-        GUEST.coins = 0;
-        GUEST.capsules = 0;
+        
+        
         current = GUEST;
     }
 

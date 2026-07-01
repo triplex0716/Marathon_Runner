@@ -204,16 +204,22 @@ public class AssetManager {
         PixelReader reader = img.getPixelReader();
         PixelWriter writer = wImg.getPixelWriter();
         
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Color c = reader.getColor(x, y);
-                if (c.getRed() > 0.85 && c.getGreen() > 0.85 && c.getBlue() > 0.85) {
-                    writer.setColor(x, y, Color.TRANSPARENT);
-                } else {
-                    writer.setColor(x, y, c);
-                }
+        int[] pixels = new int[width * height];
+        reader.getPixels(0, 0, width, height, javafx.scene.image.PixelFormat.getIntArgbInstance(), pixels, 0, width);
+        
+        for (int i = 0; i < pixels.length; i++) {
+            int argb = pixels[i];
+            int r = (argb >> 16) & 0xff;
+            int g = (argb >> 8) & 0xff;
+            int b = argb & 0xff;
+            
+            // Check if it's near-white (threshold > 0.85 * 255 = 216.75)
+            if (r > 217 && g > 217 && b > 217) {
+                pixels[i] = 0x00ffffff; // Transparent (alpha 0)
             }
         }
+        
+        writer.setPixels(0, 0, width, height, javafx.scene.image.PixelFormat.getIntArgbInstance(), pixels, 0, width);
         return wImg;
     }
 

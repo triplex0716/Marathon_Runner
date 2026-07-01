@@ -28,28 +28,28 @@ public class PausedState implements GameState {
     @Override
     public void update(double dt) {
         if (input.isKeyJustPressed(KeyCode.SPACE) || input.isKeyJustPressed(KeyCode.ESCAPE)) {
-            gsm.setState("PLAYING");
+            gsm.setState(StateId.PLAYING);
             return;
         }
         if (input.isKeyJustPressed(KeyCode.Q)) {
             AudioManager.stopBGM();
-            gsm.setState("MENU");
+            gsm.setState(StateId.MENU);
             return;
         }
 
         if (input.isMouseJustClicked()) {
             if (btnResume().contains(input.getMouseX(), input.getMouseY())) {
-                gsm.setState("PLAYING");
+                gsm.setState(StateId.PLAYING);
             } else if (btnQuit().contains(input.getMouseX(), input.getMouseY())) {
                 AudioManager.stopBGM();
-                gsm.setState("MENU");
+                gsm.setState(StateId.MENU);
             }
         }
     }
 
     @Override
     public void render() {
-        GameState playing = gsm.getState("PLAYING");
+        GameState playing = gsm.getState(StateId.PLAYING);
         if (playing != null) {
             playing.render();
         }

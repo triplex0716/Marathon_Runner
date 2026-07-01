@@ -12,7 +12,7 @@ public abstract class Collectible extends AnimatedObject {
         if (event.other().kind() != ObjectKind.PLAYER) {
             return;
         }
-        active = false;
+        deactivate();
         onPickedUpBy(event.other(), context);
     }
 

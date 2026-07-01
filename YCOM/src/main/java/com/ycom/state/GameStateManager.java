@@ -2,11 +2,11 @@ package com.ycom.state;
 
 import javafx.scene.canvas.Canvas;
 import com.ycom.system.InputSystem;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class GameStateManager {
-    private Map<String, GameState> states = new HashMap<>();
+    private Map<StateId, GameState> states = new EnumMap<>(StateId.class);
     private GameState currentState;
     private Canvas canvas;
     private InputSystem input;
@@ -15,25 +15,30 @@ public class GameStateManager {
         this.canvas = canvas;
         this.input = input;
         
-        states.put("LOGIN", new LoginState(this, canvas, input));
-        states.put("MENU", new MainMenuState(this, canvas, input));
-        states.put("INSTRUCTION", new InstructionState(this, canvas, input));
-        states.put("SHOP", new ShopState(this, canvas, input));
-        states.put("PLAYING", new PlayingState(this, canvas, input));
-        states.put("GAMEOVER", new GameOverState(this, canvas, input));
-        states.put("PAUSED", new PausedState(this, canvas, input));
+        states.put(StateId.LOGIN, new LoginState(this, canvas, input));
+        states.put(StateId.MENU, new MainMenuState(this, canvas, input));
+        states.put(StateId.INSTRUCTION, new InstructionState(this, canvas, input));
+        states.put(StateId.SHOP, new ShopState(this, canvas, input));
+        states.put(StateId.PLAYING, new PlayingState(this, canvas, input));
+        states.put(StateId.GAMEOVER, new GameOverState(this, canvas, input));
+        states.put(StateId.PAUSED, new PausedState(this, canvas, input));
 
-        setState("LOGIN");
+        setState(StateId.LOGIN);
     }
     
-    public void setState(String stateName) {
+    public void setState(StateId stateId, Object payload) {
         if (currentState != null) currentState.onExit();
-        currentState = states.get(stateName);
+        currentState = states.get(stateId);
+        if (currentState != null) currentState.onEnter(payload);
+    }
+    public void setState(StateId stateId) {
+        if (currentState != null) currentState.onExit();
+        currentState = states.get(stateId);
         if (currentState != null) currentState.onEnter();
     }
     
-    public GameState getState(String stateName) {
-        return states.get(stateName);
+    public GameState getState(StateId stateId) {
+        return states.get(stateId);
     }
     
     public void update(double dt) {

@@ -39,7 +39,7 @@ public class InstructionState implements GameState {
         if (input.isKeyJustPressed(KeyCode.ESCAPE)
                 || input.isKeyJustPressed(KeyCode.Q)
                 || (input.isMouseJustClicked() && btnBack().contains(input.getMouseX(), input.getMouseY()))) {
-            gsm.setState("MENU");
+            gsm.setState(StateId.MENU);
         }
     }
 

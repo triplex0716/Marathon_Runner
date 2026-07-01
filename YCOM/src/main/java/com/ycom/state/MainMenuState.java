@@ -49,21 +49,21 @@ public class MainMenuState implements GameState {
             if (btnEasy().contains(mx, my)) startGame(Config.Difficulty.EASY);
             else if (btnMedium().contains(mx, my)) startGame(Config.Difficulty.MEDIUM);
             else if (btnHard().contains(mx, my)) startGame(Config.Difficulty.HARD);
-            else if (Session.isLoggedIn() && btnShop().contains(mx, my)) gsm.setState("SHOP");
-            else if (btnInstruction().contains(mx, my)) gsm.setState("INSTRUCTION");
+            else if (Session.isLoggedIn() && btnShop().contains(mx, my)) gsm.setState(StateId.SHOP);
+            else if (btnInstruction().contains(mx, my)) gsm.setState(StateId.INSTRUCTION);
             else if (btnIdentity().contains(mx, my)) {
                 if (!Session.isGuest()) Session.logout();
-                gsm.setState("LOGIN");
+                gsm.setState(StateId.LOGIN);
             }
         }
     }
 
     private void startGame(Config.Difficulty diff) {
-        GameState state = gsm.getState("PLAYING");
+        GameState state = gsm.getState(StateId.PLAYING);
         if (state instanceof PlayingState playingState) {
             playingState.resetGame(diff);
         }
-        gsm.setState("PLAYING");
+        gsm.setState(StateId.PLAYING);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class MainMenuState implements GameState {
         if (Session.isGuest()) return;
         Account acc = Session.current();
         
-        String info = String.format("%s | Coins: %d | Caps: %d", acc.username, acc.coins, acc.capsules);
+        String info = String.format("%s | Coins: %d | Caps: %d", acc.getUsername(), acc.getCoins(), acc.getCapsules());
         Font font = Font.font("Courier New", FontWeight.BOLD, 18);
         
         Text textHelper = new Text(info);

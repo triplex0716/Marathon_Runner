@@ -16,8 +16,8 @@ public class GameOverState implements GameState {
     private final GameStateManager gsm;
     private final Canvas canvas;
     private final InputSystem input;
-    public static int finalScore = 0;
-    public static boolean isWin = false;
+    private int finalScore = 0;
+    private boolean isWin = false;
     private boolean newHighScore = false;
     private double time = 0.0;
 
@@ -28,13 +28,21 @@ public class GameOverState implements GameState {
     }
 
     @Override
+    public void onEnter(Object payload) {
+        if (payload instanceof GameResult result) {
+            this.finalScore = result.finalScore();
+            this.isWin = result.isWin();
+        }
+        onEnter();
+    }
+    @Override
     public void onEnter() {
         newHighScore = false;
         time = 0.0;
         if (Session.isLoggedIn()) {
             Account acc = Session.current();
-            if (finalScore > acc.highScore) {
-                acc.highScore = finalScore;
+            if (finalScore > acc.getHighScore()) {
+                acc.tryUpdateHighScore(finalScore);
                 AccountStore.save();
                 newHighScore = true;
             }
@@ -53,7 +61,7 @@ public class GameOverState implements GameState {
         boolean clickTrigger = input.isMouseJustClicked()
                 && btnMenu().contains(input.getMouseX(), input.getMouseY());
         if (keyTrigger || clickTrigger) {
-            gsm.setState("MENU");
+            gsm.setState(StateId.MENU);
         }
     }
 
@@ -125,9 +133,9 @@ public class GameOverState implements GameState {
     private void drawStatCards(GraphicsContext gc) {
         boolean guest = Session.isGuest();
         Account acc = guest ? null : Session.current();
-        String coins = guest ? "---" : String.valueOf(acc.coins);
-        String caps = guest ? "---" : String.valueOf(acc.capsules);
-        String best = guest ? "---" : String.valueOf(acc.highScore);
+        String coins = guest ? "---" : String.valueOf(acc.getCoins());
+        String caps = guest ? "---" : String.valueOf(acc.getCapsules());
+        String best = guest ? "---" : String.valueOf(acc.getHighScore());
 
         double w = 860, h = 80;
         double x = Config.LOGICAL_WIDTH * 0.3 - w / 2.0;

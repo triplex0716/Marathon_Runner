@@ -37,6 +37,8 @@ import com.ycom.system.RenderSystem;
 import com.ycom.system.SpawnSystem;
 import com.ycom.system.CollisionSystem;
 import com.ycom.system.ScoreSystem;
+import com.ycom.system.ReviveService;
+import com.ycom.system.RunEventHandlers;
 import com.ycom.resource.AudioManager;
 import com.ycom.resource.AssetManager;
 import javafx.scene.image.Image;
@@ -52,7 +54,9 @@ public class PlayingState implements GameState {
     private SpawnSystem spawnSystem;
     private CollisionSystem collisionSystem;
     private ScoreSystem scoreSystem;
+    private com.ycom.system.EffectSystem effectSystem;
     private ParticleSystem particleSystem;
+    private ReviveService reviveService;
     private Config.Difficulty currentDifficulty = Config.DEFAULT_DIFFICULTY;
     private boolean awaitingRevival = false;
 
@@ -80,20 +84,19 @@ public class PlayingState implements GameState {
         renderSystem = new RenderSystem(canvas);
         spawnSystem = new SpawnSystem(world, currentDifficulty);
         scoreSystem = new ScoreSystem(eventBus, world.getPlayer());
+        effectSystem = new com.ycom.system.EffectSystem();
         collisionSystem = new CollisionSystem(world, eventBus);
         particleSystem = new ParticleSystem();
+        reviveService = new ReviveService();
         awaitingRevival = false;
         dyingAnimation = false;
         deathTimer = 0.0;
         registerEventHandlers();
 
         Account acc = Session.current();
-        if (Session.isGuest()) {
-            acc.coins = 0;
-            acc.capsules = 0;
-        }
-        scoreSystem.setCoins(acc.coins);
-        world.getPlayer().setRevivalCount(acc.capsules);
+        
+        scoreSystem.setCoins(acc.getCoins());
+        world.getPlayer().setRevivalCount(acc.getCapsules());
     }
 
     @Override
@@ -115,7 +118,7 @@ public class PlayingState implements GameState {
             deathTimer += dt;
             if (deathTimer >= DEATH_DURATION) {
                 dyingAnimation = false;
-                gsm.setState("GAMEOVER");
+                gsm.setState(StateId.GAMEOVER, new GameResult(scoreSystem.getScore(), isWin));
             }
             return;
         }
@@ -125,7 +128,7 @@ public class PlayingState implements GameState {
         }
         if (input.isKeyJustPressed(KeyCode.P) || input.isKeyJustPressed(KeyCode.ESCAPE)) {
             AudioManager.pauseBGM();
-            gsm.setState("PAUSED");
+            gsm.setState(StateId.PAUSED);
             return;
         }
 
@@ -133,19 +136,21 @@ public class PlayingState implements GameState {
         double worldDt = TimeManager.getScaledDeltaTime(dt);
 
         world.update(worldDt, dt, input, eventBus);
-        spawnSystem.update(world.getPlayer().z);
+        effectSystem.update(dt, new com.ycom.entity.EntityUpdateContext(input, eventBus, world.getPlayer(), dt, world));
+        spawnSystem.update(world.getPlayer().getZ());
         collisionSystem.update();
-        scoreSystem.update(worldDt, world.getPlayer().z);
-        particleSystem.update(worldDt, world.getPlayer().z);
+        scoreSystem.update(worldDt, world.getPlayer().getZ());
+        particleSystem.update(worldDt, world.getPlayer().getZ());
         AudioManager.setBgmRate(TimeManager.getAudioRate());
 
         int curCoins = scoreSystem.getCoins();
         int curCapsules = world.getPlayer().revivalCount();
         Account acc = Session.current();
-        if (acc.coins != curCoins || acc.capsules != curCapsules) {
-            acc.coins = curCoins;
-            acc.capsules = curCapsules;
-            if (!Session.isGuest()) AccountStore.save();
+        if (acc.getCoins() != curCoins || acc.getCapsules() != curCapsules) {
+            // Replaced with addCoins if needed
+            acc.addCoins(curCoins - acc.getCoins());
+            acc.addCapsules(curCapsules - acc.getCapsules());
+            // if (!Session.isGuest()) AccountStore.save(); // Moved to GameOverState / Exit to avoid IO stutter
         }
 
         if (scoreSystem.getScore() >= 10000 && !dyingAnimation && !awaitingRevival) {
@@ -156,7 +161,7 @@ public class PlayingState implements GameState {
     @Override
     public void render() {
         if (renderSystem != null && world != null && scoreSystem != null) {
-            renderSystem.render(world, scoreSystem, particleSystem);
+            renderSystem.render(world, scoreSystem, particleSystem, effectSystem);
         }
         if (dyingAnimation) {
             drawDeathAnimation();
@@ -222,39 +227,8 @@ public class PlayingState implements GameState {
     }
 
     private void registerEventHandlers() {
-        eventBus.subscribe(CoinCollectedEvent.class, event -> AudioManager.playSfx("coin"));
-        eventBus.subscribe(MagnetActivatedEvent.class, event -> {
-            world.getPlayer().activateMagnet(event.duration());
-            AudioManager.playSfx("win");
-        });
-        eventBus.subscribe(BoostActivatedEvent.class, event -> {
-            world.getPlayer().activateBoost(event.duration());
-            AudioManager.playSfx("invincible");
-        });
-        eventBus.subscribe(RevivalCollectedEvent.class, event -> {
-            world.getPlayer().addRevival();
-            AudioManager.playSfx("win");
-        });
-        eventBus.subscribe(ScoreMultiplierActivatedEvent.class, event -> {
-            world.getPlayer().activateScoreMultiplier(event.duration(), event.multiplier());
-            AudioManager.playSfx("win");
-        });
-        eventBus.subscribe(ObstacleDestroyedEvent.class, event -> {
-            eventBus.publish(new ScoreAddEvent(25, "BOOST_BREAK"));
-            particleSystem.spawnBreak(
-                    event.x(), event.y(), event.z(),
-                    event.width(), event.height(), event.depth(),
-                    Color.color(event.red(), event.green(), event.blue())
-            );
-            if (AudioManager.hasSfx("obstacle_break")) {
-                AudioManager.playSfx("obstacle_break");
-            } else {
-                AudioManager.playSfx("win");
-            }
-        });
-        eventBus.subscribe(PlayerHitEvent.class, event -> eventBus.publish(new GameOverEvent(event.hitType())));
-        eventBus.subscribe(GameOverEvent.class, event -> {
-            if (canOfferRevive()) {
+        RunEventHandlers.register(eventBus, world, particleSystem, effectSystem, () -> {
+            if (reviveService.canOfferRevive(world.getPlayer(), scoreSystem)) {
                 awaitingRevival = true;
                 AudioManager.pauseBGM();
                 return;
@@ -263,22 +237,10 @@ public class PlayingState implements GameState {
         });
     }
 
-    private boolean canOfferRevive() {
-        return world.getPlayer().hasRevival() || scoreSystem.getCoins() >= currentCoinReviveCost();
-    }
-
-    private int currentCoinReviveCost() {
-        int used = world.getPlayer().coinRevivesUsed();
-        int[] costs = Config.COIN_REVIVE_COSTS;
-        if (used >= costs.length) {
-            return Integer.MAX_VALUE;
-        }
-        return costs[used];
-    }
-
+    
+    
     private void doGameOver() {
-        GameOverState.finalScore = scoreSystem.getScore();
-        GameOverState.isWin = false;
+        if (!Session.isGuest()) AccountStore.save();
         isWin = false;
         AudioManager.stopBGM();
         AudioManager.playSfx("ascension");
@@ -287,8 +249,7 @@ public class PlayingState implements GameState {
     }
 
     private void doGameWin() {
-        GameOverState.finalScore = scoreSystem.getScore();
-        GameOverState.isWin = true;
+        if (!Session.isGuest()) AccountStore.save();
         isWin = true;
         AudioManager.stopBGM();
         AudioManager.playSfx("win");
@@ -296,30 +257,11 @@ public class PlayingState implements GameState {
         deathTimer = 0.0;
     }
 
-    private void doRevive() {
-        clearNearbyObstacles();
-        world.getPlayer().revive();
-        eventBus.clear();
-        AudioManager.playSfx("invincible");
-        AudioManager.playBGM();
-        awaitingRevival = false;
-    }
-
-    private void clearNearbyObstacles() {
-        double playerZ = world.getPlayer().z;
-        double radius = Config.REVIVE_CLEAR_RADIUS;
-        for (GameObject obj : world.getObjects()) {
-            if (obj.kind() != GameObject.ObjectKind.OBSTACLE) continue;
-            double dz = obj.z - playerZ;
-            if (dz >= -1.5 && dz <= radius) {
-                obj.active = false;
-            }
-        }
-    }
-
+    
+    
     private void handleRevivalPrompt() {
         boolean capsuleAvail = world.getPlayer().hasRevival();
-        int cost = currentCoinReviveCost();
+        int cost = reviveService.currentCoinReviveCost(world.getPlayer());
         boolean coinAvail = cost != Integer.MAX_VALUE && scoreSystem.getCoins() >= cost;
 
         double mx = input.getMouseX();
@@ -352,18 +294,16 @@ public class PlayingState implements GameState {
     }
 
     private void handleUseCapsuleRevive() {
-        if (!world.getPlayer().hasRevival()) return;
-        world.getPlayer().consumeRevival();
-        resetReviveCursor();
-        doRevive();
+        if (reviveService.useCapsule(world.getPlayer(), world, eventBus, effectSystem)) {
+            resetReviveCursor();
+            awaitingRevival = false;
+        }
     }
 
     private void handleCoinRevive() {
-        int cost = currentCoinReviveCost();
-        if (scoreSystem.trySpendCoins(cost)) {
-            world.getPlayer().onCoinRevive();
+        if (reviveService.useCoins(world.getPlayer(), scoreSystem, world, eventBus, effectSystem)) {
             resetReviveCursor();
-            doRevive();
+            awaitingRevival = false;
         }
     }
 
@@ -410,7 +350,7 @@ public class PlayingState implements GameState {
         drawHudCards(gc);
 
         boolean capsuleAvail = world.getPlayer().hasRevival();
-        int cost = currentCoinReviveCost();
+        int cost = reviveService.currentCoinReviveCost(world.getPlayer());
         boolean coinAvail = cost != Integer.MAX_VALUE && scoreSystem.getCoins() >= cost;
         int capsuleCount = world.getPlayer().revivalCount();
 

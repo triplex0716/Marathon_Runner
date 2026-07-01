@@ -15,14 +15,9 @@ public class Player extends Actor {
     private PlayerState state = PlayerState.RUNNING;
     private double velocityY;
     private double slideTimer;
-    private double magnetTimer;
-    private double magnetMax;
-    private double boostTimer;
-    private double boostMax;
-    private double reviveInvincibleTimer;
-    private double reviveInvincibleMax;
-    private double scoreMultiplierTimer;
-    private double scoreMultiplierMax;
+    private boolean hasMagnet;
+    private boolean isBoosted;
+    private boolean isReviveInvincible;
     private double scoreMultiplier = 1.0;
     private int revivalCount;
     private int coinRevivesUsed;
@@ -37,7 +32,7 @@ public class Player extends Actor {
     public void update(double worldDt, EntityUpdateContext context) {
         super.update(worldDt, context);
 
-        z += Config.BASE_SPEED * worldDt;
+        setZ(getZ() + Config.BASE_SPEED * worldDt);
         updateInput(worldDt, context);
         updateVerticalMotion(worldDt, context);
         updateEffects(context.fixedDt());
@@ -52,9 +47,9 @@ public class Player extends Actor {
         }
 
         targetX = lane * Config.LANE_WIDTH;
-        x += (targetX - x) * Math.min(1.0, Config.LATERAL_SPEED * worldDt);
+        setX(getX() + (targetX - getX()) * Math.min(1.0, Config.LATERAL_SPEED * worldDt));
 
-        boolean grounded = Math.abs(y - floorY) <= 0.0001;
+        boolean grounded = Math.abs(getY() - floorY) <= 0.0001;
         if ((context.input().isKeyJustPressed(KeyCode.UP) || context.input().isKeyJustPressed(KeyCode.W)) && grounded) {
             velocityY = Config.JUMP_VELOCITY;
             clearSlide();
@@ -64,47 +59,51 @@ public class Player extends Actor {
         if ((context.input().isKeyJustPressed(KeyCode.DOWN) || context.input().isKeyJustPressed(KeyCode.S)) && grounded) {
             state = PlayerState.SLIDING;
             slideTimer = Config.SLIDE_DURATION;
-            height = Config.PLAYER_SLIDING_HEIGHT;
-            y = 0.0;
+            setHeight(Config.PLAYER_SLIDING_HEIGHT);
+            setY(0.0);
         }
     }
 
-    private void updateVerticalMotion(double worldDt, EntityUpdateContext context) {
-        floorY = 0.0;
-        
+    private double calculateFloorY(EntityUpdateContext context) {
+        double floorY = 0.0;
         for (GameObject obj : context.world().getObjects()) {
-            if (!obj.active || !(obj instanceof Obstacle obs)) continue;
-            
-            double halfW = obs.width / 2.0;
-            if (x >= obs.x - halfW && x <= obs.x + halfW) {
-                if (z + depth / 2.0 >= obs.z - obs.depth / 2.0 && z - depth / 2.0 <= obs.z + obs.depth / 2.0) {
+            if (!obj.isActive() || !(obj instanceof Obstacle obs)) continue;
+
+            double halfW = obs.getWidth() / 2.0;
+            if (getX() >= obs.getX() - halfW && getX() <= obs.getX() + halfW) {
+                if (getZ() + getDepth() / 2.0 >= obs.getZ() - obs.getDepth() / 2.0 && getZ() - getDepth() / 2.0 <= obs.getZ() + obs.getDepth() / 2.0) {
                     if (obs.avoidMethod() == Obstacle.AvoidMethod.CONTAINER) {
-                        floorY = Math.max(floorY, obs.height);
+                        floorY = Math.max(floorY, obs.getHeight());
                     } else if (obs.avoidMethod() == Obstacle.AvoidMethod.RAMP) {
-                        double frontZ = obs.z - obs.depth / 2.0;
-                        double clampZ = Math.max(frontZ, Math.min(obs.z + obs.depth / 2.0, z + depth / 2.0));
-                        double progress = (clampZ - frontZ) / obs.depth;
-                        progress = Math.max(0.0, Math.min(1.0, progress));
-                        double rY = progress * obs.height;
+                        double frontZ = obs.getZ() - obs.getDepth() / 2.0;
+                        double clampZ = Math.max(frontZ, Math.min(obs.getZ() + obs.getDepth() / 2.0, getZ() + getDepth() / 2.0));
+                        double progress = (clampZ - frontZ) / obs.getDepth();
+                        // 坡度高度从前向后递增
+                        double rY = progress * obs.getHeight();
                         floorY = Math.max(floorY, rY);
                     }
                 }
             }
         }
+        return floorY;
+    }
+
+    private void updateVerticalMotion(double worldDt, EntityUpdateContext context) {
+        floorY = calculateFloorY(context);
         
-        if (y > floorY || velocityY > 0.0) {
+        if (getY() > floorY || velocityY > 0.0) {
             velocityY += Config.GRAVITY * worldDt;
-            y += velocityY * worldDt;
-            if (y <= floorY) {
-                y = floorY;
+            setY(getY() + velocityY * worldDt);
+            if (getY() <= floorY) {
+                setY(floorY);
                 velocityY = 0.0;
                 if (!isSliding() && !isBoosted()) {
                     state = PlayerState.RUNNING;
                 }
             }
         } else {
-            if (y < floorY) {
-                y = floorY;
+            if (getY() < floorY) {
+                setY(floorY);
                 velocityY = 0.0;
             }
             if (!isSliding() && !isBoosted()) {
@@ -120,137 +119,47 @@ public class Player extends Actor {
                 clearSlide();
             }
         }
-
-        if (magnetTimer > 0.0) {
-            magnetTimer -= realDt;
-            if (magnetTimer <= 0.0) {
-                magnetTimer = 0.0;
-                magnetMax = 0.0;
-            }
-        }
-
-        if (boostTimer > 0.0) {
-            boostTimer -= realDt;
-            state = PlayerState.BOOSTED_INVINCIBLE;
-            if (boostTimer <= 0.0) {
-                boostTimer = 0.0;
-                boostMax = 0.0;
-                state = Math.abs(y - floorY) > 0.0001 ? PlayerState.JUMPING : PlayerState.RUNNING;
-            }
-        }
-
-        if (reviveInvincibleTimer > 0.0) {
-            reviveInvincibleTimer -= realDt;
-            if (reviveInvincibleTimer <= 0.0) {
-                reviveInvincibleTimer = 0.0;
-                reviveInvincibleMax = 0.0;
-            }
-        }
-
-        if (scoreMultiplierTimer > 0.0) {
-            scoreMultiplierTimer -= realDt;
-            if (scoreMultiplierTimer <= 0.0) {
-                scoreMultiplierTimer = 0.0;
-                scoreMultiplierMax = 0.0;
-                scoreMultiplier = 1.0;
-            }
-        }
     }
 
     private void clearSlide() {
         slideTimer = 0.0;
-        if (height != Config.PLAYER_STANDING_HEIGHT) {
-            height = Config.PLAYER_STANDING_HEIGHT;
+        if (getHeight() != Config.PLAYER_STANDING_HEIGHT) {
+            setHeight(Config.PLAYER_STANDING_HEIGHT);
         }
         if (!isBoosted()) {
-            state = Math.abs(y - floorY) > 0.0001 ? PlayerState.JUMPING : PlayerState.RUNNING;
+            state = Math.abs(getY() - floorY) > 0.0001 ? PlayerState.JUMPING : PlayerState.RUNNING;
         }
     }
 
-    public void activateMagnet(double duration) {
-        magnetTimer = Math.max(magnetTimer, duration);
-        magnetMax = Math.max(magnetMax, duration);
-    }
+    public void setHasMagnet(boolean val) { this.hasMagnet = val; }
+    public boolean hasMagnet() { return hasMagnet; }
 
-    public void activateBoost(double duration) {
-        boostTimer = Math.max(boostTimer, duration);
-        boostMax = Math.max(boostMax, duration);
-        state = PlayerState.BOOSTED_INVINCIBLE;
+    public void setBoosted(boolean val) {
+        this.isBoosted = val;
+        if (val) {
+            state = PlayerState.BOOSTED_INVINCIBLE;
+        } else {
+            state = Math.abs(getY() - floorY) > 0.0001 ? PlayerState.JUMPING : PlayerState.RUNNING;
+        }
     }
+    public boolean isBoosted() { return isBoosted; }
 
-    public void activateReviveInvincibility(double duration) {
-        reviveInvincibleTimer = Math.max(reviveInvincibleTimer, duration);
-        reviveInvincibleMax = Math.max(reviveInvincibleMax, duration);
-    }
+    public void setReviveInvincible(boolean val) { this.isReviveInvincible = val; }
+    public boolean isReviveInvincible() { return isReviveInvincible; }
 
-    public boolean isReviveInvincible() {
-        return reviveInvincibleTimer > 0.0;
-    }
+    public boolean isInvulnerable() { return isBoosted || isReviveInvincible; }
 
-    public double reviveInvincibleTimer() {
-        return reviveInvincibleTimer;
-    }
-
-    public double reviveInvincibleMaxDuration() {
-        return reviveInvincibleMax;
-    }
-
-    public boolean isInvulnerable() {
-        return isBoosted() || isReviveInvincible();
-    }
-
-    public boolean hasMagnet() {
-        return magnetTimer > 0.0;
-    }
-
-    public double magnetTimer() {
-        return magnetTimer;
-    }
-
-    public double magnetMaxDuration() {
-        return magnetMax;
-    }
-
-    public double boostMaxDuration() {
-        return boostMax;
-    }
-
-    public double scoreMultiplierMaxDuration() {
-        return scoreMultiplierMax;
-    }
-
-    public boolean isBoosted() {
-        return boostTimer > 0.0;
-    }
-
-    public double boostTimer() {
-        return boostTimer;
-    }
+    public void setScoreMultiplier(double val) { this.scoreMultiplier = val; }
+    public double currentScoreMultiplier() { return scoreMultiplier; }
+    public boolean hasScoreMultiplier() { return scoreMultiplier > 1.0; }
 
     public boolean isSliding() {
         return slideTimer > 0.0;
     }
 
     public PlayerState state() {
+        if (isBoosted) return PlayerState.BOOSTED_INVINCIBLE;
         return state;
-    }
-
-    public void activateScoreMultiplier(double duration, double multiplier) {
-        scoreMultiplierTimer = Math.max(scoreMultiplierTimer, duration);
-        scoreMultiplierMax = Math.max(scoreMultiplierMax, duration);
-        scoreMultiplier = Math.max(scoreMultiplier, multiplier);
-    }
-
-    public boolean hasScoreMultiplier() {
-        return scoreMultiplierTimer > 0.0;
-    }
-
-    public double scoreMultiplierTimer() {
-        return scoreMultiplierTimer;
-    }
-
-    public double currentScoreMultiplier() {
-        return scoreMultiplier;
     }
 
     public void addRevival() {
@@ -285,11 +194,11 @@ public class Player extends Actor {
 
     public void revive() {
         velocityY = 0.0;
-        y = 0.0;
+        setY(0.0);
         slideTimer = 0.0;
-        height = Config.PLAYER_STANDING_HEIGHT;
+        setHeight(Config.PLAYER_STANDING_HEIGHT);
         state = PlayerState.RUNNING;
-        activateReviveInvincibility(Config.REVIVE_INVINCIBLE_DURATION);
+        
     }
 
     public double floorY() {

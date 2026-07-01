@@ -49,7 +49,7 @@ public class AccountStore {
                             Integer.parseInt(parts[2]),
                             Integer.parseInt(parts[3]),
                             high);
-                    accounts.put(acc.username, acc);
+                    accounts.put(acc.getUsername(), acc);
                 } catch (NumberFormatException ex) {
                     System.err.println("AccountStore: skipped line " + (i + 1) + " (bad number)");
                 }
@@ -75,7 +75,7 @@ public class AccountStore {
     public static synchronized Account authenticate(String username, String password) {
         ensureLoaded();
         Account acc = accounts.get(username);
-        if (acc == null || !acc.password.equals(password)) {
+        if (acc == null || !acc.checkPassword(password)) {
             return null;
         }
         return acc;
@@ -89,7 +89,7 @@ public class AccountStore {
             }
             List<String> lines = new ArrayList<>(accounts.size());
             for (Account a : accounts.values()) {
-                lines.add(a.username + ";" + a.password + ";" + a.coins + ";" + a.capsules + ";" + a.highScore);
+                lines.add(a.getUsername() + ";" + a.getPasswordHash() + ";" + a.getCoins() + ";" + a.getCapsules() + ";" + a.getHighScore());
             }
             Files.write(FILE, lines, StandardCharsets.UTF_8);
         } catch (IOException ex) {

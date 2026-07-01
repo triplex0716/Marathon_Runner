@@ -30,11 +30,11 @@ public class Obstacle extends RenderableObject {
                 return;
             }
             if (player.isInvulnerable()) {
-                active = false;
+                deactivate();
                 context.eventBus().publish(new ObstacleDestroyedEvent(
                         id, player.id,
-                        x, y, z, width, height, depth,
-                        color.getRed(), color.getGreen(), color.getBlue()
+                        getX(), getY(), getZ(), getWidth(), getHeight(), getDepth(),
+                        getColor().getRed(), getColor().getGreen(), getColor().getBlue()
                 ));
             } else {
                 context.eventBus().publish(new PlayerHitEvent(player.id, id, avoidMethod.name()));
