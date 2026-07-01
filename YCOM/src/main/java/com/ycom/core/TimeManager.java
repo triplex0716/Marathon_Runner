@@ -1,11 +1,8 @@
 package com.ycom.core;
 
 public class TimeManager {
-    private static final double FIXED_DT = 1.0 / 60.0;
-
     private static double difficultyTimeScale = Config.BASE_TIME_SCALE;
     private static double boostWorldRate = 0.0;
-    private static double boostRemaining = 0.0;
     private static double audioRate = Config.BASE_TIME_SCALE;
     private static double elapsedTime = 0.0;
     private static Config.Difficulty difficulty = Config.DEFAULT_DIFFICULTY;
@@ -24,18 +21,13 @@ public class TimeManager {
                 Config.MAX_TIME_SCALE
         );
 
-        if (boostRemaining > 0.0) {
-            boostRemaining -= dt;
-            if (boostRemaining <= 0.0) {
-                clearBoost();
-            }
-        } else {
+        if (!isBoostActive()) {
             audioRate = difficultyTimeScale;
         }
     }
 
     public static double getFixedDt() {
-        return FIXED_DT;
+        return Config.FIXED_TIMESTEP_SECONDS;
     }
 
     public static double getWorldRate() {
@@ -59,19 +51,24 @@ public class TimeManager {
     }
 
     public static void activateBoost(double duration, double worldRate, double bgmRate) {
-        boostRemaining = Math.max(boostRemaining, duration);
+        if (duration <= 0.0) {
+            return;
+        }
         boostWorldRate = clamp(worldRate, 0.0, Config.BOOST_WORLD_RATE);
         audioRate = clamp(bgmRate, 0.0, Config.BOOST_BGM_RATE);
     }
 
     public static void clearBoost() {
-        boostRemaining = 0.0;
         boostWorldRate = 0.0;
         audioRate = difficultyTimeScale;
     }
 
     public static double getBoostRemaining() {
-        return boostRemaining;
+        return 0.0;
+    }
+
+    public static boolean isBoostActive() {
+        return boostWorldRate > 0.0;
     }
 
     public static void reset() {
@@ -82,7 +79,6 @@ public class TimeManager {
         difficulty = selectedDifficulty == null ? Config.DEFAULT_DIFFICULTY : selectedDifficulty;
         difficultyTimeScale = difficulty.initialTimeScale;
         boostWorldRate = 0.0;
-        boostRemaining = 0.0;
         audioRate = difficultyTimeScale;
         elapsedTime = 0.0;
     }

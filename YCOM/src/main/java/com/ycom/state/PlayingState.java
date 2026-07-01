@@ -42,6 +42,7 @@ import com.ycom.system.RunEventHandlers;
 import com.ycom.resource.AudioManager;
 import com.ycom.resource.AssetManager;
 import javafx.scene.image.Image;
+import javafx.application.Platform;
 
 public class PlayingState implements GameState {
     private final GameStateManager gsm;
@@ -153,7 +154,7 @@ public class PlayingState implements GameState {
             // if (!Session.isGuest()) AccountStore.save(); // Moved to GameOverState / Exit to avoid IO stutter
         }
 
-        if (scoreSystem.getScore() >= 10000 && !dyingAnimation && !awaitingRevival) {
+        if (scoreSystem.getScore() >= Config.GAME_WIN_SCORE && !dyingAnimation && !awaitingRevival) {
             doGameWin();
         }
     }
@@ -271,7 +272,8 @@ public class PlayingState implements GameState {
         boolean overQuit = quitButton().contains(mx, my);
         Scene scene = canvas.getScene();
         if (scene != null) {
-            scene.setCursor((overCapsule || overCoin || overQuit) ? Cursor.HAND : Cursor.DEFAULT);
+            Cursor cursor = (overCapsule || overCoin || overQuit) ? Cursor.HAND : Cursor.DEFAULT;
+            Platform.runLater(() -> scene.setCursor(cursor));
         }
 
         if (input.isKeyJustPressed(KeyCode.Y) && capsuleAvail) {
@@ -315,7 +317,7 @@ public class PlayingState implements GameState {
 
     private void resetReviveCursor() {
         Scene s = canvas.getScene();
-        if (s != null) s.setCursor(Cursor.DEFAULT);
+        if (s != null) Platform.runLater(() -> s.setCursor(Cursor.DEFAULT));
     }
 
     private static final double REVIVE_PANEL_W = 760.0;

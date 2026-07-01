@@ -4,7 +4,7 @@ import com.ycom.event.ObstacleDestroyedEvent;
 import com.ycom.event.PlayerHitEvent;
 import javafx.scene.paint.Color;
 
-public class Obstacle extends RenderableObject {
+public class Obstacle extends GameObject {
     public enum AvoidMethod {
         JUMP,
         SLIDE,
@@ -16,7 +16,7 @@ public class Obstacle extends RenderableObject {
     private final AvoidMethod avoidMethod;
 
     public Obstacle(double x, double y, double z, double width, double height, double depth, Color color, AvoidMethod avoidMethod) {
-        super(ObjectKind.OBSTACLE, null, x, y, z, width, height, depth, color);
+        super(ObjectKind.OBSTACLE, x, y, z, width, height, depth, color);
         this.avoidMethod = avoidMethod;
     }
 

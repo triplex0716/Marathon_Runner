@@ -1,12 +1,6 @@
 package com.ycom.system;
 
-import com.ycom.account.Account;
-import com.ycom.account.Session;
 import com.ycom.core.Config;
-import com.ycom.core.TimeManager;
-import com.ycom.entity.AnimatedObject;
-import com.ycom.entity.GameObject;
-import com.ycom.entity.Obstacle;
 import com.ycom.entity.Player;
 import com.ycom.resource.AssetManager;
 import com.ycom.world.GameWorld;
@@ -14,14 +8,16 @@ import com.ycom.render.Camera;
 import com.ycom.render.Projector;
 import com.ycom.render.Projection;
 import com.ycom.render.ObstacleRenderer;
+import com.ycom.render.RenderFrame;
+import com.ycom.render.RenderSnapshot;
+import com.ycom.entity.GameObject;
 import java.util.ArrayList;
 import java.util.List;
-import com.ycom.system.EffectSystem;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
@@ -34,6 +30,10 @@ public class RenderSystem {
     private final Projector projector;
     private final ObstacleRenderer obstacleRenderer;
     private final com.ycom.render.HudRenderer hudRenderer = new com.ycom.render.HudRenderer();
+    private final Camera camera = new Camera(0.0, 0.0, 0.0);
+    private final List<RenderSnapshot> objectBuffer = new ArrayList<>();
+    private final com.ycom.render.RendererRegistry registry = new com.ycom.render.RendererRegistry();
+    private WritableImage backgroundCache;
 
     public RenderSystem(Canvas canvas) {
         this.canvas = canvas;
@@ -41,27 +41,70 @@ public class RenderSystem {
         this.horizonY = Config.LOGICAL_HEIGHT * 0.38;
         this.projector = new Projector(this.cx, this.horizonY);
         this.obstacleRenderer = new ObstacleRenderer(this.projector, this.horizonY);
+        
+        registry.register(GameObject.ObjectKind.PLAYER, (gc, obj, p, cam) -> drawPlayer(gc, obj, p));
+        registry.register(GameObject.ObjectKind.COIN, (gc, obj, p, cam) -> drawCoin(gc, p));
+        registry.register(GameObject.ObjectKind.MAGNET, (gc, obj, p, cam) -> {
+            double phase = obj.animationTime() * 4.0;
+            drawCoinFlipIcon(gc, p, AssetManager.magnetIcon(), Color.MEDIUMPURPLE, "M", phase);
+        });
+        registry.register(GameObject.ObjectKind.ENERGY_DRINK, (gc, obj, p, cam) -> {
+            double phase = obj.animationTime() * 4.0;
+            drawCoinFlipIcon(gc, p, AssetManager.spriteIcon(), Color.MEDIUMPURPLE, "S", phase);
+        });
+        registry.register(GameObject.ObjectKind.REVIVAL_CAPSULE, (gc, obj, p, cam) -> {
+            double phase = obj.animationTime() * 6.0;
+            drawBobbingIcon(gc, p, AssetManager.revivalIcon(), Color.CRIMSON, "+", phase);
+        });
+        registry.register(GameObject.ObjectKind.TREADMILL, (gc, obj, p, cam) -> {
+            double phase = obj.animationTime() * 4.0;
+            drawCoinFlipIcon(gc, p, AssetManager.treadmillIcon(), Color.DARKORANGE, "x2", phase);
+        });
+        registry.register(GameObject.ObjectKind.RANDOM_ITEM, (gc, obj, p, cam) -> {
+            double phase = obj.animationTime() * 6.0;
+            drawBobbingIcon(gc, p, AssetManager.randomIcon(), Color.DARKSLATEGRAY, "?", phase);
+        });
+        registry.register(GameObject.ObjectKind.OBSTACLE, this.obstacleRenderer);
     }
 
     public void render(GameWorld world, ScoreSystem scoreSystem, ParticleSystem particles, EffectSystem effectSystem) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         Player player = world.getPlayer();
+        RenderFrame frame = world.renderFrame();
+        double alpha = frame.alpha(System.nanoTime());
+        RenderSnapshot playerSnapshot = frame.player(alpha);
 
         drawBackground(gc);
 
-        double camX = player.getX();
-        double camY = Config.CAMERA_Y + player.getY();
-        double camZ = player.getZ() + Config.CAMERA_OFFSET_Z;
-        Camera cam = new Camera(camX, camY, camZ);
+        double camX = playerSnapshot.x();
+        double camY = Config.CAMERA_Y + playerSnapshot.y();
+        double camZ = playerSnapshot.z() + Config.CAMERA_OFFSET_Z;
+        camera.x = camX;
+        camera.y = camY;
+        camera.z = camZ;
 
-        drawTrack(gc, camX, camY, camZ);
-        drawScenery(gc, camX, camY, camZ);
-        drawObjects(gc, world, player, camX, camY, camZ);
+        drawTrack(gc, camera);
+        drawScenery(gc, camera);
+        drawObjects(gc, frame, alpha, playerSnapshot, camera);
         particles.draw(gc, camX, camY, camZ);
         hudRenderer.draw(gc, player, scoreSystem, effectSystem);
     }
 
     private void drawBackground(GraphicsContext gc) {
+        if (backgroundCache == null) {
+            backgroundCache = createBackgroundCache();
+        }
+        gc.drawImage(backgroundCache, 0.0, 0.0);
+    }
+
+    private WritableImage createBackgroundCache() {
+        Canvas bgCanvas = new Canvas(Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
+        GraphicsContext gc = bgCanvas.getGraphicsContext2D();
+        drawBackgroundLayer(gc);
+        return bgCanvas.snapshot(null, null);
+    }
+
+    private void drawBackgroundLayer(GraphicsContext gc) {
         Image background = AssetManager.background();
         if (background != null && background.getWidth() > 0.0) {
             drawCover(gc, background, 0.0, 0.0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
@@ -96,58 +139,32 @@ public class RenderSystem {
         gc.strokeLine(0.0, horizonY, Config.LOGICAL_WIDTH, horizonY);
     }
 
-    private void drawObjects(GraphicsContext gc, GameWorld world, Player player, double camX, double camY, double camZ) {
-        Camera cam = new Camera(camX, camY, camZ);
-        List<GameObject> objects = new ArrayList<>();
-        for (GameObject obj : world.getObjects()) {
-            if (obj.isActive() && obj.getZ() >= camZ + 0.8) {
-                objects.add(obj);
-            }
-        }
-        objects.add(player);
-        objects.sort((a, b) -> Double.compare(b.getZ(), a.getZ()));
+    private void drawObjects(GraphicsContext gc, RenderFrame frame, double alpha, RenderSnapshot player, Camera cam) {
+        frame.writeObjects(objectBuffer, alpha);
+        objectBuffer.removeIf(snapshot -> snapshot.z() < cam.z + 0.8);
+        objectBuffer.add(player);
+        objectBuffer.sort((a, b) -> Double.compare(b.z(), a.z()));
 
-        for (GameObject obj : objects) {
-            Projection p = projector.project(obj.getX(), obj.getY(), obj.getZ(), obj.getWidth(), obj.getHeight(), cam);
+        for (RenderSnapshot obj : objectBuffer) {
+            Projection p = projector.project(obj.x(), obj.y(), obj.z(), obj.width(), obj.height(), cam);
             if (p.scale() <= 0.0 || p.x() + p.width() < -200.0 || p.x() - p.width() > Config.LOGICAL_WIDTH + 200.0) {
                 continue;
             }
 
-            switch (obj.kind()) {
-                case PLAYER -> drawPlayer(gc, (Player) obj, p);
-                case COIN -> drawCoin(gc, p);
-                case MAGNET -> {
-                    double phase = ((AnimatedObject) obj).animationTime() * 4.0;
-                    drawCoinFlipIcon(gc, p, AssetManager.magnetIcon(), Color.MEDIUMPURPLE, "M", phase);
-                }
-                case ENERGY_DRINK -> {
-                    double phase = ((AnimatedObject) obj).animationTime() * 4.0;
-                    drawCoinFlipIcon(gc, p, AssetManager.spriteIcon(), Color.MEDIUMPURPLE, "S", phase);
-                }
-                case REVIVAL_CAPSULE -> {
-                    double phase = ((AnimatedObject) obj).animationTime() * 6.0;
-                    drawBobbingIcon(gc, p, AssetManager.revivalIcon(), Color.CRIMSON, "+", phase);
-                }
-                case TREADMILL -> {
-                    double phase = ((AnimatedObject) obj).animationTime() * 4.0;
-                    drawCoinFlipIcon(gc, p, AssetManager.treadmillIcon(), Color.DARKORANGE, "x2", phase);
-                }
-                case RANDOM_ITEM -> {
-                    double phase = ((AnimatedObject) obj).animationTime() * 6.0;
-                    drawBobbingIcon(gc, p, AssetManager.randomIcon(), Color.DARKSLATEGRAY, "?", phase);
-                }
-                case OBSTACLE -> obstacleRenderer.drawObstacle(gc, (Obstacle) obj, p, cam);
+            com.ycom.render.ObjectRenderer renderer = registry.getRenderer(obj.kind());
+            if (renderer != null) {
+                renderer.render(gc, obj, p, cam);
             }
         }
     }
 
     
     
-    private void drawPlayer(GraphicsContext gc, Player player, Projection p) {
-        if (player.isReviveInvincible()) {
+    private void drawPlayer(GraphicsContext gc, RenderSnapshot player, Projection p) {
+        if (player.reviveInvincible()) {
             gc.setFill(Color.rgb(255, 200, 50, 0.32));
             gc.fillOval(p.x() - p.width() * 0.95, p.y() - p.height() * 0.9, p.width() * 1.9, p.height() * 1.8);
-        } else if (player.isBoosted()) {
+        } else if (player.boosted()) {
             gc.setFill(Color.rgb(155, 89, 182, 0.25));
             gc.fillOval(p.x() - p.width() * 0.95, p.y() - p.height() * 0.9, p.width() * 1.9, p.height() * 1.8);
         }
@@ -155,7 +172,7 @@ public class RenderSystem {
         // 根据玩家状态选择精灵图
         Image sheet = null;
         int frameCount = 1;
-        switch (player.state()) {
+        switch (player.playerState()) {
             case BOOSTED_INVINCIBLE -> {
                 sheet = AssetManager.boostSheet();
                 frameCount = AssetManager.frameCount("boost");
@@ -175,7 +192,7 @@ public class RenderSystem {
         }
 
         if (sheet != null && sheet.getWidth() > 0.0) {
-            int frame = player.currentFrame(frameCount);
+            int frame = currentFrame(player.animationTime(), frameCount, 12.0);
             double sw = sheet.getWidth() / frameCount;
             double sx = frame * sw;
             gc.drawImage(sheet, sx, 0.0, sw, sheet.getHeight(), p.x() - p.width() / 2.0, p.y() - p.height() / 2.0, p.width(), p.height());
@@ -190,6 +207,13 @@ public class RenderSystem {
 
         gc.setFill(Color.CORNFLOWERBLUE);
         gc.fillRoundRect(p.x() - p.width() / 2.0, p.y() - p.height() / 2.0, p.width(), p.height(), 12.0, 12.0);
+    }
+
+    private int currentFrame(double animationTime, int frameCount, double framesPerSecond) {
+        if (frameCount <= 1) {
+            return 0;
+        }
+        return (int) Math.floor(animationTime * framesPerSecond) % frameCount;
     }
 
     private void drawCoin(GraphicsContext gc, Projection p) {
@@ -265,16 +289,27 @@ public class RenderSystem {
                                       double lrx, double lry, 
                                       double llx, double lly) {
         if (img == null || img.getWidth() <= 0) return;
+        
+        double minX = Math.min(Math.min(ulx, urx), Math.min(llx, lrx));
+        double maxX = Math.max(Math.max(ulx, urx), Math.max(llx, lrx));
+        double minY = Math.min(Math.min(uly, ury), Math.min(lly, lry));
+        double maxY = Math.max(Math.max(uly, ury), Math.max(lly, lry));
+        
+        if (maxX < 0 || minX > Config.LOGICAL_WIDTH || maxY < 0 || minY > Config.LOGICAL_HEIGHT) {
+            return;
+        }
+
         PT.setUlx(ulx); PT.setUly(uly);
         PT.setUrx(urx); PT.setUry(ury);
         PT.setLrx(lrx); PT.setLry(lry);
         PT.setLlx(llx); PT.setLly(lly);
+        
         gc.setEffect(PT);
         gc.drawImage(img, 0, 0, img.getWidth(), img.getHeight());
         gc.setEffect(null);
     }
 
-    private void drawTrack(GraphicsContext gc, double camX, double camY, double camZ) {
+    private void drawTrack(GraphicsContext gc, Camera cam) {
         Image roadTex = AssetManager.getImage("road_texture");
         if (roadTex == null || roadTex.getWidth() <= 0) {
             // Fallback if texture fails
@@ -283,14 +318,14 @@ public class RenderSystem {
             double roadHalfWidth = Config.LANE_WIDTH * 1.5;
             for (int i = -3; i <= 3; i++) {
                 double lineX = i * Config.LANE_WIDTH / 2.0;
-                drawGroundLine(gc, lineX, camX, camY);
+                drawGroundLine(gc, lineX, cam.x, cam.y);
             }
             return;
         }
         
         double roadHalfWidth = Config.LANE_WIDTH * 1.6;
         double segmentLength = 40.0; // Optimized: doubled length halves Shader calls and adds speed blur
-        double zOffset = positiveMod(camZ, segmentLength);
+        double zOffset = positiveMod(cam.z, segmentLength);
         
         // Draw back to front to avoid bleeding
         for (double z = 220.0 - zOffset; z > 1.0; z -= segmentLength) {
@@ -300,11 +335,11 @@ public class RenderSystem {
             double farScale = Config.FOCAL_LENGTH / farZ;
             double nearScale = Config.FOCAL_LENGTH / nearZ;
             
-            double farY = horizonY - (-camY) * farScale;
-            double nearY = horizonY - (-camY) * nearScale;
+            double farY = horizonY - (-cam.y) * farScale;
+            double nearY = horizonY - (-cam.y) * nearScale;
             
-            double farShiftX = cx + (0.0 - camX) * farScale;
-            double nearShiftX = cx + (0.0 - camX) * nearScale;
+            double farShiftX = cx + (0.0 - cam.x) * farScale;
+            double nearShiftX = cx + (0.0 - cam.x) * nearScale;
             
             double farHalf = roadHalfWidth * farScale;
             double nearHalf = roadHalfWidth * nearScale;
@@ -323,12 +358,12 @@ public class RenderSystem {
         "bldg_shop", "bldg_bamboo", "bldg_pine", "bldg_kitsune", "bldg_bell"
     };
 
-    private void drawScenery(GraphicsContext gc, double camX, double camY, double camZ) {
+    private void drawScenery(GraphicsContext gc, Camera cam) {
         double spacing = 50.0;
-        double zOffset = positiveMod(camZ, spacing);
+        double zOffset = positiveMod(cam.z, spacing);
         
         for (double dZ = 220.0 - zOffset; dZ > 1.0; dZ -= spacing) {
-            double worldZ = camZ + dZ;
+            double worldZ = cam.z + dZ;
             int absZ = (int) Math.round(worldZ / spacing);
             
             String keyLeft = SCENERY_KEYS[Math.abs(absZ * 7) % SCENERY_KEYS.length];
@@ -349,18 +384,18 @@ public class RenderSystem {
             double xLeft = -roadEdge - (wLeft / 2.0);
             double xRight = roadEdge + (wRight / 2.0);
             
-            if (imgLeft != null) drawScenerySprite(gc, imgLeft, xLeft, worldZ, wLeft, hLeft, camX, camY, camZ);
-            if (imgRight != null) drawScenerySprite(gc, imgRight, xRight, worldZ, wRight, hRight, camX, camY, camZ);
+            if (imgLeft != null) drawScenerySprite(gc, imgLeft, xLeft, worldZ, wLeft, hLeft, cam);
+            if (imgRight != null) drawScenerySprite(gc, imgRight, xRight, worldZ, wRight, hRight, cam);
         }
     }
 
-    private void drawScenerySprite(GraphicsContext gc, Image img, double bX, double bZ, double bW, double bH, double camX, double camY, double camZ) {
-        if (bZ < camZ + 1.0) return;
-        Projection p = projector.project(bX, 0, bZ, bW, bH, new Camera(camX, camY, camZ));
+    private void drawScenerySprite(GraphicsContext gc, Image img, double bX, double bZ, double bW, double bH, Camera cam) {
+        if (bZ < cam.z + 1.0) return;
+        Projection p = projector.project(bX, 0, bZ, bW, bH, cam);
         if (p.scale() <= 0.0) return;
         
         // Pin the bottom edge of the sprite exactly to the 3D ground level
-        double groundY = horizonY - (-camY) * p.scale();
+        double groundY = horizonY - (-cam.y) * p.scale();
         gc.drawImage(img, p.x() - p.width() / 2.0, groundY - p.height(), p.width(), p.height());
     }
 

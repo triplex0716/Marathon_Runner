@@ -1,6 +1,8 @@
 package com.ycom.resource;
 
 import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import com.ycom.core.Config;
@@ -12,7 +14,8 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 public class AudioManager {
-    private static final Map<String, AudioClip> SFX = new HashMap<>();
+    private static final Map<String, SfxState> SFX = new HashMap<>();
+    private static final Deque<SfxPlayStamp> recentSfxPlays = new ArrayDeque<>();
 
     private static MediaPlayer bgmPlayer;
     private static boolean bgmPlayRequested;
@@ -21,6 +24,7 @@ public class AudioManager {
     public static void init() {
         stopBGM();
         SFX.clear();
+        recentSfxPlays.clear();
 
         bgmPlayer = loadBgm("BackgroundMusic.wav");
         loadSfx("coin", "coin.wav");
@@ -75,17 +79,72 @@ public class AudioManager {
         }
     }
 
-    public static boolean hasSfx(String key) {
+    public static synchronized boolean hasSfx(String key) {
         return SFX.containsKey(key);
     }
 
     public static void playSfx(String key) {
-        AudioClip clip = SFX.get(key);
-        if (clip == null) {
-            System.err.println("Missing SFX key: " + key);
+        SfxPlay play = prepareSfxPlay(key);
+        if (play == null) {
             return;
         }
-        clip.play(Config.SFX_VOLUME);
+        runOnFxThread(() -> play.clip().play(play.volume()));
+    }
+
+    private static SfxPlay prepareSfxPlay(String key) {
+        long now = System.nanoTime();
+        synchronized (AudioManager.class) {
+            SfxState state = SFX.get(key);
+            if (state == null) {
+                System.err.println("Missing SFX key: " + key);
+                return null;
+            }
+
+            if (now < state.nextAllowedNanos) {
+                return null;
+            }
+
+            pruneRecentSfx(now);
+            if (recentSfxPlays.size() >= Config.SFX_MAX_PLAYS_PER_BURST_WINDOW) {
+                return null;
+            }
+
+            int overlapping = recentSfxPlays.size();
+            double activeVolume = activeSfxVolume();
+            double remainingMixBudget = Config.SFX_MIX_VOLUME_CAP - activeVolume;
+            if (remainingMixBudget < Config.SFX_MIN_PLAY_VOLUME) {
+                return null;
+            }
+
+            state.nextAllowedNanos = now + secondsToNanos(minIntervalFor(key));
+
+            double volume = Math.min(Config.SFX_VOLUME / Math.sqrt(overlapping + 1.0), remainingMixBudget);
+            recentSfxPlays.addLast(new SfxPlayStamp(now, volume));
+            return new SfxPlay(state.clip, volume);
+        }
+    }
+
+    private static void pruneRecentSfx(long now) {
+        long windowNanos = secondsToNanos(Config.SFX_BURST_WINDOW_SECONDS);
+        while (!recentSfxPlays.isEmpty() && now - recentSfxPlays.peekFirst().startedAtNanos() > windowNanos) {
+            recentSfxPlays.removeFirst();
+        }
+    }
+
+    private static double activeSfxVolume() {
+        double volume = 0.0;
+        for (SfxPlayStamp stamp : recentSfxPlays) {
+            volume += stamp.volume();
+        }
+        return volume;
+    }
+
+    private static double minIntervalFor(String key) {
+        return "coin".equals(key) ? Config.SFX_COIN_MIN_INTERVAL_SECONDS : Config.SFX_MIN_INTERVAL_SECONDS;
+    }
+
+    private static long secondsToNanos(double seconds) {
+        return Math.max(0L, Math.round(seconds * 1_000_000_000.0));
     }
 
     private static MediaPlayer loadBgm(String... fileNames) {
@@ -121,7 +180,7 @@ public class AudioManager {
         try {
             AudioClip clip = new AudioClip(path.toUri().toString());
             clip.setVolume(Config.SFX_VOLUME);
-            SFX.put(key, clip);
+            SFX.put(key, new SfxState(clip));
         } catch (MediaException ex) {
             System.err.println("Failed to load SFX [" + key + "]: " + ex.getMessage());
         }
@@ -160,5 +219,20 @@ public class AudioManager {
         } else {
             Platform.runLater(action);
         }
+    }
+
+    private static final class SfxState {
+        private final AudioClip clip;
+        private long nextAllowedNanos;
+
+        private SfxState(AudioClip clip) {
+            this.clip = clip;
+        }
+    }
+
+    private record SfxPlay(AudioClip clip, double volume) {
+    }
+
+    private record SfxPlayStamp(long startedAtNanos, double volume) {
     }
 }

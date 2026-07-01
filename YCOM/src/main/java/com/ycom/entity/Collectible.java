@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 
 public abstract class Collectible extends AnimatedObject {
     protected Collectible(ObjectKind kind, double x, double y, double z, double width, double height, double depth, Color color) {
-        super(kind, null, x, y, z, width, height, depth, color);
+        super(kind, x, y, z, width, height, depth, color);
     }
 
     @Override

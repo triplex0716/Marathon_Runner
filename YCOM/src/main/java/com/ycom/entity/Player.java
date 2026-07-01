@@ -12,20 +12,22 @@ public class Player extends Actor {
         BOOSTED_INVINCIBLE
     }
 
-    private PlayerState state = PlayerState.RUNNING;
+    private volatile PlayerState state = PlayerState.RUNNING;
     private double velocityY;
-    private double slideTimer;
-    private boolean hasMagnet;
-    private boolean isBoosted;
-    private boolean isReviveInvincible;
-    private double scoreMultiplier = 1.0;
-    private int revivalCount;
+    private volatile double slideTimer;
+    private volatile boolean hasMagnet;
+    private volatile boolean isBoosted;
+    private volatile boolean isReviveInvincible;
+    private volatile double scoreMultiplier = 1.0;
+    private volatile int revivalCount;
     private int coinRevivesUsed;
-    private double floorY;
+    private volatile double floorY;
 
     public Player() {
-        super("player", 0.0, 0.0, 0.0, 1.25, Config.PLAYER_STANDING_HEIGHT, 1.0, Color.CORNFLOWERBLUE);
-        setFramesPerSecond(12.0);
+        super(ObjectKind.PLAYER, 0.0, 0.0, 0.0,
+                Config.PLAYER_WIDTH, Config.PLAYER_STANDING_HEIGHT, Config.PLAYER_DEPTH,
+                Color.CORNFLOWERBLUE);
+        setFramesPerSecond(Config.PLAYER_ANIMATION_FPS);
     }
 
     @Override
@@ -39,10 +41,12 @@ public class Player extends Actor {
     }
 
     private void updateInput(double worldDt, EntityUpdateContext context) {
-        if ((context.input().isKeyJustPressed(KeyCode.LEFT) || context.input().isKeyJustPressed(KeyCode.A)) && lane > -1) {
+        if ((context.input().isKeyJustPressed(KeyCode.LEFT) || context.input().isKeyJustPressed(KeyCode.A))
+                && lane > Config.MIN_LANE) {
             lane--;
         }
-        if ((context.input().isKeyJustPressed(KeyCode.RIGHT) || context.input().isKeyJustPressed(KeyCode.D)) && lane < 1) {
+        if ((context.input().isKeyJustPressed(KeyCode.RIGHT) || context.input().isKeyJustPressed(KeyCode.D))
+                && lane < Config.MAX_LANE) {
             lane++;
         }
 

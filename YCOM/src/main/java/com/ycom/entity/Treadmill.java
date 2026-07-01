@@ -6,7 +6,9 @@ import javafx.scene.paint.Color;
 
 public final class Treadmill extends Collectible {
     public Treadmill(double x, double y, double z) {
-        super(ObjectKind.TREADMILL, x, y, z, 1.1, 0.9, 1.1, Color.DARKORANGE);
+        super(ObjectKind.TREADMILL, x, y, z,
+                Config.TREADMILL_WIDTH, Config.TREADMILL_HEIGHT, Config.TREADMILL_DEPTH,
+                Color.DARKORANGE);
     }
 
     @Override

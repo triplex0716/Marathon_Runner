@@ -3,8 +3,8 @@ import com.ycom.entity.EntityUpdateContext;
 import com.ycom.core.TimeManager;
 
 public class BoostEffect implements PowerUpEffect {
-    private double timer;
-    private double max;
+    private volatile double timer;
+    private volatile double max;
     private double worldRate;
     private double bgmRate;
 

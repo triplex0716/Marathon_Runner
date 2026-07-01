@@ -17,13 +17,10 @@ import java.util.List;
 import java.util.Random;
 
 public class SpawnSystem {
-    private static final double CHUNK_BUFFER_GAP = 6.0;
-    private static final double SPAWN_LOOKAHEAD = 230.0;
-
     private final GameWorld world;
     private final SceneScheduler scheduler;
     private final Random rand = new Random();
-    private double nextSpawnZ = 50.0;
+    private double nextSpawnZ = Config.INITIAL_SPAWN_Z;
 
     public SpawnSystem(GameWorld world, Config.Difficulty difficulty) {
         this.world = world;
@@ -32,10 +29,10 @@ public class SpawnSystem {
     }
 
     public void update(double playerZ) {
-        while (playerZ + SPAWN_LOOKAHEAD > nextSpawnZ) {
+        while (playerZ + Config.SPAWN_LOOKAHEAD > nextSpawnZ) {
             Chunk c = scheduler.next(TimeManager.getElapsedTime());
             spawnChunk(c, nextSpawnZ);
-            nextSpawnZ += c.length + CHUNK_BUFFER_GAP;
+            nextSpawnZ += c.length + Config.CHUNK_BUFFER_GAP;
         }
     }
 
@@ -57,12 +54,12 @@ public class SpawnSystem {
         }
         List<int[]> candidates = new ArrayList<>();
         if (c.laneShiftable && c.mirrorable) {
-            for (int s = -1; s <= 1; s++) {
+            for (int s = Config.MIN_LANE; s <= Config.MAX_LANE; s++) {
                 candidates.add(new int[]{s, 0});
                 candidates.add(new int[]{s, 1});
             }
         } else if (c.laneShiftable) {
-            for (int s = -1; s <= 1; s++) candidates.add(new int[]{s, 0});
+            for (int s = Config.MIN_LANE; s <= Config.MAX_LANE; s++) candidates.add(new int[]{s, 0});
         } else {
             candidates.add(new int[]{0, 0});
             candidates.add(new int[]{0, 1});
@@ -81,7 +78,7 @@ public class SpawnSystem {
             int lane = spec.lane;
             if (mirror) lane = -lane;
             lane += shift;
-            if (lane < -1 || lane > 1) return false;
+            if (lane < Config.MIN_LANE || lane > Config.MAX_LANE) return false;
         }
         return true;
     }

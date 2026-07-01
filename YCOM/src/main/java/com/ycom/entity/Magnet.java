@@ -6,7 +6,9 @@ import javafx.scene.paint.Color;
 
 public final class Magnet extends Collectible {
     public Magnet(double x, double y, double z) {
-        super(ObjectKind.MAGNET, x, y, z, 1.0, 1.0, 1.0, Color.MEDIUMPURPLE);
+        super(ObjectKind.MAGNET, x, y, z,
+                Config.MAGNET_WIDTH, Config.MAGNET_HEIGHT, Config.MAGNET_DEPTH,
+                Color.MEDIUMPURPLE);
     }
 
     @Override

@@ -18,14 +18,14 @@ public abstract class GameObject {
     private static final AtomicLong IDS = new AtomicLong(1L);
 
     public final long id;
-    private double x;
-    private double y;
-    private double z;
-    private double width;
-    private double height;
-    private double depth;
-    private Color color;
-    private boolean active = true;
+    private volatile double x;
+    private volatile double y;
+    private volatile double z;
+    private volatile double width;
+    private volatile double height;
+    private volatile double depth;
+    private volatile Color color;
+    private volatile boolean active = true;
 
     private final ObjectKind kind;
 

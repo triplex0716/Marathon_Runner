@@ -2,8 +2,8 @@ package com.ycom.system.effect;
 import com.ycom.entity.EntityUpdateContext;
 
 public class ScoreMultiplierEffect implements PowerUpEffect {
-    private double timer;
-    private double max;
+    private volatile double timer;
+    private volatile double max;
     private double multiplier;
 
     public ScoreMultiplierEffect(double duration, double multiplier) {

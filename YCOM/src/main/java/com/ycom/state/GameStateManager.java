@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class GameStateManager {
     private Map<StateId, GameState> states = new EnumMap<>(StateId.class);
-    private GameState currentState;
+    private volatile GameState currentState;
     private Canvas canvas;
     private InputSystem input;
     

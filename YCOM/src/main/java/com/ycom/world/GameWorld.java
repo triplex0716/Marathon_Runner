@@ -2,11 +2,12 @@ package com.ycom.world;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Iterator;
 import com.ycom.entity.Coin;
 import com.ycom.entity.EntityUpdateContext;
 import com.ycom.entity.GameObject;
 import com.ycom.entity.Player;
+import com.ycom.render.RenderFrame;
+import com.ycom.render.RenderSnapshot;
 import com.ycom.system.InputSystem;
 import com.ycom.core.Config;
 import com.ycom.event.EventBus;
@@ -15,10 +16,12 @@ public class GameWorld {
     private final Player player;
     private final List<GameObject> objects = new ArrayList<>();
     private final List<GameObject> newObjects = new ArrayList<>();
+    private volatile RenderFrame renderFrame;
     private EntityUpdateContext context;
 
     public GameWorld() {
         player = new Player();
+        renderFrame = RenderFrame.initial(RenderSnapshot.from(player));
     }
 
     public void addObject(GameObject obj) {
@@ -35,7 +38,7 @@ public class GameWorld {
         for (GameObject obj : objects) {
             if (obj.isActive()) {
                 obj.update(worldDt, context);
-                if (obj.getZ() < player.getZ() - 35.0) {
+                if (obj.getZ() < player.getZ() - Config.OBJECT_DESPAWN_BEHIND_DISTANCE) {
                     obj.deactivate();
                 }
 
@@ -51,25 +54,44 @@ public class GameWorld {
             }
         }
         objects.removeIf(obj -> !obj.isActive());
+        publishRenderFrame(fixedDt);
+    }
+
+    private void publishRenderFrame(double fixedDt) {
+        List<RenderSnapshot> currentObjects = new ArrayList<>(objects.size());
+        for (GameObject obj : objects) {
+            if (obj.isActive()) {
+                currentObjects.add(RenderSnapshot.from(obj));
+            }
+        }
+        RenderFrame previous = renderFrame;
+        renderFrame = new RenderFrame(
+                previous.player(1.0),
+                RenderSnapshot.from(player),
+                previous.currentObjects(),
+                currentObjects,
+                System.nanoTime(),
+                Math.round(fixedDt * 1_000_000_000.0)
+        );
     }
 
     private boolean isInMagnetRange(GameObject obj) {
         double dz = obj.getZ() - player.getZ();
-        if (dz < -1.0 || dz > 38.0) {
+        if (dz < -Config.MAGNET_RANGE_BEHIND_DISTANCE || dz > Config.MAGNET_RANGE_AHEAD_DISTANCE) {
             return false;
         }
         double dx = player.getX() - obj.getX();
-        double dy = player.getY() + 0.8 - obj.getY();
+        double dy = player.getY() + Config.MAGNET_TARGET_Y_OFFSET - obj.getY();
         double distSq = dx * dx + dy * dy + dz * dz;
-        return distSq <= 45.0 * 45.0;
+        return distSq <= Config.MAGNET_ATTRACT_RADIUS * Config.MAGNET_ATTRACT_RADIUS;
     }
 
     private void pullTowardPlayer(GameObject obj, double worldDt) {
         double dx = player.getX() - obj.getX();
-        double dy = player.getY() + 0.8 - obj.getY();
+        double dy = player.getY() + Config.MAGNET_TARGET_Y_OFFSET - obj.getY();
         double dz = player.getZ() - obj.getZ();
         double dist = Math.max(0.001, Math.sqrt(dx * dx + dy * dy + dz * dz));
-        double speed = Math.max(36.0, Config.BASE_SPEED * 2.0);
+        double speed = Math.max(Config.MAGNET_PULL_MIN_SPEED, Config.BASE_SPEED * Config.MAGNET_PULL_SPEED_MULTIPLIER);
         obj.setX(obj.getX() + (dx / dist) * speed * worldDt);
         obj.setY(obj.getY() + (dy / dist) * speed * worldDt);
         obj.setZ(obj.getZ() + (dz / dist) * speed * worldDt);
@@ -81,6 +103,10 @@ public class GameWorld {
 
     public List<GameObject> getObjects() {
         return objects;
+    }
+
+    public RenderFrame renderFrame() {
+        return renderFrame;
     }
 
     public EntityUpdateContext context() {

@@ -10,14 +10,16 @@ import com.ycom.system.InputSystem;
 import com.ycom.resource.AssetManager;
 import com.ycom.resource.AudioManager;
 import javafx.scene.canvas.GraphicsContext;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GameLoop extends AnimationTimer {
-    private long lastTime = 0;
-    private double accumulator = 0.0;
-
     private final GameStateManager stateManager;
     private final InputSystem inputSystem;
     private final Canvas canvas;
+    private final ScheduledExecutorService physicsExecutor;
+    private final double fixedDt;
 
     public GameLoop(Canvas canvas, Scene scene) {
         this.canvas = canvas;
@@ -27,39 +29,36 @@ public class GameLoop extends AnimationTimer {
 
         inputSystem = new InputSystem(scene);
         stateManager = new GameStateManager(canvas, inputSystem);
+        fixedDt = TimeManager.getFixedDt();
+        physicsExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread thread = new Thread(r, "ycom-physics");
+            thread.setDaemon(true);
+            return thread;
+        });
+        long periodNanos = Math.round(fixedDt * 1_000_000_000.0);
+        physicsExecutor.scheduleAtFixedRate(this::updatePhysics, 0L, periodNanos, TimeUnit.NANOSECONDS);
     }
 
     @Override
     public void handle(long now) {
-        if (lastTime == 0) {
-            lastTime = now;
-            return;
-        }
-
-        double frameTime = (now - lastTime) / 1_000_000_000.0;
-        lastTime = now;
-        if (frameTime > 0.25) {
-            frameTime = 0.25;
-        }
-
-        accumulator += frameTime;
-
-        double fixedDt = TimeManager.getFixedDt();
-        int maxUpdates = 5;
-        int updates = 0;
-        while (accumulator >= fixedDt && updates < maxUpdates) {
-            inputSystem.update();
-            stateManager.update(fixedDt);
-            accumulator -= fixedDt;
-            updates++;
-        }
-        if (accumulator >= fixedDt) {
-            accumulator = 0; // Prevent death spiral if we hit maxUpdates
-        }
-
         GraphicsContext gc = getGraphicsContext();
         stateManager.render();
         gc.restore();
+    }
+
+    @Override
+    public void stop() {
+        physicsExecutor.shutdownNow();
+        super.stop();
+    }
+
+    private void updatePhysics() {
+        try {
+            inputSystem.update();
+            stateManager.update(fixedDt);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     private GraphicsContext getGraphicsContext() {

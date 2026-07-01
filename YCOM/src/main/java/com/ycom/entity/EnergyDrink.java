@@ -6,7 +6,9 @@ import javafx.scene.paint.Color;
 
 public final class EnergyDrink extends Collectible {
     public EnergyDrink(double x, double y, double z) {
-        super(ObjectKind.ENERGY_DRINK, x, y, z, 0.9, 1.2, 0.9, Color.DEEPSKYBLUE);
+        super(ObjectKind.ENERGY_DRINK, x, y, z,
+                Config.ENERGY_DRINK_WIDTH, Config.ENERGY_DRINK_HEIGHT, Config.ENERGY_DRINK_DEPTH,
+                Color.DEEPSKYBLUE);
     }
 
     @Override

@@ -8,10 +8,6 @@ import java.util.List;
 import java.util.Random;
 
 public class ChunkPicker {
-    private static final int COOLDOWN_WINDOW = 2;
-    private static final double LATE_GAME_THRESHOLD_SECONDS = 30.0;
-    private static final int MIXED_SAFE_ROW_LATE_WEIGHT = 15;
-
     private final Config.Difficulty difficulty;
     private final List<Chunk> pool;
     private final Random rand = new Random();
@@ -58,15 +54,15 @@ public class ChunkPicker {
     }
 
     private int effectiveWeight(Chunk c, double elapsedSeconds) {
-        if (c == ChunkLibrary.MIXED_SAFE_ROW && elapsedSeconds > LATE_GAME_THRESHOLD_SECONDS) {
-            return MIXED_SAFE_ROW_LATE_WEIGHT;
+        if (c == ChunkLibrary.MIXED_SAFE_ROW && elapsedSeconds > Config.LATE_GAME_THRESHOLD_SECONDS) {
+            return Config.MIXED_SAFE_ROW_LATE_WEIGHT;
         }
         return c.weight;
     }
 
     private void remember(Chunk c) {
         recent.addLast(c);
-        while (recent.size() > COOLDOWN_WINDOW) {
+        while (recent.size() > Config.CHUNK_PICKER_COOLDOWN_WINDOW) {
             recent.removeFirst();
         }
     }

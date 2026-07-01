@@ -14,8 +14,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import java.text.DecimalFormat;
 
 public class HudRenderer {
+    private static final Font SCORE_FONT = Font.font("Arial Black", FontWeight.BOLD, 30.0);
+    private static final Font HUD_FONT = Font.font("Arial Black", FontWeight.BOLD, 22.0);
+    private static final Font TIMER_FONT = Font.font("Arial Black", FontWeight.BOLD, 16.0);
+    private static final DecimalFormat SPEED_FORMAT = new DecimalFormat("0.00x");
+    private static final DecimalFormat TIMER_FORMAT = new DecimalFormat("0.0s");
 
     public void draw(GraphicsContext gc, Player player, ScoreSystem scoreSystem, com.ycom.system.EffectSystem effectSystem) {
         gc.setTextAlign(TextAlignment.LEFT);
@@ -35,12 +41,12 @@ public class HudRenderer {
         gc.strokeRect(startX, startY, panelW, panelH);
 
         gc.setFill(UIUtils.BORDER);
-        gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 30.0));
+        gc.setFont(SCORE_FONT);
         double y = startY + 50.0;
         gc.fillText("SCORE: " + scoreSystem.getScore(), startX + 24.0, y);
         y += 40.0;
 
-        gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 22.0));
+        gc.setFont(HUD_FONT);
         if (topRunVisible) {
             Account acc = Session.current();
             int gap = acc.getHighScore() - scoreSystem.getScore();
@@ -57,7 +63,7 @@ public class HudRenderer {
 
         int totalCoins = Session.current() != null ? Session.current().getCoins() : scoreSystem.getCoins();
         gc.fillText("COINS: " + scoreSystem.getRunCoinsEarned() + " (ALL: " + totalCoins + ")", startX + 24.0, y); y += 40.0;
-        gc.fillText("SPEED: " + String.format("%.2fx", TimeManager.getWorldRate()), startX + 24.0, y); y += 40.0;
+        gc.fillText("SPEED: " + SPEED_FORMAT.format(TimeManager.getWorldRate()), startX + 24.0, y); y += 40.0;
         gc.fillText("CAPSULES: " + player.revivalCount(), startX + 24.0, y);
 
         double size = 84.0;
@@ -98,9 +104,9 @@ public class HudRenderer {
         gc.strokeRect(x, y + size - 14, size, 24);
 
         gc.setFill(UIUtils.BORDER);
-        gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 16.0));
+        gc.setFont(TIMER_FONT);
         gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText(String.format("%.1fs", timer), x + size / 2.0, y + size + 3);
+        gc.fillText(TIMER_FORMAT.format(timer), x + size / 2.0, y + size + 3);
         gc.setTextAlign(TextAlignment.LEFT);
     }
 }

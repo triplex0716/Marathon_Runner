@@ -57,6 +57,6 @@ public class EffectSystem {
     }
 
     public List<PowerUpEffect> activeEffects() {
-        return effects;
+        return List.copyOf(effects);
     }
 }

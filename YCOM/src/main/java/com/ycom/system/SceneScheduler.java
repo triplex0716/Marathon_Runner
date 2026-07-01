@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Random;
 
 public class SceneScheduler {
-    private static final int FILLER_PER_BLOCK = 7;
-    private static final double MAX_POWERUP_GAP_SECONDS = 10.0;
-
     private static final List<Chunk> FILLER_POOL = List.of(
             ChunkLibrary.MAGNET_PICKUP,
             ChunkLibrary.ENERGY_DRINK_PICKUP,
@@ -50,7 +47,7 @@ public class SceneScheduler {
     }
 
     public Chunk next(double elapsedSeconds) {
-        if (elapsedSeconds - lastPowerupElapsedSeconds > MAX_POWERUP_GAP_SECONDS) {
+        if (elapsedSeconds - lastPowerupElapsedSeconds > Config.MAX_POWERUP_GAP_SECONDS) {
             Chunk p = powerupPicker.pick(elapsedSeconds);
             lastPowerupElapsedSeconds = elapsedSeconds;
             return p;
@@ -69,7 +66,7 @@ public class SceneScheduler {
             if (chunkInSceneIdx >= currentSceneChunks.size()) {
                 currentScene = null;
                 currentSceneChunks = null;
-                fillerRemaining = FILLER_PER_BLOCK;
+                fillerRemaining = Config.FILLER_CHUNKS_PER_SCENE_BLOCK;
             }
             return c;
         }

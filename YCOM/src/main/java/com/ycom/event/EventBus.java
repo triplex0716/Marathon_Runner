@@ -8,27 +8,16 @@ import java.util.Map;
 import java.util.Queue;
 
 public final class EventBus {
+    private static final int MAX_EVENTS_PER_DISPATCH = 1024;
+
     private final Map<Class<? extends GameEvent>, List<EventListener<? extends GameEvent>>> listeners = new HashMap<>();
-    private final Queue<GameEvent> queue = new ArrayDeque<>();
 
     public <T extends GameEvent> void subscribe(Class<T> eventType, EventListener<T> listener) {
         listeners.computeIfAbsent(eventType, ignored -> new ArrayList<>()).add(listener);
     }
 
     public void publish(GameEvent event) {
-        queue.add(event);
-    }
-
-    public void clear() {
-        queue.clear();
-    }
-
-    public void dispatchQueuedEvents() {
-        int count = queue.size();
-        for (int i = 0; i < count; i++) {
-            GameEvent event = queue.poll();
-            dispatch(event);
-        }
+        dispatch(event);
     }
 
     @SuppressWarnings("unchecked")

@@ -12,7 +12,7 @@ import com.ycom.event.GameOverEvent;
 import com.ycom.event.ScoreAddEvent;
 import com.ycom.world.GameWorld;
 import com.ycom.resource.AudioManager;
-import com.ycom.core.TimeManager;
+import com.ycom.core.Config;
 import javafx.scene.paint.Color;
 
 public class RunEventHandlers {
@@ -35,7 +35,7 @@ public class RunEventHandlers {
             AudioManager.playSfx("win");
         });
         eventBus.subscribe(ObstacleDestroyedEvent.class, event -> {
-            eventBus.publish(new ScoreAddEvent(25, "BOOST_BREAK"));
+            eventBus.publish(new ScoreAddEvent(Config.BOOST_OBSTACLE_BREAK_SCORE, "BOOST_BREAK"));
             particleSystem.spawnBreak(
                     event.x(), event.y(), event.z(),
                     event.width(), event.height(), event.depth(),

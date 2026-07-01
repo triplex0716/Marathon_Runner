@@ -21,31 +21,39 @@ public class ParticleSystem {
 
     public void spawnBreak(double x, double y, double z, double w, double h, double d, Color color) {
         double size = Math.max(0.18, Math.min(w, h) * 0.22);
-        for (int i = 0; i < SHARDS_PER_BREAK; i++) {
-            double dx = (Math.random() - 0.5) * w;
-            double dy = Math.random() * h;
-            double dz = (Math.random() - 0.5) * d * 0.6;
-            double vx = (Math.random() - 0.5) * 6.0;
-            double vy = 3.5 + Math.random() * 4.5;
-            double vz = -2.0 - Math.random() * 4.0;
-            double life = 0.45 + Math.random() * 0.25;
-            shards.add(new Shard(x + dx, y + dy, z + dz, vx, vy, vz, life, color, size));
+        synchronized (shards) {
+            for (int i = 0; i < SHARDS_PER_BREAK; i++) {
+                double dx = (Math.random() - 0.5) * w;
+                double dy = Math.random() * h;
+                double dz = (Math.random() - 0.5) * d * 0.6;
+                double vx = (Math.random() - 0.5) * 6.0;
+                double vy = 3.5 + Math.random() * 4.5;
+                double vz = -2.0 - Math.random() * 4.0;
+                double life = 0.45 + Math.random() * 0.25;
+                shards.add(new Shard(x + dx, y + dy, z + dz, vx, vy, vz, life, color, size));
+            }
         }
     }
 
     public void update(double dt, double playerZ) {
-        for (Shard s : shards) {
-            s.vy += GRAVITY * dt;
-            s.x += s.vx * dt;
-            s.y += s.vy * dt;
-            s.z += s.vz * dt;
-            s.life -= dt;
+        synchronized (shards) {
+            for (Shard s : shards) {
+                s.vy += GRAVITY * dt;
+                s.x += s.vx * dt;
+                s.y += s.vy * dt;
+                s.z += s.vz * dt;
+                s.life -= dt;
+            }
+            shards.removeIf(s -> s.life <= 0.0 || s.y < 0.0 || s.z < playerZ - 35.0);
         }
-        shards.removeIf(s -> s.life <= 0.0 || s.y < 0.0 || s.z < playerZ - 35.0);
     }
 
     public void draw(GraphicsContext gc, double camX, double camY, double camZ) {
-        for (Shard s : shards) {
+        List<Shard> snapshot;
+        synchronized (shards) {
+            snapshot = List.copyOf(shards);
+        }
+        for (Shard s : snapshot) {
             double distZ = s.z - camZ;
             if (distZ < 0.5) {
                 continue;
@@ -64,7 +72,9 @@ public class ParticleSystem {
     }
 
     public void clear() {
-        shards.clear();
+        synchronized (shards) {
+            shards.clear();
+        }
     }
 
     private static final class Shard {

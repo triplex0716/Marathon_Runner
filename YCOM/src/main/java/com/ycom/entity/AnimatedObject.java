@@ -2,12 +2,12 @@ package com.ycom.entity;
 
 import javafx.scene.paint.Color;
 
-public abstract class AnimatedObject extends RenderableObject {
-    private double animationTime;
+public abstract class AnimatedObject extends GameObject {
+    private volatile double animationTime;
     private double framesPerSecond = 10.0;
 
-    protected AnimatedObject(ObjectKind kind, String spriteKey, double x, double y, double z, double width, double height, double depth, Color color) {
-        super(kind, spriteKey, x, y, z, width, height, depth, color);
+    protected AnimatedObject(ObjectKind kind, double x, double y, double z, double width, double height, double depth, Color color) {
+        super(kind, x, y, z, width, height, depth, color);
     }
 
     @Override

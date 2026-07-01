@@ -30,6 +30,5 @@ public class CollisionSystem {
                 player.onCollision(new CollisionEvent(player, obj), world.context());
             }
         }
-        eventBus.dispatchQueuedEvents();
     }
 }

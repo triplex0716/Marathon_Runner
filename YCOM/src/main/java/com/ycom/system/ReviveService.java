@@ -43,7 +43,6 @@ public class ReviveService {
         clearNearbyObstacles(world, player.getZ());
         player.revive();
         effectSystem.addEffect(new com.ycom.system.effect.ReviveInvincibleEffect(Config.REVIVE_INVINCIBLE_DURATION), new com.ycom.entity.EntityUpdateContext(null, eventBus, player, 0, world));
-        eventBus.clear();
         AudioManager.playSfx("invincible");
         AudioManager.playBGM();
     }
@@ -53,7 +52,7 @@ public class ReviveService {
         for (GameObject obj : world.getObjects()) {
             if (obj.kind() != GameObject.ObjectKind.OBSTACLE) continue;
             double dz = obj.getZ() - playerZ;
-            if (dz >= -1.5 && dz <= radius) {
+            if (dz >= -Config.REVIVE_CLEAR_BEHIND_DISTANCE && dz <= radius) {
                 obj.deactivate();
             }
         }

@@ -7,7 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-public class ObstacleRenderer {
+public class ObstacleRenderer implements ObjectRenderer {
     private final Projector projector;
     private final double horizonY;
     private static final javafx.scene.effect.PerspectiveTransform PT = new javafx.scene.effect.PerspectiveTransform();
@@ -23,16 +23,28 @@ public class ObstacleRenderer {
                                      double lrx, double lry, 
                                      double llx, double lly) {
         if (img == null || img.getWidth() <= 0) return;
+        
+        double minX = Math.min(Math.min(ulx, urx), Math.min(llx, lrx));
+        double maxX = Math.max(Math.max(ulx, urx), Math.max(llx, lrx));
+        double minY = Math.min(Math.min(uly, ury), Math.min(lly, lry));
+        double maxY = Math.max(Math.max(uly, ury), Math.max(lly, lry));
+        
+        if (maxX < 0 || minX > 1920.0 || maxY < 0 || minY > 1080.0) {
+            return;
+        }
+
         PT.setUlx(ulx); PT.setUly(uly);
         PT.setUrx(urx); PT.setUry(ury);
         PT.setLrx(lrx); PT.setLry(lry);
         PT.setLlx(llx); PT.setLly(lly);
+        
         gc.setEffect(PT);
         gc.drawImage(img, 0, 0, img.getWidth(), img.getHeight());
         gc.setEffect(null);
     }
 
-    public void drawObstacle(GraphicsContext gc, Obstacle obstacle, Projection p, Camera cam) {
+    @Override
+    public void render(GraphicsContext gc, RenderSnapshot obstacle, Projection p, Camera cam) {
         if (obstacle.avoidMethod() == Obstacle.AvoidMethod.CONTAINER) {
             drawTrainObstacleBody(gc, obstacle, p, cam);
             return;
@@ -58,12 +70,12 @@ public class ObstacleRenderer {
         }
     }
 
-    private void drawTrainObstacleBody(GraphicsContext gc, Obstacle obstacle, Projection dummyFront, Camera cam) {
-        double fZ = obstacle.getZ() - obstacle.getDepth() / 2.0;
-        double bZ = obstacle.getZ() + obstacle.getDepth() / 2.0;
+    private void drawTrainObstacleBody(GraphicsContext gc, RenderSnapshot obstacle, Projection dummyFront, Camera cam) {
+        double fZ = obstacle.z() - obstacle.depth() / 2.0;
+        double bZ = obstacle.z() + obstacle.depth() / 2.0;
         
-        Projection front = projector.project(obstacle.getX(), obstacle.getY(), fZ, obstacle.getWidth() * 0.95, obstacle.getHeight() * 0.95, cam);
-        Projection back = projector.project(obstacle.getX(), obstacle.getY() + 0.12, bZ, obstacle.getWidth() * 0.95, obstacle.getHeight() * 0.95, cam);
+        Projection front = projector.project(obstacle.x(), obstacle.y(), fZ, obstacle.width() * 0.95, obstacle.height() * 0.95, cam);
+        Projection back = projector.project(obstacle.x(), obstacle.y() + 0.12, bZ, obstacle.width() * 0.95, obstacle.height() * 0.95, cam);
 
         double frontLeft = front.x() - front.width() * 0.45;
         double frontRight = front.x() + front.width() * 0.45;
@@ -76,7 +88,7 @@ public class ObstacleRenderer {
         double backBottom = back.y() + back.height() * 0.32;
 
         Image topImg, sideImg, frontImg;
-        boolean isFar = (obstacle.getZ() - cam.z) > 120.0;
+        boolean isFar = (obstacle.z() - cam.z) > 120.0;
         if (obstacle.avoidMethod() == Obstacle.AvoidMethod.CONTAINER) {
             topImg = isFar ? null : AssetManager.containerTop();
             sideImg = isFar ? null : AssetManager.containerSide();
@@ -151,20 +163,20 @@ public class ObstacleRenderer {
         gc.strokePolygon(frontX, frontY, 4);
     }
 
-    private void drawRamp(GraphicsContext gc, Obstacle obstacle, Projection front, Camera cam) {
-        double fZ = obstacle.getZ() - obstacle.getDepth() / 2.0;
-        double bZ = obstacle.getZ() + obstacle.getDepth() / 2.0;
+    private void drawRamp(GraphicsContext gc, RenderSnapshot obstacle, Projection front, Camera cam) {
+        double fZ = obstacle.z() - obstacle.depth() / 2.0;
+        double bZ = obstacle.z() + obstacle.depth() / 2.0;
         
-        Projection pFrontBottomLeft = projector.project(obstacle.getX() - obstacle.getWidth() / 2.0, obstacle.getY(), fZ, 0, 0, cam);
-        Projection pFrontBottomRight = projector.project(obstacle.getX() + obstacle.getWidth() / 2.0, obstacle.getY(), fZ, 0, 0, cam);
+        Projection pFrontBottomLeft = projector.project(obstacle.x() - obstacle.width() / 2.0, obstacle.y(), fZ, 0, 0, cam);
+        Projection pFrontBottomRight = projector.project(obstacle.x() + obstacle.width() / 2.0, obstacle.y(), fZ, 0, 0, cam);
         
-        Projection pBackTopLeft = projector.project(obstacle.getX() - obstacle.getWidth() / 2.0, obstacle.getY() + obstacle.getHeight(), bZ, 0, 0, cam);
-        Projection pBackTopRight = projector.project(obstacle.getX() + obstacle.getWidth() / 2.0, obstacle.getY() + obstacle.getHeight(), bZ, 0, 0, cam);
+        Projection pBackTopLeft = projector.project(obstacle.x() - obstacle.width() / 2.0, obstacle.y() + obstacle.height(), bZ, 0, 0, cam);
+        Projection pBackTopRight = projector.project(obstacle.x() + obstacle.width() / 2.0, obstacle.y() + obstacle.height(), bZ, 0, 0, cam);
         
-        Projection pBackBottomLeft = projector.project(obstacle.getX() - obstacle.getWidth() / 2.0, obstacle.getY(), bZ, 0, 0, cam);
-        Projection pBackBottomRight = projector.project(obstacle.getX() + obstacle.getWidth() / 2.0, obstacle.getY(), bZ, 0, 0, cam);
+        Projection pBackBottomLeft = projector.project(obstacle.x() - obstacle.width() / 2.0, obstacle.y(), bZ, 0, 0, cam);
+        Projection pBackBottomRight = projector.project(obstacle.x() + obstacle.width() / 2.0, obstacle.y(), bZ, 0, 0, cam);
         
-        boolean isFar = (obstacle.getZ() - cam.z) > 120.0;
+        boolean isFar = (obstacle.z() - cam.z) > 120.0;
         Image rampTex = isFar ? null : AssetManager.getImage("obs_ramp_tex");
 
         double[] slopeX = {pBackTopLeft.x(), pBackTopRight.x(), pFrontBottomRight.x(), pFrontBottomLeft.x()};
@@ -195,7 +207,7 @@ public class ObstacleRenderer {
                 gc.closePath();
                 gc.clip();
                 
-                Projection pFrontTopLeft = projector.project(obstacle.getX() - obstacle.getWidth() / 2.0, obstacle.getY() + obstacle.getHeight(), fZ, 0, 0, cam);
+                Projection pFrontTopLeft = projector.project(obstacle.x() - obstacle.width() / 2.0, obstacle.y() + obstacle.height(), fZ, 0, 0, cam);
                 drawPerspectiveImage(gc, rampTex,
                     pBackTopLeft.x(), pBackTopLeft.y(),
                     pFrontTopLeft.x(), pFrontTopLeft.y(),
@@ -224,7 +236,7 @@ public class ObstacleRenderer {
                 gc.closePath();
                 gc.clip();
                 
-                Projection pFrontTopRight = projector.project(obstacle.getX() + obstacle.getWidth() / 2.0, obstacle.getY() + obstacle.getHeight(), fZ, 0, 0, cam);
+                Projection pFrontTopRight = projector.project(obstacle.x() + obstacle.width() / 2.0, obstacle.y() + obstacle.height(), fZ, 0, 0, cam);
                 drawPerspectiveImage(gc, rampTex,
                     pFrontTopRight.x(), pFrontTopRight.y(),
                     pBackTopRight.x(), pBackTopRight.y(),

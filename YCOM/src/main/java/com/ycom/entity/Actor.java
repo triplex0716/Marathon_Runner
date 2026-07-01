@@ -6,8 +6,8 @@ public abstract class Actor extends AnimatedObject {
     protected int lane;
     protected double targetX;
 
-    protected Actor(String spriteKey, double x, double y, double z, double width, double height, double depth, Color color) {
-        super(ObjectKind.PLAYER, spriteKey, x, y, z, width, height, depth, color);
+    protected Actor(ObjectKind kind, double x, double y, double z, double width, double height, double depth, Color color) {
+        super(kind, x, y, z, width, height, depth, color);
     }
 
     public int lane() {

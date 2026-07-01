@@ -6,14 +6,14 @@ import com.ycom.event.EventBus;
 import com.ycom.event.ScoreAddEvent;
 
 public class ScoreSystem {
-    private static int highScore = 0;
+    private static volatile int highScore = 0;
 
     private final Player player;
-    private double distance = 0.0;
+    private volatile double distance = 0.0;
     private double lastPlayerZ = 0.0;
-    private int coinCount = 0;
-    private int runCoinsEarned = 0;
-    private int bonusScore = 0;
+    private volatile int coinCount = 0;
+    private volatile int runCoinsEarned = 0;
+    private volatile int bonusScore = 0;
 
     public ScoreSystem(EventBus eventBus, Player player) {
         this.player = player;
