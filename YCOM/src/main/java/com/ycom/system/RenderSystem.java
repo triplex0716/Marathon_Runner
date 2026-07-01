@@ -268,8 +268,12 @@ public class RenderSystem {
         };
 
         if (obstacleImage != null) {
+            double drawHeight = p.height;
+            if (obstacle.avoidMethod() == Obstacle.AvoidMethod.SLIDE) {
+                drawHeight = p.height * 2.5;
+            }
             double groundY = horizonY - (-camY) * p.scale;
-            gc.drawImage(obstacleImage, p.x - p.width / 2.0, groundY - p.height, p.width, p.height);
+            gc.drawImage(obstacleImage, p.x - p.width / 2.0, groundY - drawHeight, p.width, drawHeight);
         }
     }
 
