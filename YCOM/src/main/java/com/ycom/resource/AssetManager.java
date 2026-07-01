@@ -224,26 +224,39 @@ public class AssetManager {
     }
 
     private static void loadImage(String key, String fileName) {
-        Path path = resolve(fileName);
-        if (path == null) {
+        String url = resolve(fileName);
+        if (url == null) {
             System.err.println("Missing image asset: " + fileName);
             return;
         }
-        IMAGES.put(key, new Image(path.toUri().toString(), false));
+        IMAGES.put(key, new Image(url, false));
     }
 
-    public static Path resolve(String fileName) {
+    public static String resolve(String fileName) {
+        String resourcePath = "";
+        String lower = fileName.toLowerCase();
+        if (lower.endsWith(".png") || lower.endsWith(".jpg") || lower.endsWith(".jpeg")) {
+            resourcePath = "/assets/textures/" + fileName;
+        } else if (lower.endsWith(".wav") || lower.endsWith(".mp3") || lower.endsWith(".ogg")) {
+            resourcePath = "/assets/audio/" + fileName;
+        } else {
+            resourcePath = "/assets/" + fileName;
+        }
+
+        java.net.URL url = AssetManager.class.getResource(resourcePath);
+        if (url != null) {
+            return url.toExternalForm();
+        }
+
         Path cwd = Path.of("").toAbsolutePath();
         Path[] candidates = new Path[] {
-                cwd.resolve(fileName),
-                cwd.resolve("..").resolve(fileName),
-                cwd.resolve("Audio").resolve(fileName),
-                cwd.resolve("..").resolve("Audio").resolve(fileName)
+                cwd.resolve("src/main/resources" + resourcePath),
+                cwd.resolve("YCOM/src/main/resources" + resourcePath)
         };
         for (Path candidate : candidates) {
             Path normalized = candidate.normalize();
             if (Files.exists(normalized)) {
-                return normalized;
+                return normalized.toUri().toString();
             }
         }
         return null;

@@ -172,13 +172,13 @@ public class AudioManager {
     }
 
     private static void loadSfx(String key, String... fileNames) {
-        Path path = resolveFirst(fileNames);
-        if (path == null) {
+        String url = resolveFirst(fileNames);
+        if (url == null) {
             System.err.println("Missing SFX " + key + " asset: " + String.join(", ", fileNames));
             return;
         }
         try {
-            AudioClip clip = new AudioClip(path.toUri().toString());
+            AudioClip clip = new AudioClip(url);
             clip.setVolume(Config.SFX_VOLUME);
             SFX.put(key, new SfxState(clip));
         } catch (MediaException ex) {
@@ -187,27 +187,27 @@ public class AudioManager {
     }
 
     private static Media loadMedia(String label, String... fileNames) {
-        Path path = resolveFirst(fileNames);
-        if (path == null) {
+        String url = resolveFirst(fileNames);
+        if (url == null) {
             System.err.println("Missing " + label + " asset: " + String.join(", ", fileNames));
             return null;
         }
 
         try {
-            Media media = new Media(path.toUri().toString());
-            media.setOnError(() -> System.err.println(label + " media error [" + path + "]: " + media.getError()));
+            Media media = new Media(url);
+            media.setOnError(() -> System.err.println(label + " media error [" + url + "]: " + media.getError()));
             return media;
         } catch (MediaException ex) {
-            System.err.println("Failed to load " + label + " [" + path + "]: " + ex.getMessage());
+            System.err.println("Failed to load " + label + " [" + url + "]: " + ex.getMessage());
             return null;
         }
     }
 
-    private static Path resolveFirst(String... fileNames) {
+    private static String resolveFirst(String... fileNames) {
         for (String fileName : fileNames) {
-            Path path = AssetManager.resolve(fileName);
-            if (path != null) {
-                return path;
+            String url = AssetManager.resolve(fileName);
+            if (url != null) {
+                return url;
             }
         }
         return null;
