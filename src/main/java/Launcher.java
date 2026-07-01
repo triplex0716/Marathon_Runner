@@ -3,8 +3,3 @@ public class Launcher {
         com.ycom.app.GameApp.main(args);
     }
 }
-
-
-
-
-

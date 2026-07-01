@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0903b1e8-e3da-4407-bb7d-43285beec39d" name="Changes" comment="Init commit">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/screenshots/screenshot_gameplay.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/screenshots/screenshot_home.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/Launcher.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/account/Account.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/account/AccountStore.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/account/Session.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/app/GameApp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/app/GameLoop.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/core/Config.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/core/TimeManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/Actor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/AnimatedObject.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/Coin.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/Collectible.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/CollisionEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/EnergyDrink.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/EntityUpdateContext.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/GameObject.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/Magnet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/Obstacle.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/Player.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/RandomItem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/RenderableObject.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/RevivalCapsule.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/Treadmill.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/entity/WorldObject.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/BoostActivatedEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/CoinCollectedEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/EventBus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/EventListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/GameEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/GameOverEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/MagnetActivatedEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/ObstacleDestroyedEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/PlayerHitEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/RevivalCollectedEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/ScoreAddEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/event/ScoreMultiplierActivatedEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/render/Camera.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/render/HudRenderer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/render/ObjectRenderer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/render/ObstacleRenderer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/render/Projection.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/render/Projector.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/render/RenderFrame.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/render/RenderSnapshot.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/render/RendererRegistry.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/resource/AssetManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/resource/AudioManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/GameOverState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/GameResult.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/GameState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/GameStateManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/InstructionState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/LoginState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/MainMenuState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/PausedState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/PlayingState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/ShopState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/StateId.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/state/UIUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/Chunk.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/ChunkLibrary.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/ChunkPicker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/CollisionSystem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/EffectSystem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/EntityFactory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/EntitySpec.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/EntityType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/InputSystem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/ParticleSystem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/RenderSystem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/ReviveService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/RunEventHandlers.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/Scene.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/SceneLibrary.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/SceneScheduler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/ScoreSystem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/SpawnSystem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/effect/BoostEffect.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/effect/MagnetEffect.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/effect/PowerUpEffect.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/effect/ReviveInvincibleEffect.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/system/effect/ScoreMultiplierEffect.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/java/com/ycom/world/GameWorld.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/audio/BackgroundMusic.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/audio/ascension.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/audio/coin.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/audio/fail.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/audio/invincible.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/audio/win.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/ascension.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/bldg_bamboo.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/bldg_bell.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/bldg_castle.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/bldg_kitsune.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/bldg_lantern.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/bldg_pine.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/bldg_shop.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/bldg_torii.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/book.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/boost.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/capsule.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/coin.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/container_front.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/container_side.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/container_top.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/energy_drink.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/head.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/item_coin.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/jump.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/magnet.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/obs_jump.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/obs_ramp_tex.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/obs_slide.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/obs_train.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/obstacle_jump.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/obstacle_slide.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/obstacle_train.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/obstacle_train_side.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/pagoda.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/ramp_side.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/ramp_slope.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/random_box.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/road_texture.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/run.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/runners/cheryl_run-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/runners/cheryl_run-2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/runners/dave_run-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/runners/dave_run-2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/runners/matt_run-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/runners/matt_run-2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/runners/mazz_run-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/runners/mazz_run-2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/sakura.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/shopping.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/slide.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/ukiyo_building.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/ukiyoe_bg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/zxf老师.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/东京夜景.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/主界面背景.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/主界面背景1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/主界面背景2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/YCOM/src/main/resources/assets/textures/终界面.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/neo-brutalist-buttons.css" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="3FGbCXBpgp29o1rnr31pfJlixVa" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.GameApp.executor": "Run",
+    "Application.JavaFX3DWave.executor": "Run",
+    "Application.Launcher.executor": "Run",
+    "Application.Run Game.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/stanley/Desktop/You Can't Outrun Me!",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2838654",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="Run Game" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Launcher" />
+      <module name="YCOM" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.25134.95" />
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.25134.95" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0903b1e8-e3da-4407-bb7d-43285beec39d" name="Changes" comment="" />
+      <created>1781704227492</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1781704227492</updated>
+      <workItem from="1781704229359" duration="580000" />
+      <workItem from="1781704828363" duration="400000" />
+      <workItem from="1781705245487" duration="108000" />
+      <workItem from="1781705363495" duration="25000" />
+      <workItem from="1781705398027" duration="4612000" />
+      <workItem from="1781714444051" duration="2161000" />
+      <workItem from="1781784550240" duration="526000" />
+      <workItem from="1781836518410" duration="4463000" />
+      <workItem from="1781879433798" duration="835000" />
+      <workItem from="1781992078072" duration="7880000" />
+      <workItem from="1782024152888" duration="6384000" />
+      <workItem from="1782200553664" duration="735000" />
+      <workItem from="1782455590741" duration="173000" />
+      <workItem from="1782459172178" duration="84000" />
+      <workItem from="1782539533293" duration="1198000" />
+      <workItem from="1782548038769" duration="528000" />
+      <workItem from="1782548618073" duration="901000" />
+      <workItem from="1782620796988" duration="15000" />
+      <workItem from="1782628515566" duration="6928000" />
+      <workItem from="1782712405006" duration="3421000" />
+      <workItem from="1782801954970" duration="6759000" />
+      <workItem from="1782900790042" duration="17939000" />
+      <workItem from="1782920885424" duration="264000" />
+    </task>
+    <task id="LOCAL-00001" summary="Init commit">
+      <option name="closed" value="true" />
+      <created>1781705302265</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1781705302265</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Init commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Init commit" />
+  </component>
+</project>
