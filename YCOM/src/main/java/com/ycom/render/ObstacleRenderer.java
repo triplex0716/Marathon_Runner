@@ -88,7 +88,7 @@ public class ObstacleRenderer implements ObjectRenderer {
         double backBottom = back.y() + back.height() * 0.32;
 
         Image topImg, sideImg, frontImg;
-        boolean isFar = (obstacle.z() - cam.z) > 120.0;
+        boolean isFar = (obstacle.z() - cam.z) > 80.0;
         if (obstacle.avoidMethod() == Obstacle.AvoidMethod.CONTAINER) {
             topImg = isFar ? null : AssetManager.containerTop();
             sideImg = isFar ? null : AssetManager.containerSide();
@@ -176,7 +176,7 @@ public class ObstacleRenderer implements ObjectRenderer {
         Projection pBackBottomLeft = projector.project(obstacle.x() - obstacle.width() / 2.0, obstacle.y(), bZ, 0, 0, cam);
         Projection pBackBottomRight = projector.project(obstacle.x() + obstacle.width() / 2.0, obstacle.y(), bZ, 0, 0, cam);
         
-        boolean isFar = (obstacle.z() - cam.z) > 120.0;
+        boolean isFar = (obstacle.z() - cam.z) > 80.0;
         Image rampTex = isFar ? null : AssetManager.getImage("obs_ramp_tex");
 
         double[] slopeX = {pBackTopLeft.x(), pBackTopRight.x(), pFrontBottomRight.x(), pFrontBottomLeft.x()};

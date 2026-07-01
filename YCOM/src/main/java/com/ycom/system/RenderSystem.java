@@ -139,21 +139,32 @@ public class RenderSystem {
         gc.strokeLine(0.0, horizonY, Config.LOGICAL_WIDTH, horizonY);
     }
 
+    private static class RenderTask {
+        final RenderSnapshot snapshot;
+        final Projection p;
+        RenderTask(RenderSnapshot snapshot, Projection p) {
+            this.snapshot = snapshot;
+            this.p = p;
+        }
+    }
+
     private void drawObjects(GraphicsContext gc, RenderFrame frame, double alpha, RenderSnapshot player, Camera cam) {
-        frame.writeObjects(objectBuffer, alpha);
-        objectBuffer.removeIf(snapshot -> snapshot.z() < cam.z + 0.8);
-        objectBuffer.add(player);
-        objectBuffer.sort((a, b) -> Double.compare(b.z(), a.z()));
+        List<RenderTask> tasks = frame.currentObjects().parallelStream()
+            .map(snapshot -> snapshot.interpolateFrom(frame.previousObjectsById().get(snapshot.id()), alpha))
+            .filter(snapshot -> snapshot.z() >= cam.z + 0.8)
+            .map(snapshot -> new RenderTask(snapshot, projector.project(snapshot.x(), snapshot.y(), snapshot.z(), snapshot.width(), snapshot.height(), cam)))
+            .filter(task -> task.p.scale() > 0.0 && task.p.x() + task.p.width() >= -200.0 && task.p.x() - task.p.width() <= Config.LOGICAL_WIDTH + 200.0)
+            .collect(java.util.stream.Collectors.toList());
 
-        for (RenderSnapshot obj : objectBuffer) {
-            Projection p = projector.project(obj.x(), obj.y(), obj.z(), obj.width(), obj.height(), cam);
-            if (p.scale() <= 0.0 || p.x() + p.width() < -200.0 || p.x() - p.width() > Config.LOGICAL_WIDTH + 200.0) {
-                continue;
-            }
+        RenderTask playerTask = new RenderTask(player, projector.project(player.x(), player.y(), player.z(), player.width(), player.height(), cam));
+        tasks.add(playerTask);
 
-            com.ycom.render.ObjectRenderer renderer = registry.getRenderer(obj.kind());
+        tasks.sort((a, b) -> Double.compare(b.snapshot.z(), a.snapshot.z()));
+
+        for (RenderTask task : tasks) {
+            com.ycom.render.ObjectRenderer renderer = registry.getRenderer(task.snapshot.kind());
             if (renderer != null) {
-                renderer.render(gc, obj, p, cam);
+                renderer.render(gc, task.snapshot, task.p, cam);
             }
         }
     }

@@ -60,6 +60,10 @@ public final class RenderFrame {
         return currentObjects;
     }
 
+    public Map<Long, RenderSnapshot> previousObjectsById() {
+        return previousObjectsById;
+    }
+
     private static Map<Long, RenderSnapshot> indexById(List<RenderSnapshot> snapshots) {
         Map<Long, RenderSnapshot> indexed = new HashMap<>();
         for (RenderSnapshot snapshot : snapshots) {
