@@ -252,7 +252,7 @@ public class RenderSystem {
         gc.setTextAlign(TextAlignment.LEFT);
     }
     private void drawObstacle(GraphicsContext gc, Obstacle obstacle, Projection p, double camX, double camY, double camZ) {
-        if (obstacle.avoidMethod() == Obstacle.AvoidMethod.CHANGE_LANE || obstacle.avoidMethod() == Obstacle.AvoidMethod.CONTAINER) {
+        if (obstacle.avoidMethod() == Obstacle.AvoidMethod.CONTAINER) {
             drawTrainObstacleBody(gc, obstacle, p, camX, camY, camZ);
             return;
         } else if (obstacle.avoidMethod() == Obstacle.AvoidMethod.RAMP) {
@@ -261,13 +261,15 @@ public class RenderSystem {
         }
 
         Image obstacleImage = switch (obstacle.avoidMethod()) {
-            case SLIDE -> AssetManager.obstacleSlideIcon();
-            case JUMP -> AssetManager.obstacleJumpIcon();
+            case CHANGE_LANE -> AssetManager.getImage("obs_train");
+            case SLIDE -> AssetManager.getImage("obs_slide");
+            case JUMP -> AssetManager.getImage("obs_jump");
             default -> null;
         };
 
         if (obstacleImage != null) {
-            gc.drawImage(obstacleImage, p.x - p.width / 2.0, p.y - p.height / 2.0, p.width, p.height);
+            double groundY = horizonY - (-camY) * p.scale;
+            gc.drawImage(obstacleImage, p.x - p.width / 2.0, groundY - p.height, p.width, p.height);
         }
     }
 
@@ -368,6 +370,8 @@ public class RenderSystem {
         gc.strokePolygon(frontX, frontY, 4);
     }
 
+
+
     private void drawRamp(GraphicsContext gc, Obstacle obstacle, Projection front, double camX, double camY, double camZ) {
         double fZ = obstacle.z - obstacle.depth / 2.0;
         double bZ = obstacle.z + obstacle.depth / 2.0;
@@ -381,15 +385,14 @@ public class RenderSystem {
         Projection pBackBottomLeft = project(obstacle.x - obstacle.width / 2.0, obstacle.y, bZ, 0, 0, camX, camY, camZ);
         Projection pBackBottomRight = project(obstacle.x + obstacle.width / 2.0, obstacle.y, bZ, 0, 0, camX, camY, camZ);
         
-        Image rampSlopeImg = AssetManager.rampSlope();
-        Image rampSideImg = AssetManager.rampSide();
+        Image rampTex = AssetManager.getImage("obs_ramp_tex");
 
         // Slope
         // Slope
         double[] slopeX = {pBackTopLeft.x, pBackTopRight.x, pFrontBottomRight.x, pFrontBottomLeft.x};
         double[] slopeY = {pBackTopLeft.y, pBackTopRight.y, pFrontBottomRight.y, pFrontBottomLeft.y};
-        if (rampSlopeImg != null && rampSlopeImg.getWidth() > 0) {
-            drawPerspectiveImage(gc, rampSlopeImg, 
+        if (rampTex != null && rampTex.getWidth() > 0) {
+            drawPerspectiveImage(gc, rampTex, 
                 pBackTopLeft.x, pBackTopLeft.y, 
                 pBackTopRight.x, pBackTopRight.y, 
                 pFrontBottomRight.x, pFrontBottomRight.y, 
@@ -406,7 +409,7 @@ public class RenderSystem {
         if (pFrontBottomLeft.x > pBackBottomLeft.x) {
             double[] leftX = {pBackTopLeft.x, pFrontBottomLeft.x, pBackBottomLeft.x};
             double[] leftY = {pBackTopLeft.y, pFrontBottomLeft.y, pBackBottomLeft.y};
-            if (rampSideImg != null && rampSideImg.getWidth() > 0) {
+            if (rampTex != null && rampTex.getWidth() > 0) {
                 gc.save();
                 gc.beginPath();
                 gc.moveTo(pBackTopLeft.x, pBackTopLeft.y);
@@ -416,7 +419,7 @@ public class RenderSystem {
                 gc.clip();
                 
                 Projection pFrontTopLeft = project(obstacle.x - obstacle.width / 2.0, obstacle.y + obstacle.height, fZ, 0, 0, camX, camY, camZ);
-                drawPerspectiveImage(gc, rampSideImg,
+                drawPerspectiveImage(gc, rampTex,
                     pBackTopLeft.x, pBackTopLeft.y,
                     pFrontTopLeft.x, pFrontTopLeft.y,
                     pFrontBottomLeft.x, pFrontBottomLeft.y,
@@ -436,7 +439,7 @@ public class RenderSystem {
         if (pFrontBottomRight.x < pBackBottomRight.x) {
             double[] rightX = {pBackTopRight.x, pFrontBottomRight.x, pBackBottomRight.x};
             double[] rightY = {pBackTopRight.y, pFrontBottomRight.y, pBackBottomRight.y};
-            if (rampSideImg != null && rampSideImg.getWidth() > 0) {
+            if (rampTex != null && rampTex.getWidth() > 0) {
                 gc.save();
                 gc.beginPath();
                 gc.moveTo(pBackTopRight.x, pBackTopRight.y);
@@ -446,7 +449,7 @@ public class RenderSystem {
                 gc.clip();
                 
                 Projection pFrontTopRight = project(obstacle.x + obstacle.width / 2.0, obstacle.y + obstacle.height, fZ, 0, 0, camX, camY, camZ);
-                drawPerspectiveImage(gc, rampSideImg,
+                drawPerspectiveImage(gc, rampTex,
                     pFrontTopRight.x, pFrontTopRight.y,
                     pBackTopRight.x, pBackTopRight.y,
                     pBackBottomRight.x, pBackBottomRight.y,
