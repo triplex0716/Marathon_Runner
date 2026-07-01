@@ -60,6 +60,7 @@ public class PlayingState implements GameState {
     private static final double DEATH_DURATION = 3.5;
     private boolean dyingAnimation = false;
     private double deathTimer = 0.0;
+    private boolean isWin = false;
 
     public PlayingState(GameStateManager gsm, Canvas canvas, InputSystem input) {
         this.gsm = gsm;
@@ -146,6 +147,10 @@ public class PlayingState implements GameState {
             acc.capsules = curCapsules;
             if (!Session.isGuest()) AccountStore.save();
         }
+
+        if (scoreSystem.getScore() >= 10000 && !dyingAnimation && !awaitingRevival) {
+            doGameWin();
+        }
     }
 
     @Override
@@ -209,8 +214,9 @@ public class PlayingState implements GameState {
         gc.setLineWidth(8.0);
         gc.setStroke(Color.rgb(110, 0, 0));
         gc.setFill(Color.rgb(255, 215, 0));
-        gc.strokeText("YOU CAN'T OUTRUN ME!", W / 2.0, H * 0.22);
-        gc.fillText("YOU CAN'T OUTRUN ME!", W / 2.0, H * 0.22);
+        String text = isWin ? "YOU WIN!" : "YOU CAN'T OUTRUN ME!";
+        gc.strokeText(text, W / 2.0, H * 0.22);
+        gc.fillText(text, W / 2.0, H * 0.22);
         gc.setGlobalAlpha(1.0);
         gc.setTextAlign(TextAlignment.LEFT);
     }
@@ -272,8 +278,20 @@ public class PlayingState implements GameState {
 
     private void doGameOver() {
         GameOverState.finalScore = scoreSystem.getScore();
+        GameOverState.isWin = false;
+        isWin = false;
         AudioManager.stopBGM();
         AudioManager.playSfx("ascension");
+        dyingAnimation = true;
+        deathTimer = 0.0;
+    }
+
+    private void doGameWin() {
+        GameOverState.finalScore = scoreSystem.getScore();
+        GameOverState.isWin = true;
+        isWin = true;
+        AudioManager.stopBGM();
+        AudioManager.playSfx("win");
         dyingAnimation = true;
         deathTimer = 0.0;
     }

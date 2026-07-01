@@ -17,6 +17,7 @@ public class GameOverState implements GameState {
     private final Canvas canvas;
     private final InputSystem input;
     public static int finalScore = 0;
+    public static boolean isWin = false;
     private boolean newHighScore = false;
     private double time = 0.0;
 
@@ -77,7 +78,7 @@ public class GameOverState implements GameState {
     }
 
     private void drawTitle(GraphicsContext gc) {
-        String text = "GAME OVER";
+        String text = isWin ? "YOU WIN!" : "GAME OVER";
         gc.setFont(Font.font("Arial Black", FontWeight.EXTRA_BOLD, 90));
         gc.setTextAlign(TextAlignment.CENTER);
         double cx = Config.LOGICAL_WIDTH * 0.3;
@@ -87,7 +88,7 @@ public class GameOverState implements GameState {
         gc.setLineWidth(12.0);
         gc.strokeText(text, cx, cy);
         
-        gc.setFill(UIUtils.RED);
+        gc.setFill(isWin ? UIUtils.YELLOW : UIUtils.RED);
         gc.fillText(text, cx, cy);
 
         if (newHighScore) {
