@@ -60,6 +60,17 @@ public class AssetManager {
             IMAGES.put(s, removeWhiteBackground(IMAGES.get(s)));
         }
         
+        loadImage("obs_train", "obs_train.jpg");
+        loadImage("obs_ramp_tex", "obs_ramp_tex.jpg");
+        loadImage("obs_jump", "obs_jump.jpg");
+        loadImage("obs_slide", "obs_slide.jpg");
+        loadImage("item_coin", "item_coin.jpg");
+        
+        String[] obstacles = {"obs_train", "obs_jump", "obs_slide", "item_coin"};
+        for (String o : obstacles) {
+            IMAGES.put(o, removeWhiteBackground(IMAGES.get(o)));
+        }
+        
         loadImage("cheryl_run_1", "runners/cheryl_run-1.png");
         loadImage("cheryl_run_2", "runners/cheryl_run-2.png");
         loadImage("dave_run_1", "runners/dave_run-1.png");
