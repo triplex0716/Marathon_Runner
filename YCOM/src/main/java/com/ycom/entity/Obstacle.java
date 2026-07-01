@@ -29,7 +29,7 @@ public class Obstacle extends RenderableObject {
             if (avoidMethod == AvoidMethod.CONTAINER && player.floorY() > 0.0) {
                 return;
             }
-            if (player.isBoosted()) {
+            if (player.isInvulnerable()) {
                 active = false;
                 context.eventBus().publish(new ObstacleDestroyedEvent(
                         id, player.id,

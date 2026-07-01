@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class AccountStore {
+    public static final int MIN_USERNAME = 3;
     public static final int MAX_USERNAME = 16;
     public static final int MIN_PASSWORD = 6;
     public static final int MAX_PASSWORD = 32;
@@ -121,6 +122,7 @@ public class AccountStore {
 
     private static void validateUsername(String s) {
         if (s == null || s.isEmpty()) throw new IllegalArgumentException("EMPTY");
+        if (s.length() < MIN_USERNAME) throw new IllegalArgumentException("USER_SHORT");
         if (s.length() > MAX_USERNAME) throw new IllegalArgumentException("TOO_LONG");
         if (s.indexOf(';') >= 0 || s.indexOf('\n') >= 0 || s.indexOf('\r') >= 0) {
             throw new IllegalArgumentException("BAD_CHAR");
