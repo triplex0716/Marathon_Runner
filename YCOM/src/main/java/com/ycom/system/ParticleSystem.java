@@ -34,17 +34,14 @@ public class ParticleSystem {
     }
 
     public void update(double dt, double playerZ) {
-        for (int i = shards.size() - 1; i >= 0; i--) {
-            Shard s = shards.get(i);
+        for (Shard s : shards) {
             s.vy += GRAVITY * dt;
             s.x += s.vx * dt;
             s.y += s.vy * dt;
             s.z += s.vz * dt;
             s.life -= dt;
-            if (s.life <= 0.0 || s.y < 0.0 || s.z < playerZ - 35.0) {
-                shards.remove(i);
-            }
         }
+        shards.removeIf(s -> s.life <= 0.0 || s.y < 0.0 || s.z < playerZ - 35.0);
     }
 
     public void draw(GraphicsContext gc, double camX, double camY, double camZ) {

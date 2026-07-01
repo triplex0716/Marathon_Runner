@@ -22,13 +22,13 @@ public class AudioManager {
         stopBGM();
         SFX.clear();
 
-        bgmPlayer = loadBgm("BackgroundMusic.wav", "BackgroundMusic.mp3");
-        loadSfx("coin", "coin.wav", "coin.mp3");
-        loadSfx("fail", "fail.wav", "fail.mp3");
-        loadSfx("invincible", "invincible.wav", "invincible.mp3");
-        loadSfx("win", "win.wav", "win.mp3");
-        loadSfx("obstacle_break", "obstacle_break.wav", "obstacle_break.mp3");
-        loadSfx("ascension", "ascension.mp3");
+        bgmPlayer = loadBgm("BackgroundMusic.wav");
+        loadSfx("coin", "coin.wav");
+        loadSfx("fail", "fail.wav");
+        loadSfx("invincible", "invincible.wav");
+        loadSfx("win", "win.wav");
+        loadSfx("obstacle_break", "obstacle_break.wav");
+        loadSfx("ascension", "ascension.wav");
     }
 
     public static void playBGM() {
