@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class InstructionState implements GameState {
@@ -71,34 +72,65 @@ public class InstructionState implements GameState {
 
         gc.setFill(UIUtils.BORDER);
         gc.setTextAlign(TextAlignment.LEFT);
-        gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 36.0));
-        gc.fillText("CONTROLS", x + 30.0, y + 50.0);
+        gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 32.0));
+        gc.fillText("STORY", x + 30.0, y + 50.0);
 
-        drawControlLine(gc, x + 30.0, y + 120.0, "A / Left", "Move left");
-        drawControlLine(gc, x + 30.0, y + 200.0, "D / Right", "Move right");
-        drawControlLine(gc, x + 30.0, y + 280.0, "W / Up", "Jump");
-        drawControlLine(gc, x + 30.0, y + 360.0, "S / Down", "Slide");
-        drawControlLine(gc, x + 30.0, y + 440.0, "Space", "Pause");
-        drawControlLine(gc, x + 30.0, y + 520.0, "Esc / Q", "Back");
+        Font bodyFont = Font.font("Arial Black", FontWeight.NORMAL, 17.0);
+        String story = "You are a runner trapped on a neon city track, chased by pressure, speed, and whatever waits beyond the next stretch of road. Streets, trains, barricades, and power-ups rush toward you without warning, so survival depends on rhythm, quick lane choices, and staying calm as the run keeps getting faster.";
+        String howToPlay = "Use A/Left and D/Right to move between the three lanes.\n"
+                + "Press W/Up to jump over low obstacles,\n"
+                + "press S/Down to slide under high obstacles,\n"
+                + "press Space to pause, and press Esc or Q to return to the menu.\n"
+                + "Collect coins to raise your score and grab useful items whenever you can. Your goal is to collect as many coins as possible and reach the goal!";
+
+        double textX = x + 30.0;
+        double textW = w - 60.0;
+        double nextY = drawWrappedParagraph(gc, story, textX, y + 88.0, textW, bodyFont, 27.0);
+
+        gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 32.0));
+        gc.setFill(UIUtils.BORDER);
+        gc.fillText("HOW TO PLAY", x + 30.0, nextY + 44.0);
+
+        drawWrappedParagraph(gc, howToPlay, textX, nextY + 78.0, textW, bodyFont, 27.0);
     }
 
-    private void drawControlLine(GraphicsContext gc, double x, double y, String key, String action) {
+    private double drawWrappedParagraph(GraphicsContext gc, String paragraph, double x, double y,
+                                        double maxWidth, Font font, double lineHeight) {
         gc.setFill(UIUtils.BORDER);
-        gc.fillRect(x + 4, y - 40 + 4, 150, 54);
-        gc.setFill(UIUtils.WHITE);
-        gc.fillRect(x, y - 40, 150, 54);
-        gc.setStroke(UIUtils.BORDER);
-        gc.setLineWidth(3.0);
-        gc.strokeRect(x, y - 40, 150, 54);
-
-        gc.setFill(UIUtils.BORDER);
-        gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 22.0));
-        gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText(key, x + 75.0, y - 4.0);
-
+        gc.setFont(font);
         gc.setTextAlign(TextAlignment.LEFT);
-        gc.setFont(Font.font("Arial Black", FontWeight.NORMAL, 28.0));
-        gc.fillText(action, x + 170.0, y - 2.0);
+
+        double drawY = y;
+        String[] explicitLines = paragraph.split("\\R", -1);
+        for (String explicitLine : explicitLines) {
+            StringBuilder line = new StringBuilder();
+            for (int i = 0; i < explicitLine.length(); i++) {
+                char ch = explicitLine.charAt(i);
+                String candidate = line.toString() + ch;
+                if (line.length() > 0 && textWidth(candidate, font) > maxWidth) {
+                    gc.fillText(line.toString().stripTrailing(), x, drawY);
+                    drawY += lineHeight;
+                    line.setLength(0);
+                    if (!Character.isWhitespace(ch)) {
+                        line.append(ch);
+                    }
+                } else {
+                    line.append(ch);
+                }
+            }
+
+            if (line.length() > 0) {
+                gc.fillText(line.toString().stripTrailing(), x, drawY);
+            }
+            drawY += lineHeight;
+        }
+        return drawY;
+    }
+
+    private double textWidth(String text, Font font) {
+        Text helper = new Text(text);
+        helper.setFont(font);
+        return helper.getLayoutBounds().getWidth();
     }
 
     private void drawItems(GraphicsContext gc) {
