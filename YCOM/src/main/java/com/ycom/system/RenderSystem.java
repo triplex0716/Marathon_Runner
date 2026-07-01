@@ -25,6 +25,17 @@ public class RenderSystem {
     private final Canvas canvas;
     private final double cx;
     private final double horizonY;
+    private final List<GameObject> renderList = new ArrayList<>();
+    private final javafx.scene.effect.PerspectiveTransform sharedPt = new javafx.scene.effect.PerspectiveTransform();
+    private final Projection sharedObjP = new Projection();
+    private final Projection frontP = new Projection();
+    private final Projection backP = new Projection();
+    private final Projection pt1 = new Projection();
+    private final Projection pt2 = new Projection();
+    private final Projection pt3 = new Projection();
+    private final Projection pt4 = new Projection();
+    private final Projection pt5 = new Projection();
+    private final Projection pt6 = new Projection();
 
     public RenderSystem(Canvas canvas) {
         this.canvas = canvas;
@@ -78,58 +89,59 @@ public class RenderSystem {
     }
 
     private void drawObjects(GraphicsContext gc, GameWorld world, Player player, double camX, double camY, double camZ) {
-        List<GameObject> objects = new ArrayList<>(world.getObjects());
-        objects.add(player);
-        objects.sort((a, b) -> Double.compare(b.z, a.z));
+        renderList.clear();
+        renderList.addAll(world.getObjects());
+        renderList.add(player);
+        renderList.sort((a, b) -> Double.compare(b.z, a.z));
 
-        for (GameObject obj : objects) {
+        for (GameObject obj : renderList) {
             if (!obj.active || obj.z < camZ + 0.8) {
                 continue;
             }
 
-            Projection p = project(obj, camX, camY, camZ);
-            if (p.scale <= 0.0 || p.x + p.width < -200.0 || p.x - p.width > Config.LOGICAL_WIDTH + 200.0) {
+            project(obj, camX, camY, camZ, sharedObjP);
+            if (sharedObjP.scale <= 0.0 || sharedObjP.x + sharedObjP.width < -200.0 || sharedObjP.x - sharedObjP.width > Config.LOGICAL_WIDTH + 200.0) {
                 continue;
             }
 
             switch (obj.kind()) {
-                case PLAYER -> drawPlayer(gc, (Player) obj, p);
-                case COIN -> drawCoin(gc, p);
+                case PLAYER -> drawPlayer(gc, (Player) obj, sharedObjP);
+                case COIN -> drawCoin(gc, sharedObjP);
                 case MAGNET -> {
                     double phase = ((AnimatedObject) obj).animationTime() * 4.0;
-                    drawCoinFlipIcon(gc, p, AssetManager.magnetIcon(), Color.MEDIUMPURPLE, "M", phase);
+                    drawCoinFlipIcon(gc, sharedObjP, AssetManager.magnetIcon(), Color.MEDIUMPURPLE, "M", phase);
                 }
                 case ENERGY_DRINK -> {
                     double phase = ((AnimatedObject) obj).animationTime() * 4.0;
-                    drawCoinFlipIcon(gc, p, AssetManager.spriteIcon(), Color.MEDIUMPURPLE, "S", phase);
+                    drawCoinFlipIcon(gc, sharedObjP, AssetManager.spriteIcon(), Color.MEDIUMPURPLE, "S", phase);
                 }
                 case REVIVAL_CAPSULE -> {
                     double phase = ((AnimatedObject) obj).animationTime() * 6.0;
-                    drawBobbingIcon(gc, p, AssetManager.revivalIcon(), Color.CRIMSON, "+", phase);
+                    drawBobbingIcon(gc, sharedObjP, AssetManager.revivalIcon(), Color.CRIMSON, "+", phase);
                 }
                 case TREADMILL -> {
                     double phase = ((AnimatedObject) obj).animationTime() * 4.0;
-                    drawCoinFlipIcon(gc, p, AssetManager.treadmillIcon(), Color.DARKORANGE, "x2", phase);
+                    drawCoinFlipIcon(gc, sharedObjP, AssetManager.treadmillIcon(), Color.DARKORANGE, "x2", phase);
                 }
                 case RANDOM_ITEM -> {
                     double phase = ((AnimatedObject) obj).animationTime() * 6.0;
-                    drawBobbingIcon(gc, p, AssetManager.randomIcon(), Color.DARKSLATEGRAY, "?", phase);
+                    drawBobbingIcon(gc, sharedObjP, AssetManager.randomIcon(), Color.DARKSLATEGRAY, "?", phase);
                 }
-                case OBSTACLE -> drawObstacle(gc, (Obstacle) obj, p, camX, camY, camZ);
+                case OBSTACLE -> drawObstacle(gc, (Obstacle) obj, sharedObjP, camX, camY, camZ);
             }
         }
     }
 
-    private Projection project(GameObject obj, double camX, double camY, double camZ) {
-        return project(obj.x, obj.y, obj.z, obj.width, obj.height, camX, camY, camZ);
+    private void project(GameObject obj, double camX, double camY, double camZ, Projection out) {
+        project(obj.x, obj.y, obj.z, obj.width, obj.height, camX, camY, camZ, out);
     }
 
-    private Projection project(double x, double y, double z, double width, double height, double camX, double camY, double camZ) {
+    private void project(double x, double y, double z, double width, double height, double camX, double camY, double camZ, Projection out) {
         double distZ = Math.max(0.5, z - camZ);
         double scale = Config.FOCAL_LENGTH / distZ;
         double screenX = cx + (x - camX) * scale;
         double screenY = horizonY - (y + height / 2.0 - camY) * scale;
-        return new Projection(screenX, screenY, width * scale, height * scale, scale);
+        out.update(screenX, screenY, width * scale, height * scale, scale);
     }
 
     private void drawPlayer(GraphicsContext gc, Player player, Projection p) {
@@ -267,18 +279,18 @@ public class RenderSystem {
         double fZ = obstacle.z - obstacle.depth / 2.0;
         double bZ = obstacle.z + obstacle.depth / 2.0;
         
-        Projection front = project(obstacle.x, obstacle.y, fZ, obstacle.width * 0.95, obstacle.height * 0.95, camX, camY, camZ);
-        Projection back = project(obstacle.x, obstacle.y + 0.12, bZ, obstacle.width * 0.95, obstacle.height * 0.95, camX, camY, camZ);
+        project(obstacle.x, obstacle.y, fZ, obstacle.width * 0.95, obstacle.height * 0.95, camX, camY, camZ, frontP);
+        project(obstacle.x, obstacle.y + 0.12, bZ, obstacle.width * 0.95, obstacle.height * 0.95, camX, camY, camZ, backP);
 
-        double frontLeft = front.x - front.width * 0.45;
-        double frontRight = front.x + front.width * 0.45;
-        double frontTop = front.y - front.height * 0.48;
-        double frontBottom = front.y + front.height * 0.32;
+        double frontLeft = frontP.x - frontP.width * 0.45;
+        double frontRight = frontP.x + frontP.width * 0.45;
+        double frontTop = frontP.y - frontP.height * 0.48;
+        double frontBottom = frontP.y + frontP.height * 0.32;
 
-        double backLeft = back.x - back.width * 0.45;
-        double backRight = back.x + back.width * 0.45;
-        double backTop = back.y - back.height * 0.48;
-        double backBottom = back.y + back.height * 0.32;
+        double backLeft = backP.x - backP.width * 0.45;
+        double backRight = backP.x + backP.width * 0.45;
+        double backTop = backP.y - backP.height * 0.48;
+        double backBottom = backP.y + backP.height * 0.32;
 
         Image topImg, sideImg, frontImg;
         if (obstacle.avoidMethod() == Obstacle.AvoidMethod.CONTAINER) {
@@ -356,14 +368,14 @@ public class RenderSystem {
         double fZ = obstacle.z - obstacle.depth / 2.0;
         double bZ = obstacle.z + obstacle.depth / 2.0;
         
-        Projection pFrontBottomLeft = project(obstacle.x - obstacle.width / 2.0, obstacle.y, fZ, 0, 0, camX, camY, camZ);
-        Projection pFrontBottomRight = project(obstacle.x + obstacle.width / 2.0, obstacle.y, fZ, 0, 0, camX, camY, camZ);
+        project(obstacle.x - obstacle.width / 2.0, obstacle.y, fZ, 0, 0, camX, camY, camZ, pt1);
+        project(obstacle.x + obstacle.width / 2.0, obstacle.y, fZ, 0, 0, camX, camY, camZ, pt2);
         
-        Projection pBackTopLeft = project(obstacle.x - obstacle.width / 2.0, obstacle.y + obstacle.height, bZ, 0, 0, camX, camY, camZ);
-        Projection pBackTopRight = project(obstacle.x + obstacle.width / 2.0, obstacle.y + obstacle.height, bZ, 0, 0, camX, camY, camZ);
+        project(obstacle.x - obstacle.width / 2.0, obstacle.y + obstacle.height, bZ, 0, 0, camX, camY, camZ, pt3);
+        project(obstacle.x + obstacle.width / 2.0, obstacle.y + obstacle.height, bZ, 0, 0, camX, camY, camZ, pt4);
         
-        Projection pBackBottomLeft = project(obstacle.x - obstacle.width / 2.0, obstacle.y, bZ, 0, 0, camX, camY, camZ);
-        Projection pBackBottomRight = project(obstacle.x + obstacle.width / 2.0, obstacle.y, bZ, 0, 0, camX, camY, camZ);
+        project(obstacle.x - obstacle.width / 2.0, obstacle.y, bZ, 0, 0, camX, camY, camZ, pt5);
+        project(obstacle.x + obstacle.width / 2.0, obstacle.y, bZ, 0, 0, camX, camY, camZ, pt6);
         
         Image rampSlopeImg = AssetManager.rampSlope();
         Image rampSideImg = AssetManager.rampSide();
@@ -371,72 +383,72 @@ public class RenderSystem {
         // Slope
         if (rampSlopeImg != null && rampSlopeImg.getWidth() > 0) {
             drawPerspectiveImage(gc, rampSlopeImg, 
-                pBackTopLeft.x, pBackTopLeft.y, 
-                pBackTopRight.x, pBackTopRight.y, 
-                pFrontBottomRight.x, pFrontBottomRight.y, 
-                pFrontBottomLeft.x, pFrontBottomLeft.y);
+                pt3.x, pt3.y, 
+                pt4.x, pt4.y, 
+                pt2.x, pt2.y, 
+                pt1.x, pt1.y);
         } else {
             gc.setFill(Color.rgb(150, 150, 150));
             gc.fillPolygon(
-                new double[] {pBackTopLeft.x, pBackTopRight.x, pFrontBottomRight.x, pFrontBottomLeft.x},
-                new double[] {pBackTopLeft.y, pBackTopRight.y, pFrontBottomRight.y, pFrontBottomLeft.y},
+                new double[] {pt3.x, pt4.x, pt2.x, pt1.x},
+                new double[] {pt3.y, pt4.y, pt2.y, pt1.y},
                 4
             );
         }
 
         // Left face
-        if (pFrontBottomLeft.x > pBackBottomLeft.x) {
+        if (pt1.x > pt5.x) {
             if (rampSideImg != null && rampSideImg.getWidth() > 0) {
                 gc.save();
                 gc.beginPath();
-                gc.moveTo(pBackTopLeft.x, pBackTopLeft.y);
-                gc.lineTo(pFrontBottomLeft.x, pFrontBottomLeft.y);
-                gc.lineTo(pBackBottomLeft.x, pBackBottomLeft.y);
+                gc.moveTo(pt3.x, pt3.y);
+                gc.lineTo(pt1.x, pt1.y);
+                gc.lineTo(pt5.x, pt5.y);
                 gc.closePath();
                 gc.clip();
                 
-                Projection pFrontTopLeft = project(obstacle.x - obstacle.width / 2.0, obstacle.y + obstacle.height, fZ, 0, 0, camX, camY, camZ);
+                project(obstacle.x - obstacle.width / 2.0, obstacle.y + obstacle.height, fZ, 0, 0, camX, camY, camZ, frontP);
                 drawPerspectiveImage(gc, rampSideImg,
-                    pBackTopLeft.x, pBackTopLeft.y,
-                    pFrontTopLeft.x, pFrontTopLeft.y,
-                    pFrontBottomLeft.x, pFrontBottomLeft.y,
-                    pBackBottomLeft.x, pBackBottomLeft.y
+                    pt3.x, pt3.y,
+                    frontP.x, frontP.y,
+                    pt1.x, pt1.y,
+                    pt5.x, pt5.y
                 );
                 gc.restore();
             } else {
                 gc.setFill(Color.rgb(100, 100, 100));
                 gc.fillPolygon(
-                    new double[] {pBackTopLeft.x, pFrontBottomLeft.x, pBackBottomLeft.x},
-                    new double[] {pBackTopLeft.y, pFrontBottomLeft.y, pBackBottomLeft.y},
+                    new double[] {pt3.x, pt1.x, pt5.x},
+                    new double[] {pt3.y, pt1.y, pt5.y},
                     3
                 );
             }
         }
         
         // Right face
-        if (pFrontBottomRight.x < pBackBottomRight.x) {
+        if (pt2.x < pt6.x) {
             if (rampSideImg != null && rampSideImg.getWidth() > 0) {
                 gc.save();
                 gc.beginPath();
-                gc.moveTo(pBackTopRight.x, pBackTopRight.y);
-                gc.lineTo(pFrontBottomRight.x, pFrontBottomRight.y);
-                gc.lineTo(pBackBottomRight.x, pBackBottomRight.y);
+                gc.moveTo(pt4.x, pt4.y);
+                gc.lineTo(pt2.x, pt2.y);
+                gc.lineTo(pt6.x, pt6.y);
                 gc.closePath();
                 gc.clip();
                 
-                Projection pFrontTopRight = project(obstacle.x + obstacle.width / 2.0, obstacle.y + obstacle.height, fZ, 0, 0, camX, camY, camZ);
+                project(obstacle.x + obstacle.width / 2.0, obstacle.y + obstacle.height, fZ, 0, 0, camX, camY, camZ, frontP);
                 drawPerspectiveImage(gc, rampSideImg,
-                    pFrontTopRight.x, pFrontTopRight.y,
-                    pBackTopRight.x, pBackTopRight.y,
-                    pBackBottomRight.x, pBackBottomRight.y,
-                    pFrontBottomRight.x, pFrontBottomRight.y
+                    frontP.x, frontP.y,
+                    pt4.x, pt4.y,
+                    pt6.x, pt6.y,
+                    pt2.x, pt2.y
                 );
                 gc.restore();
             } else {
                 gc.setFill(Color.rgb(100, 100, 100));
                 gc.fillPolygon(
-                    new double[] {pBackTopRight.x, pFrontBottomRight.x, pBackBottomRight.x},
-                    new double[] {pBackTopRight.y, pFrontBottomRight.y, pBackBottomRight.y},
+                    new double[] {pt4.x, pt2.x, pt6.x},
+                    new double[] {pt4.y, pt2.y, pt6.y},
                     3
                 );
             }
@@ -449,12 +461,11 @@ public class RenderSystem {
                                       double lrx, double lry, 
                                       double llx, double lly) {
         if (img == null || img.getWidth() <= 0) return;
-        javafx.scene.effect.PerspectiveTransform pt = new javafx.scene.effect.PerspectiveTransform();
-        pt.setUlx(ulx); pt.setUly(uly);
-        pt.setUrx(urx); pt.setUry(ury);
-        pt.setLrx(lrx); pt.setLry(lry);
-        pt.setLlx(llx); pt.setLly(lly);
-        gc.setEffect(pt);
+        sharedPt.setUlx(ulx); sharedPt.setUly(uly);
+        sharedPt.setUrx(urx); sharedPt.setUry(ury);
+        sharedPt.setLrx(lrx); sharedPt.setLry(lry);
+        sharedPt.setLlx(llx); sharedPt.setLly(lly);
+        gc.setEffect(sharedPt);
         gc.drawImage(img, 0, 0, img.getWidth(), img.getHeight());
         gc.setEffect(null);
     }
@@ -597,6 +608,19 @@ public class RenderSystem {
         return result < 0.0 ? result + mod : result;
     }
 
-    private record Projection(double x, double y, double width, double height, double scale) {
+    private static final class Projection {
+        double x;
+        double y;
+        double width;
+        double height;
+        double scale;
+        
+        void update(double x, double y, double width, double height, double scale) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.scale = scale;
+        }
     }
 }

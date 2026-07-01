@@ -45,10 +45,16 @@ public class GameLoop extends AnimationTimer {
         accumulator += frameTime;
 
         double fixedDt = TimeManager.getFixedDt();
-        while (accumulator >= fixedDt) {
+        int maxUpdates = 5;
+        int updates = 0;
+        while (accumulator >= fixedDt && updates < maxUpdates) {
             inputSystem.update();
             stateManager.update(fixedDt);
             accumulator -= fixedDt;
+            updates++;
+        }
+        if (accumulator >= fixedDt) {
+            accumulator = 0; // Prevent death spiral if we hit maxUpdates
         }
 
         GraphicsContext gc = getGraphicsContext();

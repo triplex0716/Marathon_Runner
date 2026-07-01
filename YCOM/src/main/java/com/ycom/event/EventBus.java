@@ -20,7 +20,8 @@ public final class EventBus {
     }
 
     public void dispatchQueuedEvents() {
-        while (!queue.isEmpty()) {
+        int count = queue.size();
+        for (int i = 0; i < count; i++) {
             GameEvent event = queue.poll();
             dispatch(event);
         }

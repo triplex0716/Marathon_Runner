@@ -14,7 +14,7 @@ public class AssetManager {
         IMAGES.clear();
         FRAME_COUNTS.clear();
         loadImage("background", "T-Pose.jpg");
-        loadImage("player", "zxf.png");
+        loadImage("player", "head.png");
         loadSprite("run", "run.png", 8);
         loadSprite("jump", "jump.png", 8);
         loadSprite("boost", "boost.png", 8);

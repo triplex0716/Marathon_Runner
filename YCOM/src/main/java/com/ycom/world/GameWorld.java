@@ -32,9 +32,7 @@ public class GameWorld {
 
         player.update(worldDt, context);
 
-        Iterator<GameObject> it = objects.iterator();
-        while (it.hasNext()) {
-            GameObject obj = it.next();
+        for (GameObject obj : objects) {
             if (obj.active) {
                 obj.update(worldDt, context);
                 if (obj.z < player.z - 35.0) {
@@ -50,10 +48,9 @@ public class GameWorld {
                         pullTowardPlayer(coin, worldDt);
                     }
                 }
-            } else {
-                it.remove();
             }
         }
+        objects.removeIf(obj -> !obj.active);
     }
 
     private boolean isInMagnetRange(GameObject obj) {
