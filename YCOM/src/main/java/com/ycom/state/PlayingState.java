@@ -299,6 +299,7 @@ public class PlayingState implements GameState {
     private void doRevive() {
         clearNearbyObstacles();
         world.getPlayer().revive();
+        eventBus.clear();
         AudioManager.playSfx("invincible");
         AudioManager.playBGM();
         awaitingRevival = false;

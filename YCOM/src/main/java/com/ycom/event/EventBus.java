@@ -19,6 +19,10 @@ public final class EventBus {
         queue.add(event);
     }
 
+    public void clear() {
+        queue.clear();
+    }
+
     public void dispatchQueuedEvents() {
         int count = queue.size();
         for (int i = 0; i < count; i++) {
