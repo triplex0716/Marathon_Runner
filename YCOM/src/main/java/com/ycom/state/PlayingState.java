@@ -380,8 +380,9 @@ public class PlayingState implements GameState {
 
     private void drawRevivalPrompt() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        // dim overlay so the running scene stays visible but unreadable
-        gc.setFill(Color.rgb(0, 0, 0, 0.62));
+        // solid overlay pattern instead of blurry shadow? Let's use a flat slightly transparent color, 
+        // but no gradients.
+        gc.setFill(Color.rgb(0, 0, 0, 0.75));
         gc.fillRect(0, 0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
 
         drawRevivePanel(gc);
@@ -405,57 +406,34 @@ public class PlayingState implements GameState {
     private void drawRevivePanel(GraphicsContext gc) {
         double x = revivePanelX();
         double y = revivePanelY();
-        // outer glow
-        gc.setFill(Color.rgb(70, 140, 255, 0.10));
-        gc.fillRoundRect(x - 16, y - 16, REVIVE_PANEL_W + 32, REVIVE_PANEL_H + 32, 34, 34);
-        gc.setFill(Color.rgb(70, 140, 255, 0.16));
-        gc.fillRoundRect(x - 6, y - 6, REVIVE_PANEL_W + 12, REVIVE_PANEL_H + 12, 28, 28);
-        // panel fill
-        LinearGradient panelFill = new LinearGradient(
-                0, y, 0, y + REVIVE_PANEL_H, false, CycleMethod.NO_CYCLE,
-                new Stop(0.0, Color.rgb(14, 22, 42, 0.92)),
-                new Stop(1.0, Color.rgb(8, 14, 30, 0.96)));
-        gc.setFill(panelFill);
-        gc.fillRoundRect(x, y, REVIVE_PANEL_W, REVIVE_PANEL_H, 26, 26);
-        gc.setStroke(Color.rgb(160, 200, 255, 0.55));
-        gc.setLineWidth(1.8);
-        gc.strokeRoundRect(x, y, REVIVE_PANEL_W, REVIVE_PANEL_H, 26, 26);
-        gc.setStroke(Color.rgb(255, 255, 255, 0.18));
-        gc.setLineWidth(1.0);
-        gc.strokeRoundRect(x + 6, y + 6, REVIVE_PANEL_W - 12, REVIVE_PANEL_H - 12, 22, 22);
+        
+        // Solid black shadow
+        gc.setFill(UIUtils.BORDER);
+        gc.fillRect(x + 10, y + 10, REVIVE_PANEL_W, REVIVE_PANEL_H);
+        
+        // Solid panel fill
+        gc.setFill(UIUtils.CYAN);
+        gc.fillRect(x, y, REVIVE_PANEL_W, REVIVE_PANEL_H);
+        
+        // Thick black border
+        gc.setStroke(UIUtils.BORDER);
+        gc.setLineWidth(6.0);
+        gc.strokeRect(x, y, REVIVE_PANEL_W, REVIVE_PANEL_H);
     }
 
     // ---------- title ----------
     private void drawReviveTitle(GraphicsContext gc) {
         double cx = Config.LOGICAL_WIDTH / 2.0;
-        double baseY = revivePanelY() + 140;
-        Font font = Font.font("Arial Black", FontWeight.BOLD,
-                javafx.scene.text.FontPosture.ITALIC, 84);
-
-        // soft yellow halo behind the text
-        gc.setFill(Color.rgb(255, 220, 90, 0.22));
-        gc.fillOval(cx - 280, baseY - 80, 560, 120);
-        gc.setFill(Color.rgb(255, 240, 150, 0.30));
-        gc.fillOval(cx - 200, baseY - 65, 400, 95);
-
-        gc.setFont(font);
+        double y = revivePanelY() + 80.0;
+        
+        gc.setFont(Font.font("Arial Black", FontWeight.EXTRA_BOLD, 48));
         gc.setTextAlign(TextAlignment.CENTER);
-        // dark outline
-        gc.setStroke(Color.rgb(80, 40, 0, 0.85));
-        gc.setLineWidth(6.0);
-        gc.strokeText("REVIVE?", cx, baseY);
-        // yellow→orange fill
-        LinearGradient titleGrad = new LinearGradient(
-                0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
-                new Stop(0.0, Color.web("#FFE26A")),
-                new Stop(1.0, Color.web("#F08A1A")));
-        gc.setFill(titleGrad);
-        gc.fillText("REVIVE?", cx, baseY);
-
-        // subtitle
-        gc.setFont(Font.font("Arial", FontWeight.NORMAL, 24));
-        gc.setFill(Color.rgb(220, 232, 250, 0.92));
-        gc.fillText("Continue your run?", cx, baseY + 50);
+        
+        gc.setStroke(UIUtils.BORDER);
+        gc.setLineWidth(8.0);
+        gc.strokeText("CONTINUE?", cx, y);
+        gc.setFill(UIUtils.YELLOW);
+        gc.fillText("CONTINUE?", cx, y);
     }
 
     // ---------- HUD cards ----------
@@ -516,183 +494,43 @@ public class PlayingState implements GameState {
     }
 
     // ---------- buttons ----------
-    private void drawCapsuleButton(GraphicsContext gc, boolean enabled, int count) {
+    private void drawCapsuleButton(GraphicsContext gc, boolean avail, int count) {
         ButtonRect r = capsuleButton();
-        Color border = Color.web("#2E92FF");
-        Color subColor = Color.web("#7EC8FF");
-        drawReviveButton(gc, r, "Use Revival Capsule", "Press Y", enabled,
-                AssetManager.revivalIcon(), false,
-                border, subColor, "x" + count, "No capsules available");
+        String text = avail ? "USE CAPSULE (" + count + ")" : "NO CAPSULES";
+        Color bg = avail ? UIUtils.PINK : Color.GRAY;
+        UIUtils.drawNeoButton(gc, input, new UIUtils.NeoBtn(r.x, r.y, r.w, r.h, bg, text, 28));
     }
 
-    private void drawCoinButton(GraphicsContext gc, boolean enabled, int cost) {
+    private void drawCoinButton(GraphicsContext gc, boolean avail, int cost) {
         ButtonRect r = coinButton();
-        Color border = Color.web("#FFA82E");
-        Color subColor = Color.web("#FFC73B");
-        String title = cost == Integer.MAX_VALUE
-                ? "Coin Revive Used Up"
-                : "Spend " + cost + " Coins";
-        drawReviveButton(gc, r, title, "Press C", enabled,
-                AssetManager.coinIcon(), false,
-                border, subColor, null, "Not enough coins");
+        String text = "USE COINS";
+        if (cost != Integer.MAX_VALUE) {
+            text += " (" + cost + ")";
+            if (!avail) text += " - NEED MORE";
+        } else {
+            text = "COIN REVIVE MAXED";
+        }
+        Color bg = avail ? UIUtils.YELLOW : Color.GRAY;
+        UIUtils.drawNeoButton(gc, input, new UIUtils.NeoBtn(r.x, r.y, r.w, r.h, bg, text, 28));
     }
 
     private void drawQuitButton(GraphicsContext gc) {
         ButtonRect r = quitButton();
-        Color border = Color.web("#FF4747");
-        Color subColor = Color.web("#FF7878");
-        drawReviveButton(gc, r, "Quit to Menu", "Press N", true,
-                null, true,
-                border, subColor, null, null);
-    }
-
-    private void drawReviveButton(GraphicsContext gc, ButtonRect r,
-                                  String title, String sub, boolean enabled,
-                                  Image icon, boolean doorIcon,
-                                  Color borderColor, Color subColor,
-                                  String iconBadge, String disabledHint) {
-        boolean clickable = enabled;
-        boolean hovered = clickable && r.contains(input.getMouseX(), input.getMouseY());
-        double effectiveAlpha = enabled ? 1.0 : 0.50;
-        gc.setGlobalAlpha(effectiveAlpha);
-
-        if (hovered) {
-            gc.setFill(tintAlpha(borderColor, 0.32));
-            gc.fillRoundRect(r.x - 8, r.y - 8, r.w + 16, r.h + 16, 24, 24);
-        }
-        LinearGradient fill = new LinearGradient(
-                0, r.y, 0, r.y + r.h, false, CycleMethod.NO_CYCLE,
-                new Stop(0.0, Color.rgb(16, 26, 48, 0.94)),
-                new Stop(1.0, Color.rgb(10, 18, 36, 0.96)));
-        gc.setFill(fill);
-        gc.fillRoundRect(r.x, r.y, r.w, r.h, 22, 22);
-        if (hovered) {
-            gc.setFill(tintAlpha(borderColor, 0.12));
-            gc.fillRoundRect(r.x, r.y, r.w, r.h, 22, 22);
-        }
-        gc.setStroke(hovered ? brightenColor(borderColor, 0.20) : borderColor);
-        gc.setLineWidth(hovered ? 3.6 : 2.6);
-        gc.strokeRoundRect(r.x, r.y, r.w, r.h, 22, 22);
-
-        double iconSize = 76;
-        double iconX = r.x + 22;
-        double iconY = r.y + (r.h - iconSize) / 2.0;
-        if (doorIcon) {
-            drawDoorIcon(gc, iconX, iconY, iconSize, borderColor);
-        } else if (icon != null) {
-            gc.drawImage(icon, iconX, iconY, iconSize, iconSize);
-        }
-
-        if (iconBadge != null) {
-            double badgeX = iconX + iconSize - 30;
-            double badgeY = iconY + iconSize - 26;
-            gc.setFill(Color.rgb(14, 22, 42, 0.92));
-            gc.fillRoundRect(badgeX - 6, badgeY - 4, 50, 28, 14, 14);
-            gc.setStroke(borderColor);
-            gc.setLineWidth(1.6);
-            gc.strokeRoundRect(badgeX - 6, badgeY - 4, 50, 28, 14, 14);
-            gc.setFill(Color.WHITE);
-            gc.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-            gc.setTextAlign(TextAlignment.CENTER);
-            gc.fillText(iconBadge, badgeX + 19, badgeY + 16);
-        }
-
-        gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 32));
-        gc.setTextAlign(TextAlignment.LEFT);
-        gc.fillText(title, r.x + 130, r.y + 50);
-        gc.setFill(subColor);
-        gc.setFont(Font.font("Arial", FontWeight.NORMAL, 22));
-        gc.fillText(sub, r.x + 130, r.y + 84);
-
-        drawReviveArrow(gc, r.x + r.w - 44, r.y + r.h / 2.0, 20);
-
-        gc.setGlobalAlpha(1.0);
-
-        if (!enabled && disabledHint != null) {
-            // small warning circle with "!" then the message text
-            double warnY = r.y + r.h - 16;
-            double warnTextRight = r.x + r.w - 20;
-            gc.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-            gc.setFill(Color.web("#FF5C5C"));
-            gc.setTextAlign(TextAlignment.RIGHT);
-            gc.fillText(disabledHint, warnTextRight, warnY);
-            double textW = textWidthLocal(disabledHint,
-                    Font.font("Arial", FontWeight.BOLD, 18));
-            double circleX = warnTextRight - textW - 22;
-            gc.setFill(Color.web("#FF5C5C"));
-            gc.fillOval(circleX, warnY - 16, 18, 18);
-            gc.setFill(Color.WHITE);
-            gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 14));
-            gc.setTextAlign(TextAlignment.CENTER);
-            gc.fillText("!", circleX + 9, warnY - 2);
-        }
-    }
-
-    private double textWidthLocal(String s, Font f) {
-        Text helper = new Text(s);
-        helper.setFont(f);
-        return helper.getLayoutBounds().getWidth();
-    }
-
-    private Color tintAlpha(Color base, double opacity) {
-        return new Color(base.getRed(), base.getGreen(), base.getBlue(), opacity);
-    }
-
-    private Color brightenColor(Color base, double amount) {
-        double a = Math.max(0.0, Math.min(1.0, amount));
-        double r = base.getRed() + (1.0 - base.getRed()) * a;
-        double g = base.getGreen() + (1.0 - base.getGreen()) * a;
-        double b = base.getBlue() + (1.0 - base.getBlue()) * a;
-        return new Color(r, g, b, base.getOpacity());
-    }
-
-    private void drawDoorIcon(GraphicsContext gc, double x, double y, double size, Color color) {
-        gc.setStroke(color);
-        gc.setLineWidth(4.0);
-        gc.setLineCap(StrokeLineCap.ROUND);
-        double doorW = size * 0.50;
-        gc.strokeLine(x, y + 4, x, y + size - 4);
-        gc.strokeLine(x, y + 4, x + doorW, y + 4);
-        gc.strokeLine(x, y + size - 4, x + doorW, y + size - 4);
-        gc.strokeLine(x + doorW, y + 4, x + doorW, y + size - 4);
-        // exit arrow
-        gc.strokeLine(x + doorW * 0.6, y + size / 2.0, x + size, y + size / 2.0);
-        gc.strokeLine(x + size, y + size / 2.0, x + size * 0.78, y + size * 0.28);
-        gc.strokeLine(x + size, y + size / 2.0, x + size * 0.78, y + size * 0.72);
-        gc.setLineCap(StrokeLineCap.BUTT);
-    }
-
-    private void drawReviveArrow(GraphicsContext gc, double cx, double cy, double size) {
-        gc.setStroke(Color.WHITE);
-        gc.setLineWidth(5.0);
-        gc.setLineCap(StrokeLineCap.ROUND);
-        double half = size * 0.5;
-        gc.strokeLine(cx - half, cy - half * 0.8, cx + half * 0.4, cy);
-        gc.strokeLine(cx - half, cy + half * 0.8, cx + half * 0.4, cy);
-        gc.setLineCap(StrokeLineCap.BUTT);
+        UIUtils.drawNeoButton(gc, input, new UIUtils.NeoBtn(r.x, r.y, r.w, r.h, UIUtils.WHITE, "GIVE UP", 28));
     }
 
     // ---------- footer ----------
     private void drawReviveFooter(GraphicsContext gc) {
         double y = revivePanelY() + REVIVE_PANEL_H - 32;
         double cx = Config.LOGICAL_WIDTH / 2.0;
-        String text = "Tip: Collect coins and power-ups to run further!";
-        Font font = Font.font("Arial", javafx.scene.text.FontPosture.ITALIC, 20);
-        double textW = textWidthLocal(text, font);
-        double textX = cx - textW / 2.0 + 18;
-        drawBulbIcon(gc, textX - 32, y - 22, 22);
-        gc.setFont(font);
-        gc.setFill(Color.rgb(210, 222, 245, 0.78));
-        gc.setTextAlign(TextAlignment.LEFT);
-        gc.fillText(text, textX, y);
-    }
-
-    private void drawBulbIcon(GraphicsContext gc, double x, double y, double size) {
-        gc.setFill(Color.web("#FFC73B"));
-        gc.fillOval(x + size * 0.10, y, size * 0.80, size * 0.70);
-        gc.setFill(Color.rgb(150, 100, 20));
-        gc.fillRoundRect(x + size * 0.25, y + size * 0.65, size * 0.50, size * 0.22, 4, 4);
+        String text = "TIP: COLLECT COINS TO RUN FURTHER!";
+        gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 20));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setStroke(UIUtils.BORDER);
+        gc.setLineWidth(4.0);
+        gc.strokeText(text, cx, y);
+        gc.setFill(UIUtils.YELLOW);
+        gc.fillText(text, cx, y);
     }
 
     private record ButtonRect(double x, double y, double w, double h) {

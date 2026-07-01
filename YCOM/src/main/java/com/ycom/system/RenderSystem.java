@@ -20,6 +20,7 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import com.ycom.state.UIUtils;
 
 public class RenderSystem {
     private final Canvas canvas;
@@ -43,6 +44,7 @@ public class RenderSystem {
         double camZ = player.z + Config.CAMERA_OFFSET_Z;
 
         drawTrack(gc, camX, camY, camZ);
+        drawScenery(gc, camX, camY, camZ);
         drawObjects(gc, world, player, camX, camY, camZ);
         particles.draw(gc, camX, camY, camZ);
         drawHud(gc, player, scoreSystem);
@@ -52,29 +54,35 @@ public class RenderSystem {
         Image background = AssetManager.background();
         if (background != null && background.getWidth() > 0.0) {
             drawCover(gc, background, 0.0, 0.0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
-            gc.setFill(Color.rgb(5, 12, 18, 0.45));
-            gc.fillRect(0.0, 0.0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
         } else {
-            gc.setFill(Color.rgb(22, 36, 44));
+            gc.setFill(UIUtils.CYAN);
             gc.fillRect(0.0, 0.0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
         }
 
-        // 绘制雪峰背景
-        gc.setFill(Color.rgb(200, 220, 230, 0.9)); // 左侧矮雪峰
-        gc.fillPolygon(
-                new double[]{ -50, Config.LOGICAL_WIDTH * 0.25, Config.LOGICAL_WIDTH * 0.6 },
-                new double[]{ horizonY, horizonY - 120, horizonY },
-                3
-        );
-        gc.setFill(Color.rgb(180, 205, 220, 0.9)); // 右侧高雪峰
-        gc.fillPolygon(
-                new double[]{ Config.LOGICAL_WIDTH * 0.35, Config.LOGICAL_WIDTH * 0.75, Config.LOGICAL_WIDTH + 100 },
-                new double[]{ horizonY, horizonY - 180, horizonY },
-                3
-        );
+        // 绘制雪峰背景 (Neo-Brutalist Style)
+        gc.setLineWidth(5.0);
+        gc.setStroke(UIUtils.BORDER);
+        
+        gc.setFill(UIUtils.WHITE); // 左侧矮雪峰
+        double[] xPoints = { -50, Config.LOGICAL_WIDTH * 0.25, Config.LOGICAL_WIDTH * 0.6 };
+        double[] yPoints = { horizonY, horizonY - 120, horizonY };
+        gc.fillPolygon(xPoints, yPoints, 3);
+        gc.strokePolygon(xPoints, yPoints, 3);
 
-        gc.setFill(Color.rgb(35, 65, 45, 0.88));
+        gc.setFill(Color.rgb(220, 220, 220)); // 右侧高雪峰
+        double[] xPoints2 = { Config.LOGICAL_WIDTH * 0.35, Config.LOGICAL_WIDTH * 0.75, Config.LOGICAL_WIDTH + 100 };
+        double[] yPoints2 = { horizonY, horizonY - 180, horizonY };
+        gc.fillPolygon(xPoints2, yPoints2, 3);
+        gc.strokePolygon(xPoints2, yPoints2, 3);
+
+        // Solid light sand ground (Ukiyo-e paper feel)
+        gc.setFill(Color.web("#F3E5AB"));
         gc.fillRect(0.0, horizonY, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT - horizonY);
+        
+        // Thick horizon line
+        gc.setLineWidth(8.0);
+        gc.setStroke(UIUtils.BORDER);
+        gc.strokeLine(0.0, horizonY, Config.LOGICAL_WIDTH, horizonY);
     }
 
     private void drawObjects(GraphicsContext gc, GameWorld world, Player player, double camX, double camY, double camZ) {
@@ -290,44 +298,47 @@ public class RenderSystem {
 
         // Top
         if (frontTop > backTop) {
+            double[] xPoints = {frontLeft, backLeft, backRight, frontRight};
+            double[] yPoints = {frontTop, backTop, backTop, frontTop};
             if (topImg != null && topImg.getWidth() > 0) {
                 drawPerspectiveImage(gc, topImg, backLeft, backTop, backRight, backTop, frontRight, frontTop, frontLeft, frontTop);
             } else {
                 gc.setFill(Color.rgb(23, 104, 160));
-                gc.fillPolygon(
-                        new double[] {frontLeft, backLeft, backRight, frontRight},
-                        new double[] {frontTop, backTop, backTop, frontTop},
-                        4
-                );
+                gc.fillPolygon(xPoints, yPoints, 4);
             }
+            gc.setStroke(UIUtils.BORDER);
+            gc.setLineWidth(4.0);
+            gc.strokePolygon(xPoints, yPoints, 4);
         }
 
         // Left
         if (frontLeft > backLeft) {
+            double[] xPoints = {frontLeft, backLeft, backLeft, frontLeft};
+            double[] yPoints = {frontTop, backTop, backBottom, frontBottom};
             if (sideImg != null && sideImg.getWidth() > 0) {
                 drawPerspectiveImage(gc, sideImg, backLeft, backTop, frontLeft, frontTop, frontLeft, frontBottom, backLeft, backBottom);
             } else {
                 gc.setFill(Color.rgb(31, 136, 198));
-                gc.fillPolygon(
-                        new double[] {frontLeft, backLeft, backLeft, frontLeft},
-                        new double[] {frontTop, backTop, backBottom, frontBottom},
-                        4
-                );
+                gc.fillPolygon(xPoints, yPoints, 4);
             }
+            gc.setStroke(UIUtils.BORDER);
+            gc.setLineWidth(4.0);
+            gc.strokePolygon(xPoints, yPoints, 4);
         }
 
         // Right
         if (frontRight < backRight) {
+            double[] xPoints = {frontRight, backRight, backRight, frontRight};
+            double[] yPoints = {frontTop, backTop, backBottom, frontBottom};
             if (sideImg != null && sideImg.getWidth() > 0) {
                 drawPerspectiveImage(gc, sideImg, frontRight, frontTop, backRight, backTop, backRight, backBottom, frontRight, frontBottom);
             } else {
-                gc.setFill(Color.rgb(31, 136, 198));
-                gc.fillPolygon(
-                        new double[] {frontRight, backRight, backRight, frontRight},
-                        new double[] {frontTop, backTop, backBottom, frontBottom},
-                        4
-                );
+                gc.setFill(Color.rgb(18, 92, 142));
+                gc.fillPolygon(xPoints, yPoints, 4);
             }
+            gc.setStroke(UIUtils.BORDER);
+            gc.setLineWidth(4.0);
+            gc.strokePolygon(xPoints, yPoints, 4);
         }
 
         // Bottom
@@ -341,12 +352,17 @@ public class RenderSystem {
         }
 
         // Front
+        double[] frontX = {frontLeft, frontRight, frontRight, frontLeft};
+        double[] frontY = {frontTop, frontTop, frontBottom, frontBottom};
         if (frontImg != null && frontImg.getWidth() > 0) {
             gc.drawImage(frontImg, frontLeft, frontTop, frontRight - frontLeft, frontBottom - frontTop);
         } else {
             gc.setFill(Color.rgb(31, 136, 198));
             gc.fillRect(frontLeft, frontTop, frontRight - frontLeft, frontBottom - frontTop);
         }
+        gc.setStroke(UIUtils.BORDER);
+        gc.setLineWidth(5.0);
+        gc.strokePolygon(frontX, frontY, 4);
     }
 
     private void drawRamp(GraphicsContext gc, Obstacle obstacle, Projection front, double camX, double camY, double camZ) {
@@ -366,6 +382,9 @@ public class RenderSystem {
         Image rampSideImg = AssetManager.rampSide();
 
         // Slope
+        // Slope
+        double[] slopeX = {pBackTopLeft.x, pBackTopRight.x, pFrontBottomRight.x, pFrontBottomLeft.x};
+        double[] slopeY = {pBackTopLeft.y, pBackTopRight.y, pFrontBottomRight.y, pFrontBottomLeft.y};
         if (rampSlopeImg != null && rampSlopeImg.getWidth() > 0) {
             drawPerspectiveImage(gc, rampSlopeImg, 
                 pBackTopLeft.x, pBackTopLeft.y, 
@@ -374,15 +393,16 @@ public class RenderSystem {
                 pFrontBottomLeft.x, pFrontBottomLeft.y);
         } else {
             gc.setFill(Color.rgb(150, 150, 150));
-            gc.fillPolygon(
-                new double[] {pBackTopLeft.x, pBackTopRight.x, pFrontBottomRight.x, pFrontBottomLeft.x},
-                new double[] {pBackTopLeft.y, pBackTopRight.y, pFrontBottomRight.y, pFrontBottomLeft.y},
-                4
-            );
+            gc.fillPolygon(slopeX, slopeY, 4);
         }
+        gc.setStroke(UIUtils.BORDER);
+        gc.setLineWidth(4.0);
+        gc.strokePolygon(slopeX, slopeY, 4);
 
         // Left face
         if (pFrontBottomLeft.x > pBackBottomLeft.x) {
+            double[] leftX = {pBackTopLeft.x, pFrontBottomLeft.x, pBackBottomLeft.x};
+            double[] leftY = {pBackTopLeft.y, pFrontBottomLeft.y, pBackBottomLeft.y};
             if (rampSideImg != null && rampSideImg.getWidth() > 0) {
                 gc.save();
                 gc.beginPath();
@@ -402,16 +422,17 @@ public class RenderSystem {
                 gc.restore();
             } else {
                 gc.setFill(Color.rgb(100, 100, 100));
-                gc.fillPolygon(
-                    new double[] {pBackTopLeft.x, pFrontBottomLeft.x, pBackBottomLeft.x},
-                    new double[] {pBackTopLeft.y, pFrontBottomLeft.y, pBackBottomLeft.y},
-                    3
-                );
+                gc.fillPolygon(leftX, leftY, 3);
             }
+            gc.setStroke(UIUtils.BORDER);
+            gc.setLineWidth(4.0);
+            gc.strokePolygon(leftX, leftY, 3);
         }
         
         // Right face
         if (pFrontBottomRight.x < pBackBottomRight.x) {
+            double[] rightX = {pBackTopRight.x, pFrontBottomRight.x, pBackBottomRight.x};
+            double[] rightY = {pBackTopRight.y, pFrontBottomRight.y, pBackBottomRight.y};
             if (rampSideImg != null && rampSideImg.getWidth() > 0) {
                 gc.save();
                 gc.beginPath();
@@ -431,12 +452,11 @@ public class RenderSystem {
                 gc.restore();
             } else {
                 gc.setFill(Color.rgb(100, 100, 100));
-                gc.fillPolygon(
-                    new double[] {pBackTopRight.x, pFrontBottomRight.x, pBackBottomRight.x},
-                    new double[] {pBackTopRight.y, pFrontBottomRight.y, pBackBottomRight.y},
-                    3
-                );
+                gc.fillPolygon(rightX, rightY, 3);
             }
+            gc.setStroke(UIUtils.BORDER);
+            gc.setLineWidth(4.0);
+            gc.strokePolygon(rightX, rightY, 3);
         }
     }
 
@@ -457,28 +477,95 @@ public class RenderSystem {
     }
 
     private void drawTrack(GraphicsContext gc, double camX, double camY, double camZ) {
-        gc.setStroke(Color.rgb(245, 245, 245, 0.75));
-        gc.setLineWidth(2.5);
-
-        double roadHalfWidth = Config.LANE_WIDTH * 1.5;
-        for (int i = -3; i <= 3; i++) {
-            double lineX = i * Config.LANE_WIDTH / 2.0;
-            drawGroundLine(gc, lineX, camX, camY);
-        }
-
-        gc.setStroke(Color.rgb(230, 230, 230, 0.42));
-        double zOffset = positiveMod(camZ, 5.0);
-        for (double z = 5.0 - zOffset; z < 220.0; z += 5.0) {
-            if (z < 1.0) {
-                continue;
+        Image roadTex = AssetManager.getImage("road_texture");
+        if (roadTex == null || roadTex.getWidth() <= 0) {
+            // Fallback if texture fails
+            gc.setStroke(UIUtils.BORDER);
+            gc.setLineWidth(5.0);
+            double roadHalfWidth = Config.LANE_WIDTH * 1.5;
+            for (int i = -3; i <= 3; i++) {
+                double lineX = i * Config.LANE_WIDTH / 2.0;
+                drawGroundLine(gc, lineX, camX, camY);
             }
-            double scale = Config.FOCAL_LENGTH / z;
-            double y = horizonY - (-camY) * scale;
-            double shiftX = cx + (0.0 - camX) * scale;
-            double halfWidth = roadHalfWidth * scale;
-            gc.strokeLine(shiftX - halfWidth, y, shiftX + halfWidth, y);
+            return;
+        }
+        
+        double roadHalfWidth = Config.LANE_WIDTH * 1.6;
+        double segmentLength = 20.0;
+        double zOffset = positiveMod(camZ, segmentLength);
+        
+        // Draw back to front to avoid bleeding
+        for (double z = 220.0 - zOffset; z > 1.0; z -= segmentLength) {
+            double farZ = z;
+            double nearZ = Math.max(0.5, z - segmentLength);
+            
+            double farScale = Config.FOCAL_LENGTH / farZ;
+            double nearScale = Config.FOCAL_LENGTH / nearZ;
+            
+            double farY = horizonY - (-camY) * farScale;
+            double nearY = horizonY - (-camY) * nearScale;
+            
+            double farShiftX = cx + (0.0 - camX) * farScale;
+            double nearShiftX = cx + (0.0 - camX) * nearScale;
+            
+            double farHalf = roadHalfWidth * farScale;
+            double nearHalf = roadHalfWidth * nearScale;
+            
+            drawPerspectiveImage(gc, roadTex,
+                farShiftX - farHalf, farY,
+                farShiftX + farHalf, farY,
+                nearShiftX + nearHalf, nearY,
+                nearShiftX - nearHalf, nearY
+            );
         }
     }
+
+    private static final String[] SCENERY_KEYS = {
+        "pagoda", "sakura", "bldg_torii", "bldg_castle", "bldg_lantern", 
+        "bldg_shop", "bldg_bamboo", "bldg_pine", "bldg_kitsune", "bldg_bell"
+    };
+
+    private void drawScenery(GraphicsContext gc, double camX, double camY, double camZ) {
+        double spacing = 50.0;
+        double zOffset = positiveMod(camZ, spacing);
+        
+        for (double dZ = 220.0 - zOffset; dZ > 1.0; dZ -= spacing) {
+            double worldZ = camZ + dZ;
+            int absZ = (int) Math.round(worldZ / spacing);
+            
+            String keyLeft = SCENERY_KEYS[Math.abs(absZ * 7) % SCENERY_KEYS.length];
+            String keyRight = SCENERY_KEYS[Math.abs(absZ * 11) % SCENERY_KEYS.length];
+            
+            Image imgLeft = AssetManager.getImage(keyLeft);
+            Image imgRight = AssetManager.getImage(keyRight);
+            
+            // Keep sizes uniform for a neat row
+            double wLeft = 45.0 + (Math.abs(absZ * 13) % 10);
+            double hLeft = wLeft * 1.5; 
+            
+            double wRight = 45.0 + (Math.abs(absZ * 17) % 10);
+            double hRight = wRight * 1.5;
+            
+            // Align perfectly with the road edge so they don't clip into the track
+            double roadEdge = 35.0;
+            double xLeft = -roadEdge - (wLeft / 2.0);
+            double xRight = roadEdge + (wRight / 2.0);
+            
+            if (imgLeft != null) drawScenerySprite(gc, imgLeft, xLeft, worldZ, wLeft, hLeft, camX, camY, camZ);
+            if (imgRight != null) drawScenerySprite(gc, imgRight, xRight, worldZ, wRight, hRight, camX, camY, camZ);
+        }
+    }
+
+    private void drawScenerySprite(GraphicsContext gc, Image img, double bX, double bZ, double bW, double bH, double camX, double camY, double camZ) {
+        if (bZ < camZ + 1.0) return;
+        Projection p = project(bX, 0, bZ, bW, bH, camX, camY, camZ);
+        if (p.scale <= 0.0) return;
+        
+        // Pin the bottom edge of the sprite exactly to the 3D ground level
+        double groundY = horizonY - (-camY) * p.scale;
+        gc.drawImage(img, p.x - p.width / 2.0, groundY - p.height, p.width, p.height);
+    }
+
 
     private void drawGroundLine(GraphicsContext gc, double lineX, double camX, double camY) {
         double nearZ = 1.0;
@@ -496,81 +583,99 @@ public class RenderSystem {
         gc.setTextAlign(TextAlignment.LEFT);
 
         boolean topRunVisible = Session.isLoggedIn() && Session.current().highScore > 0;
-        double panelH = topRunVisible ? 250.0 : 208.0;
-        gc.setFill(Color.rgb(0, 0, 0, 0.45));
-        gc.fillRoundRect(24.0, 24.0, 392.0, panelH, 10.0, 10.0);
+        double panelW = 440.0;
+        double panelH = topRunVisible ? 240.0 : 190.0;
+        double startX = 24.0;
+        double startY = 24.0;
 
-        gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 34.0));
-        double y = 72.0;
-        gc.fillText("Score " + scoreSystem.getScore(), 48.0, y);
-        y += 42.0;
+        // HUD panel shadow
+        gc.setFill(UIUtils.BORDER);
+        gc.fillRect(startX + 8, startY + 8, panelW, panelH);
+        
+        // HUD panel fill
+        gc.setFill(UIUtils.WHITE);
+        gc.fillRect(startX, startY, panelW, panelH);
+        
+        // HUD panel border
+        gc.setStroke(UIUtils.BORDER);
+        gc.setLineWidth(6.0);
+        gc.strokeRect(startX, startY, panelW, panelH);
 
-        gc.setFont(Font.font("Arial", 28.0));
+        gc.setFill(UIUtils.BORDER);
+        gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 30.0));
+        double y = startY + 50.0;
+        gc.fillText("SCORE: " + scoreSystem.getScore(), startX + 24.0, y);
+        y += 40.0;
+
+        gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 22.0));
         if (topRunVisible) {
             Account acc = Session.current();
             int gap = acc.highScore - scoreSystem.getScore();
             if (gap > 0) {
-                gc.setFill(Color.WHITE);
-                gc.fillText("Top Run " + gap, 48.0, y);
+                gc.setFill(UIUtils.BORDER);
+                gc.fillText("TOP RUN: " + gap, startX + 24.0, y);
             } else {
-                gc.setFill(Color.rgb(255, 215, 0));
-                gc.fillText("Top Run NEW BEST! +" + (-gap), 48.0, y);
-                gc.setFill(Color.WHITE);
+                gc.setFill(UIUtils.RED);
+                gc.fillText("NEW BEST! +" + (-gap), startX + 24.0, y);
+                gc.setFill(UIUtils.BORDER);
             }
-            y += 42.0;
+            y += 40.0;
         }
 
         int totalCoins = Session.current() != null ? Session.current().coins : scoreSystem.getCoins();
-        gc.fillText("Coins " + scoreSystem.getRunCoinsEarned() + " (Total: " + totalCoins + ")", 48.0, y); y += 42.0;
-        gc.fillText("Speed " + String.format("%.2fx", TimeManager.getWorldRate()), 48.0, y); y += 42.0;
-        gc.fillText("Revival Capsule " + player.revivalCount(), 48.0, y);
+        gc.fillText("COINS: " + scoreSystem.getRunCoinsEarned() + " (ALL: " + totalCoins + ")", startX + 24.0, y); y += 40.0;
+        gc.fillText("SPEED: " + String.format("%.2fx", TimeManager.getWorldRate()), startX + 24.0, y); y += 40.0;
+        gc.fillText("CAPSULES: " + player.revivalCount(), startX + 24.0, y);
 
         double size = 84.0;
         double stride = 104.0;
-        double bcx = 32.0 + size / 2.0;
-        double bcy = Config.LOGICAL_HEIGHT - 32.0 - size / 2.0;
+        double bcx = 32.0;
+        double bcy = Config.LOGICAL_HEIGHT - 32.0 - size;
 
         if (player.hasMagnet()) {
             drawBuffTimer(gc, AssetManager.magnetIcon(), player.magnetTimer(), player.magnetMaxDuration(),
-                    Color.rgb(155, 89, 182), bcx, bcy, size);
+                    UIUtils.PINK, bcx, bcy, size);
             bcy -= stride;
         }
         if (player.isBoosted()) {
             drawBuffTimer(gc, AssetManager.spriteIcon(), player.boostTimer(), player.boostMaxDuration(),
-                    Color.rgb(155, 89, 182), bcx, bcy, size);
+                    UIUtils.PINK, bcx, bcy, size);
             bcy -= stride;
         }
         if (player.hasScoreMultiplier()) {
             drawBuffTimer(gc, AssetManager.treadmillIcon(), player.scoreMultiplierTimer(), player.scoreMultiplierMaxDuration(),
-                    Color.rgb(255, 170, 60), bcx, bcy, size);
+                    UIUtils.YELLOW, bcx, bcy, size);
         }
     }
 
-    private void drawBuffTimer(GraphicsContext gc, Image icon, double timer, double max, Color ringColor, double cx, double cy, double size) {
-        double r = size / 2.0;
+    private void drawBuffTimer(GraphicsContext gc, Image icon, double timer, double max, Color ringColor, double x, double y, double size) {
+        // Flat solid background shadow
+        gc.setFill(UIUtils.BORDER);
+        gc.fillRect(x + 6, y + 6, size, size);
 
-        gc.setFill(Color.rgb(0, 0, 0, 0.55));
-        gc.fillOval(cx - r, cy - r, size, size);
+        // Flat solid color background
+        gc.setFill(ringColor);
+        gc.fillRect(x, y, size, size);
+        
+        // Border
+        gc.setStroke(UIUtils.BORDER);
+        gc.setLineWidth(4.0);
+        gc.strokeRect(x, y, size, size);
 
         if (icon != null && icon.getWidth() > 0.0) {
             double iconSize = size * 0.66;
-            gc.drawImage(icon, cx - iconSize / 2.0, cy - iconSize / 2.0, iconSize, iconSize);
+            gc.drawImage(icon, x + (size - iconSize) / 2.0, y + (size - iconSize) / 2.0, iconSize, iconSize);
         }
 
-        double ratio = max <= 0.0 ? 0.0 : Math.max(0.0, Math.min(1.0, timer / max));
-        double ringR = r - 3.0;
-        gc.setStroke(Color.rgb(255, 255, 255, 0.25));
-        gc.setLineWidth(5.0);
-        gc.strokeOval(cx - ringR, cy - ringR, ringR * 2.0, ringR * 2.0);
-        gc.setStroke(ringColor);
-        gc.setLineWidth(5.0);
-        gc.strokeArc(cx - ringR, cy - ringR, ringR * 2.0, ringR * 2.0, 90.0, -ratio * 360.0, ArcType.OPEN);
+        // Timer text tag
+        gc.setFill(UIUtils.WHITE);
+        gc.fillRect(x, y + size - 14, size, 24);
+        gc.strokeRect(x, y + size - 14, size, 24);
 
-        gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 18.0));
+        gc.setFill(UIUtils.BORDER);
+        gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 16.0));
         gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText(String.format("%.1fs", timer), cx, cy + r + 20.0);
+        gc.fillText(String.format("%.1fs", timer), x + size / 2.0, y + size + 3);
         gc.setTextAlign(TextAlignment.LEFT);
     }
 

@@ -1,6 +1,10 @@
 package com.ycom.resource;
 
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -13,7 +17,7 @@ public class AssetManager {
     public static void init() {
         IMAGES.clear();
         FRAME_COUNTS.clear();
-        loadImage("background", "T-Pose.jpg");
+        loadImage("background", "ukiyoe_bg.jpg");
         loadImage("player", "zxf.png");
         loadSprite("run", "run.png", 8);
         loadSprite("jump", "jump.png", 8);
@@ -38,6 +42,23 @@ public class AssetManager {
         loadImage("container_top", "container_top.jpg");
         loadImage("menu_bg", "主界面背景.png");
         loadImage("game_over_bg", "终界面.png");
+        loadImage("road_texture", "road_texture.jpg");
+        loadImage("ukiyo_building", "ukiyo_building.jpg");
+        loadImage("pagoda", "pagoda.jpg");
+        loadImage("sakura", "sakura.jpg");
+        loadImage("bldg_torii", "bldg_torii.jpg");
+        loadImage("bldg_castle", "bldg_castle.jpg");
+        loadImage("bldg_lantern", "bldg_lantern.jpg");
+        loadImage("bldg_shop", "bldg_shop.jpg");
+        loadImage("bldg_bamboo", "bldg_bamboo.jpg");
+        loadImage("bldg_pine", "bldg_pine.jpg");
+        loadImage("bldg_kitsune", "bldg_kitsune.jpg");
+        loadImage("bldg_bell", "bldg_bell.jpg");
+        
+        String[] sceneries = {"pagoda", "sakura", "bldg_torii", "bldg_castle", "bldg_lantern", "bldg_shop", "bldg_bamboo", "bldg_pine", "bldg_kitsune", "bldg_bell"};
+        for (String s : sceneries) {
+            IMAGES.put(s, removeWhiteBackground(IMAGES.get(s)));
+        }
         
         loadImage("cheryl_run_1", "runners/cheryl_run-1.png");
         loadImage("cheryl_run_2", "runners/cheryl_run-2.png");
@@ -162,6 +183,27 @@ public class AssetManager {
 
     public static Image runnerFrame(String character, int frame) {
         return getImage(character + "_run_" + frame);
+    }
+
+    public static Image removeWhiteBackground(Image img) {
+        if (img == null || img.getWidth() <= 0) return img;
+        int width = (int) img.getWidth();
+        int height = (int) img.getHeight();
+        WritableImage wImg = new WritableImage(width, height);
+        PixelReader reader = img.getPixelReader();
+        PixelWriter writer = wImg.getPixelWriter();
+        
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Color c = reader.getColor(x, y);
+                if (c.getRed() > 0.85 && c.getGreen() > 0.85 && c.getBlue() > 0.85) {
+                    writer.setColor(x, y, Color.TRANSPARENT);
+                } else {
+                    writer.setColor(x, y, c);
+                }
+            }
+        }
+        return wImg;
     }
 
     private static void loadImage(String key, String fileName) {
