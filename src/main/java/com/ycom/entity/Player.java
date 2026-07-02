@@ -4,7 +4,10 @@ import com.ycom.core.Config;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
-public class Player extends Actor {
+public class Player extends AnimatedObject {
+    protected int lane;
+    protected double targetX;
+
     public enum PlayerState {
         RUNNING,
         JUMPING,
@@ -203,6 +206,10 @@ public class Player extends Actor {
         setHeight(Config.PLAYER_STANDING_HEIGHT);
         state = PlayerState.RUNNING;
         
+    }
+
+    public int lane() {
+        return lane;
     }
 
     public double floorY() {
