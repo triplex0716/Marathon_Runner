@@ -71,24 +71,43 @@ classDiagram
         +update(worldDt, context)
         +isActive()
     }
+    
+    class AnimatedObject {
+        <<abstract>>
+        -double animationTime
+        -double framesPerSecond
+        +currentFrame(frameCount)
+    }
+
     class Player {
         -PlayerState state
+        -int lane
+        -double targetX
         +jump()
         +slide()
         +applyPowerUp(type)
     }
+    
     class Obstacle {
         -AvoidMethod method
     }
+    
+    class Collectible {
+        <<abstract>>
+        +onPickedUpBy(player, context)
+    }
+    
     class Coin
     class PowerUp {
         -PowerUpType type
     }
     
-    GameObject <|-- Player
+    GameObject <|-- AnimatedObject
     GameObject <|-- Obstacle
-    GameObject <|-- Coin
-    GameObject <|-- PowerUp
+    AnimatedObject <|-- Player
+    AnimatedObject <|-- Collectible
+    Collectible <|-- Coin
+    Collectible <|-- PowerUp
 
     %% World & Systems
     class GameWorld {
