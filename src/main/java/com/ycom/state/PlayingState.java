@@ -1,6 +1,5 @@
 package com.ycom.state;
 
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -25,7 +24,6 @@ import com.ycom.system.ScoreSystem;
 import com.ycom.system.ReviveService;
 import com.ycom.system.RunEventHandlers;
 import com.ycom.resource.AudioManager;
-import javafx.application.Platform;
 
 public class PlayingState implements GameState {
     private final GameStateManager gsm;

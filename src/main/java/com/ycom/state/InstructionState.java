@@ -1,11 +1,9 @@
 package com.ycom.state;
 
 import com.ycom.core.Config;
-import com.ycom.resource.AssetManager;
 import com.ycom.system.InputSystem;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;

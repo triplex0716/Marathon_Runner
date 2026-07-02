@@ -2,9 +2,7 @@ package com.ycom.render;
 
 import com.ycom.entity.Obstacle;
 import com.ycom.resource.AssetManager;
-import com.ycom.state.UIUtils;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class ObstacleRenderer implements ObjectRenderer {

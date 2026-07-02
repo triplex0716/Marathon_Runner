@@ -3,7 +3,6 @@ package com.ycom.state;
 import com.ycom.account.Account;
 import com.ycom.account.AccountStore;
 import com.ycom.account.Session;
-import com.ycom.core.Config;
 import com.ycom.system.InputSystem;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;

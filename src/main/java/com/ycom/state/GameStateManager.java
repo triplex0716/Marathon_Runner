@@ -8,13 +8,8 @@ import java.util.Map;
 public class GameStateManager {
     private Map<StateId, GameState> states = new EnumMap<>(StateId.class);
     private volatile GameState currentState;
-    private Canvas canvas;
-    private InputSystem input;
-    
+
     public GameStateManager(Canvas canvas, InputSystem input) {
-        this.canvas = canvas;
-        this.input = input;
-        
         states.put(StateId.LOGIN, new LoginState(this, canvas, input));
         states.put(StateId.MENU, new MainMenuState(this, canvas, input));
         states.put(StateId.INSTRUCTION, new InstructionState(this, canvas, input));

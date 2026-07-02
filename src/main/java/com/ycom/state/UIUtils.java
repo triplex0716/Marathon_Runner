@@ -4,7 +4,6 @@ import com.ycom.core.Config;
 import com.ycom.resource.AssetManager;
 import com.ycom.system.InputSystem;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;

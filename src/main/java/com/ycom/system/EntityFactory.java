@@ -3,7 +3,6 @@ package com.ycom.system;
 import com.ycom.core.Config;
 import com.ycom.entity.Coin;
 import com.ycom.entity.EnergyDrink;
-import com.ycom.entity.GameObject;
 import com.ycom.entity.Magnet;
 import com.ycom.entity.Obstacle;
 import com.ycom.entity.RandomItem;
@@ -11,8 +10,6 @@ import com.ycom.entity.RevivalCapsule;
 import com.ycom.entity.Treadmill;
 import com.ycom.world.GameWorld;
 import javafx.scene.paint.Color;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EntityFactory {
     
