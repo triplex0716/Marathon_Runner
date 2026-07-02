@@ -1,22 +1,26 @@
 package com.ycom.resource;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AssetManager {
-    private static final Map<String, Image> IMAGES = new HashMap<>();
+    public static Image ATLAS;
+    private static final Map<String, TextureRegion> REGIONS = new HashMap<>();
     private static final Map<String, Integer> FRAME_COUNTS = new HashMap<>();
+    private static final Map<String, Image> TEMP_IMAGES = new HashMap<>();
 
     public static void init() {
-        IMAGES.clear();
+        TEMP_IMAGES.clear();
+        REGIONS.clear();
         FRAME_COUNTS.clear();
+        
         loadImage("background", "ukiyoe_bg.jpg");
         loadImage("player", "zxf.png");
         loadSprite("run", "run.png", 8);
@@ -44,20 +48,11 @@ public class AssetManager {
         loadImage("game_over_bg", "终界面.png");
         loadImage("road_texture", "road_texture.jpg");
         loadImage("ukiyo_building", "ukiyo_building.jpg");
-        loadImage("pagoda", "pagoda.jpg");
-        loadImage("sakura", "sakura.jpg");
-        loadImage("bldg_torii", "bldg_torii.jpg");
-        loadImage("bldg_castle", "bldg_castle.jpg");
-        loadImage("bldg_lantern", "bldg_lantern.jpg");
-        loadImage("bldg_shop", "bldg_shop.jpg");
-        loadImage("bldg_bamboo", "bldg_bamboo.jpg");
-        loadImage("bldg_pine", "bldg_pine.jpg");
-        loadImage("bldg_kitsune", "bldg_kitsune.jpg");
-        loadImage("bldg_bell", "bldg_bell.jpg");
         
         String[] sceneries = {"pagoda", "sakura", "bldg_torii", "bldg_castle", "bldg_lantern", "bldg_shop", "bldg_bamboo", "bldg_pine", "bldg_kitsune", "bldg_bell"};
         for (String s : sceneries) {
-            IMAGES.put(s, removeWhiteBackground(IMAGES.get(s)));
+            loadImage(s, s + ".jpg");
+            TEMP_IMAGES.put(s, removeWhiteBackground(TEMP_IMAGES.get(s)));
         }
         
         loadImage("obs_train", "obs_train.jpg");
@@ -68,7 +63,7 @@ public class AssetManager {
         
         String[] obstacles = {"obs_train", "obs_jump", "obs_slide", "item_coin"};
         for (String o : obstacles) {
-            IMAGES.put(o, removeWhiteBackground(IMAGES.get(o)));
+            TEMP_IMAGES.put(o, removeWhiteBackground(TEMP_IMAGES.get(o)));
         }
         
         loadImage("cheryl_run_1", "runners/cheryl_run-1.png");
@@ -79,121 +74,125 @@ public class AssetManager {
         loadImage("matt_run_2", "runners/matt_run-2.png");
         loadImage("mazz_run_1", "runners/mazz_run-1.png");
         loadImage("mazz_run_2", "runners/mazz_run-2.png");
+        
+        packAtlas();
+    }
+    
+    private static void packAtlas() {
+        int atlasSize = 8192;
+        WritableImage atlas = new WritableImage(atlasSize, atlasSize);
+        PixelWriter writer = atlas.getPixelWriter();
+        
+        int currentX = 0;
+        int currentY = 0;
+        int rowHeight = 0;
+        
+        java.util.List<Map.Entry<String, Image>> sortedEntries = new java.util.ArrayList<>(TEMP_IMAGES.entrySet());
+        sortedEntries.sort((e1, e2) -> Double.compare(
+            e2.getValue() == null ? 0 : e2.getValue().getHeight(),
+            e1.getValue() == null ? 0 : e1.getValue().getHeight()
+        ));
+        
+        for (Map.Entry<String, Image> entry : sortedEntries) {
+            Image img = entry.getValue();
+            if (img == null || img.getWidth() <= 0) continue;
+            int w = (int) img.getWidth();
+            int h = (int) img.getHeight();
+            
+            if (currentX + w > atlasSize) {
+                currentX = 0;
+                currentY += rowHeight;
+                rowHeight = 0;
+            }
+            if (currentY + h > atlasSize) {
+                System.err.println("Atlas too small for " + entry.getKey());
+                continue;
+            }
+            
+            PixelReader reader = img.getPixelReader();
+            writer.setPixels(currentX, currentY, w, h, reader, 0, 0);
+            
+            REGIONS.put(entry.getKey(), new TextureRegion(atlas, currentX, currentY, w, h));
+            
+            currentX += w;
+            rowHeight = Math.max(rowHeight, h);
+        }
+        ATLAS = atlas;
+        TEMP_IMAGES.clear(); // Free memory
     }
 
-    public static Image ascensionImage() {
-        return getImage("ascension");
+    public static TextureRegion getRegion(String key) {
+        return REGIONS.get(key);
+    }
+    
+    // Legacy support for places that absolutely need an Image (if any)
+    public static String background() { return "background"; }
+    public static String gameOverBg() { return "game_over_bg"; }
+    public static String playerImage() { return "player"; }
+    public static String runSheet() { return "run"; }
+    public static String jumpSheet() { return "jump"; }
+    public static String boostSheet() { return "boost"; }
+    public static String slideSheet() { return "slide"; }
+    public static String magnetIcon() { return "magnet"; }
+    public static String spriteIcon() { return "sprite"; }
+    public static String revivalIcon() { return "revival"; }
+    public static String treadmillIcon() { return "treadmill"; }
+    public static String randomItemIcon() { return "random"; }
+    public static String rampSlope() { return "ramp_slope"; }
+    public static String rampSide() { return "ramp_side"; }
+    public static String randomIcon() { return "random"; }
+    public static String coinIcon() { return "coin"; }
+    public static String obstacleSlideIcon() { return "obstacle_slide"; }
+    public static String obstacleJumpIcon() { return "obstacle_jump"; }
+    public static String obstacleTrainIcon() { return "obstacle_train"; }
+    public static String obstacleTrainSideIcon() { return "obstacle_train_side"; }
+    public static String containerFront() { return "container_front"; }
+    public static String containerSide() { return "container_side"; }
+    public static String containerTop() { return "container_top"; }
+    public static String menuBg() { return "menu_bg"; }
+    public static String ascensionImage() { return "ascension"; }
+    public static String shoppingIcon() { return "shopping"; }
+    public static String runnerFrame(String character, int frame) {
+        return character + "_run_" + frame;
+    }
+    
+    public static boolean exists(String key) {
+        return REGIONS.containsKey(key);
+    }
+    public static Image getImage(String key) {
+        // Warning: This should ideally not be used if we want to stick to the atlas.
+        // It's left here just in case something breaks. We return ATLAS if it's there.
+        // Actually, if we return ATLAS, the caller will draw the entire atlas!
+        // We will remove this and fix all callers.
+        return null;
     }
 
-    public static Image shoppingIcon() {
-        return getImage("shopping");
-    }
-
-    private static void loadSprite(String key, String fileName, int frameCount) {
-        loadImage(key, fileName);
-        if (IMAGES.containsKey(key)) {
-            FRAME_COUNTS.put(key, frameCount);
+    public static void draw(GraphicsContext gc, String key, double dx, double dy, double dw, double dh) {
+        TextureRegion r = REGIONS.get(key);
+        if (r != null) {
+            gc.drawImage(ATLAS, r.sx(), r.sy(), r.sw(), r.sh(), dx, dy, dw, dh);
         }
     }
-
-    public static Image getImage(String key) {
-        return IMAGES.get(key);
+    
+    public static void drawSpriteFrame(GraphicsContext gc, String key, int frame, double dx, double dy, double dw, double dh) {
+        TextureRegion r = REGIONS.get(key);
+        if (r != null) {
+            int frameCount = FRAME_COUNTS.getOrDefault(key, 1);
+            double frameW = r.sw() / frameCount;
+            double sx = r.sx() + frame * frameW;
+            gc.drawImage(ATLAS, sx, r.sy(), frameW, r.sh(), dx, dy, dw, dh);
+        }
     }
 
     public static int frameCount(String key) {
         return FRAME_COUNTS.getOrDefault(key, 1);
     }
 
-    public static Image background() {
-        return getImage("background");
-    }
-
-    public static Image gameOverBg() {
-        return getImage("game_over_bg");
-    }
-
-    public static Image playerImage() {
-        return getImage("player");
-    }
-
-    public static Image runSheet() {
-        return getImage("run");
-    }
-
-    public static Image jumpSheet() {
-        return getImage("jump");
-    }
-
-    public static Image boostSheet() {
-        return getImage("boost");
-    }
-
-    public static Image slideSheet() {
-        return getImage("slide");
-    }
-
-    public static Image magnetIcon() {
-        return getImage("magnet");
-    }
-
-    public static Image spriteIcon() {
-        return getImage("sprite");
-    }
-
-    public static Image revivalIcon() {
-        return getImage("revival");
-    }
-
-    public static Image treadmillIcon() {
-        return getImage("treadmill");
-    }
-
-    public static Image randomItemIcon() { return getImage("random_item"); }
-    public static Image rampSlope() { return getImage("ramp_slope"); }
-    public static Image rampSide() { return getImage("ramp_side"); }
-
-    public static Image randomIcon() {
-        return getImage("random");
-    }
-
-    public static Image coinIcon() {
-        return getImage("coin");
-    }
-
-    public static Image obstacleSlideIcon() {
-        return getImage("obstacle_slide");
-    }
-
-    public static Image obstacleJumpIcon() {
-        return getImage("obstacle_jump");
-    }
-
-    public static Image obstacleTrainIcon() {
-        return getImage("obstacle_train");
-    }
-
-    public static Image obstacleTrainSideIcon() {
-        return getImage("obstacle_train_side");
-    }
-
-    public static Image containerFront() {
-        return getImage("container_front");
-    }
-
-    public static Image containerSide() {
-        return getImage("container_side");
-    }
-
-    public static Image containerTop() {
-        return getImage("container_top");
-    }
-
-    public static Image menuBg() {
-        return getImage("menu_bg");
-    }
-
-    public static Image runnerFrame(String character, int frame) {
-        return getImage(character + "_run_" + frame);
+    private static void loadSprite(String key, String fileName, int frameCount) {
+        loadImage(key, fileName);
+        if (TEMP_IMAGES.containsKey(key)) {
+            FRAME_COUNTS.put(key, frameCount);
+        }
     }
 
     public static Image removeWhiteBackground(Image img) {
@@ -213,9 +212,8 @@ public class AssetManager {
             int g = (argb >> 8) & 0xff;
             int b = argb & 0xff;
             
-            // Check if it's near-white (threshold > 0.85 * 255 = 216.75)
             if (r > 217 && g > 217 && b > 217) {
-                pixels[i] = 0x00ffffff; // Transparent (alpha 0)
+                pixels[i] = 0x00ffffff; 
             }
         }
         
@@ -229,7 +227,7 @@ public class AssetManager {
             System.err.println("Missing image asset: " + fileName);
             return;
         }
-        IMAGES.put(key, new Image(url, false));
+        TEMP_IMAGES.put(key, new Image(url, false));
     }
 
     public static String resolve(String fileName) {

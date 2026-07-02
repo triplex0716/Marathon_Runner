@@ -1,9 +1,7 @@
 package com.ycom.render;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public final class RenderFrame {
     private static final long DEFAULT_FIXED_NANOS = 16_666_667L;
@@ -11,7 +9,7 @@ public final class RenderFrame {
     private final RenderSnapshot previousPlayer;
     private final RenderSnapshot currentPlayer;
     private final List<RenderSnapshot> currentObjects;
-    private final Map<Long, RenderSnapshot> previousObjectsById;
+    private final List<RenderSnapshot> previousObjects;
     private final long tickNanos;
     private final long fixedNanos;
 
@@ -25,14 +23,18 @@ public final class RenderFrame {
     ) {
         this.previousPlayer = previousPlayer == null ? currentPlayer : previousPlayer;
         this.currentPlayer = currentPlayer;
-        this.currentObjects = List.copyOf(currentObjects);
-        this.previousObjectsById = indexById(previousObjects);
+        this.currentObjects = currentObjects;
+        this.previousObjects = previousObjects;
         this.tickNanos = tickNanos;
         this.fixedNanos = fixedNanos > 0L ? fixedNanos : DEFAULT_FIXED_NANOS;
     }
 
     public static RenderFrame initial(RenderSnapshot player) {
         return new RenderFrame(player, player, List.of(), List.of(), System.nanoTime(), DEFAULT_FIXED_NANOS);
+    }
+
+    public RenderSnapshot currentPlayer() {
+        return currentPlayer;
     }
 
     public RenderSnapshot player(double alpha) {
@@ -48,7 +50,7 @@ public final class RenderFrame {
     public void writeObjects(List<RenderSnapshot> snapshots, double alpha) {
         snapshots.clear();
         for (RenderSnapshot current : currentObjects) {
-            snapshots.add(current.interpolateFrom(previousObjectsById.get(current.id()), alpha));
+            snapshots.add(current.interpolateFrom(findPrevious(current.id()), alpha));
         }
     }
 
@@ -60,15 +62,23 @@ public final class RenderFrame {
         return currentObjects;
     }
 
-    public Map<Long, RenderSnapshot> previousObjectsById() {
-        return previousObjectsById;
-    }
+    private RenderSnapshot findPrevious(long id) {
+        if (previousObjects == null || previousObjects.isEmpty()) return null;
+        int low = 0;
+        int high = previousObjects.size() - 1;
 
-    private static Map<Long, RenderSnapshot> indexById(List<RenderSnapshot> snapshots) {
-        Map<Long, RenderSnapshot> indexed = new HashMap<>();
-        for (RenderSnapshot snapshot : snapshots) {
-            indexed.put(snapshot.id(), snapshot);
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            RenderSnapshot midVal = previousObjects.get(mid);
+            long midId = midVal.id();
+
+            if (midId < id)
+                low = mid + 1;
+            else if (midId > id)
+                high = mid - 1;
+            else
+                return midVal;
         }
-        return Map.copyOf(indexed);
+        return null;
     }
 }

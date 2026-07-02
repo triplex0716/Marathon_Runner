@@ -69,9 +69,9 @@ public class GameOverState implements GameState {
     public void render() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        javafx.scene.image.Image bg = com.ycom.resource.AssetManager.gameOverBg();
-        if (bg != null) {
-            gc.drawImage(bg, 0, 0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
+        String bg = com.ycom.resource.AssetManager.gameOverBg();
+        if (com.ycom.resource.AssetManager.exists(bg)) {
+            com.ycom.resource.AssetManager.draw(gc, bg, 0, 0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
         } else {
             UIUtils.drawBackgroundAndTrack(gc, time);
         }

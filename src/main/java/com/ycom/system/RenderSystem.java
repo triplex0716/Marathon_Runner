@@ -54,7 +54,7 @@ public class RenderSystem {
         });
         registry.register(GameObject.ObjectKind.REVIVAL_CAPSULE, (gc, obj, p, cam) -> {
             double phase = obj.animationTime() * 6.0;
-            drawBobbingIcon(gc, p, AssetManager.revivalIcon(), Color.CRIMSON, "+", phase);
+            drawBobbingIcon(gc, p, "revival", Color.CRIMSON, "+", phase);
         });
         registry.register(GameObject.ObjectKind.TREADMILL, (gc, obj, p, cam) -> {
             double phase = obj.animationTime() * 4.0;
@@ -62,15 +62,15 @@ public class RenderSystem {
         });
         registry.register(GameObject.ObjectKind.RANDOM_ITEM, (gc, obj, p, cam) -> {
             double phase = obj.animationTime() * 6.0;
-            drawBobbingIcon(gc, p, AssetManager.randomIcon(), Color.DARKSLATEGRAY, "?", phase);
+            drawBobbingIcon(gc, p, "random", Color.DARKSLATEGRAY, "?", phase);
         });
         registry.register(GameObject.ObjectKind.OBSTACLE, this.obstacleRenderer);
     }
 
-    public void render(GameWorld world, ScoreSystem scoreSystem, ParticleSystem particles, EffectSystem effectSystem) {
+    public void render(com.ycom.core.PhysicsSnapshot snap, com.ycom.system.ParticleSystem particles) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        Player player = world.getPlayer();
-        RenderFrame frame = world.renderFrame();
+        RenderFrame frame = snap.renderFrame();
+        if (frame == null) return;
         double alpha = frame.alpha(System.nanoTime());
         RenderSnapshot playerSnapshot = frame.player(alpha);
 
@@ -86,8 +86,8 @@ public class RenderSystem {
         drawTrack(gc, camera);
         drawScenery(gc, camera);
         drawObjects(gc, frame, alpha, playerSnapshot, camera);
-        particles.draw(gc, camX, camY, camZ);
-        hudRenderer.draw(gc, player, scoreSystem, effectSystem);
+        particles.draw(gc, camX, camY, camZ, snap.particles());
+        hudRenderer.draw(gc, snap);
     }
 
     private void drawBackground(GraphicsContext gc) {
@@ -105,9 +105,9 @@ public class RenderSystem {
     }
 
     private void drawBackgroundLayer(GraphicsContext gc) {
-        Image background = AssetManager.background();
-        if (background != null && background.getWidth() > 0.0) {
-            drawCover(gc, background, 0.0, 0.0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
+        String background = AssetManager.background();
+        if (com.ycom.resource.AssetManager.exists(background)) {
+            com.ycom.resource.AssetManager.draw(gc, background, 0.0, 0.0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
         } else {
             gc.setFill(UIUtils.CYAN);
             gc.fillRect(0.0, 0.0, Config.LOGICAL_WIDTH, Config.LOGICAL_HEIGHT);
@@ -139,37 +139,25 @@ public class RenderSystem {
         gc.strokeLine(0.0, horizonY, Config.LOGICAL_WIDTH, horizonY);
     }
 
-    private static class RenderTask {
-        final RenderSnapshot snapshot;
-        final Projection p;
-        RenderTask(RenderSnapshot snapshot, Projection p) {
-            this.snapshot = snapshot;
-            this.p = p;
-        }
-    }
-
     private void drawObjects(GraphicsContext gc, RenderFrame frame, double alpha, RenderSnapshot player, Camera cam) {
-        List<RenderTask> tasks = frame.currentObjects().parallelStream()
-            .map(snapshot -> snapshot.interpolateFrom(frame.previousObjectsById().get(snapshot.id()), alpha))
-            .filter(snapshot -> snapshot.z() >= cam.z + 0.8)
-            .map(snapshot -> new RenderTask(snapshot, projector.project(snapshot.x(), snapshot.y(), snapshot.z(), snapshot.width(), snapshot.height(), cam)))
-            .filter(task -> task.p.scale() > 0.0 && task.p.x() + task.p.width() >= -200.0 && task.p.x() - task.p.width() <= Config.LOGICAL_WIDTH + 200.0)
-            .collect(java.util.stream.Collectors.toList());
+        objectBuffer.clear();
+        frame.writeObjects(objectBuffer, alpha);
+        objectBuffer.removeIf(snapshot -> snapshot.z() < cam.z + 0.8);
+        objectBuffer.add(player);
+        objectBuffer.sort((a, b) -> Double.compare(b.z(), a.z()));
 
-        RenderTask playerTask = new RenderTask(player, projector.project(player.x(), player.y(), player.z(), player.width(), player.height(), cam));
-        tasks.add(playerTask);
+        for (RenderSnapshot obj : objectBuffer) {
+            Projection p = projector.project(obj.x(), obj.y(), obj.z(), obj.width(), obj.height(), cam);
+            if (p.scale() <= 0.0 || p.x() + p.width() < -200.0 || p.x() - p.width() > Config.LOGICAL_WIDTH + 200.0) {
+                continue;
+            }
 
-        tasks.sort((a, b) -> Double.compare(b.snapshot.z(), a.snapshot.z()));
-
-        for (RenderTask task : tasks) {
-            com.ycom.render.ObjectRenderer renderer = registry.getRenderer(task.snapshot.kind());
+            com.ycom.render.ObjectRenderer renderer = registry.getRenderer(obj.kind());
             if (renderer != null) {
-                renderer.render(gc, task.snapshot, task.p, cam);
+                renderer.render(gc, obj, p, cam);
             }
         }
     }
-
-    
     
     private void drawPlayer(GraphicsContext gc, RenderSnapshot player, Projection p) {
         if (player.reviveInvincible()) {
@@ -181,38 +169,36 @@ public class RenderSystem {
         }
 
         // 根据玩家状态选择精灵图
-        Image sheet = null;
+        String sheet = null;
         int frameCount = 1;
         switch (player.playerState()) {
             case BOOSTED_INVINCIBLE -> {
-                sheet = AssetManager.boostSheet();
+                sheet = "boost";
                 frameCount = AssetManager.frameCount("boost");
             }
             case JUMPING -> {
-                sheet = AssetManager.jumpSheet();
+                sheet = "jump";
                 frameCount = AssetManager.frameCount("jump");
             }
             case SLIDING -> {
-                sheet = AssetManager.slideSheet();
+                sheet = "slide";
                 frameCount = AssetManager.frameCount("slide");
             }
             default -> {
-                sheet = AssetManager.runSheet();
+                sheet = "run";
                 frameCount = AssetManager.frameCount("run");
             }
         }
 
-        if (sheet != null && sheet.getWidth() > 0.0) {
+        if (sheet != null) {
             int frame = currentFrame(player.animationTime(), frameCount, 12.0);
-            double sw = sheet.getWidth() / frameCount;
-            double sx = frame * sw;
-            gc.drawImage(sheet, sx, 0.0, sw, sheet.getHeight(), p.x() - p.width() / 2.0, p.y() - p.height() / 2.0, p.width(), p.height());
+            com.ycom.resource.AssetManager.drawSpriteFrame(gc, sheet, frame, p.x() - p.width() / 2.0, p.y() - p.height() / 2.0, p.width(), p.height());
             return;
         }
 
-        Image playerImage = AssetManager.playerImage();
-        if (playerImage != null && playerImage.getWidth() > 0.0) {
-            gc.drawImage(playerImage, p.x() - p.width() / 2.0, p.y() - p.height() / 2.0, p.width(), p.height());
+        String playerImage = "player";
+        if (playerImage != null) {
+            com.ycom.resource.AssetManager.draw(gc, playerImage, p.x() - p.width() / 2.0, p.y() - p.height() / 2.0, p.width(), p.height());
             return;
         }
 
@@ -229,10 +215,10 @@ public class RenderSystem {
 
     private void drawCoin(GraphicsContext gc, Projection p) {
         double size = Math.max(6.0, Math.min(p.width(), p.height()));
-        Image coinImage = AssetManager.getImage("coin");
+        String coinImage = "coin";
 
-        if (coinImage != null && coinImage.getWidth() > 0.0) {
-            gc.drawImage(coinImage, p.x() - size / 2.0, p.y() - size / 2.0, size, size);
+        if (coinImage != null) {
+            com.ycom.resource.AssetManager.draw(gc, coinImage, p.x() - size / 2.0, p.y() - size / 2.0, size, size);
             return;
         }
 
@@ -240,23 +226,23 @@ public class RenderSystem {
 
     private static final double POWERUP_ICON_SCALE = 1.3;
 
-    private void drawCoinFlipIcon(GraphicsContext gc, Projection p, Image icon, Color color, String label, double phase) {
-        if (icon == null || icon.getWidth() <= 0.0) {
+    private void drawCoinFlipIcon(GraphicsContext gc, Projection p, String icon, Color color, String label, double phase) {
+        if (!com.ycom.resource.AssetManager.exists(icon)) {
             drawPickup(gc, p, color, label);
             return;
         }
         double widthScale = Math.max(0.1, Math.abs(Math.cos(phase)));
         double h = Math.max(12.0, p.height()) * POWERUP_ICON_SCALE;
         double w = Math.max(12.0, p.width()) * POWERUP_ICON_SCALE * widthScale;
-        gc.drawImage(icon, p.x() - w / 2.0, p.y() - h / 2.0, w, h);
+        com.ycom.resource.AssetManager.draw(gc, icon, p.x() - w / 2.0, p.y() - h / 2.0, w, h);
     }
 
-    private void drawBobbingIcon(GraphicsContext gc, Projection p, Image icon, Color color, String label, double phase) {
+    private void drawBobbingIcon(GraphicsContext gc, Projection p, String icon, Color color, String label, double phase) {
         double w = Math.max(12.0, p.width()) * POWERUP_ICON_SCALE;
         double h = Math.max(12.0, p.height()) * POWERUP_ICON_SCALE;
         double yOffset = -h * 0.45 + Math.sin(phase) * h * 0.22;
-        if (icon != null && icon.getWidth() > 0.0) {
-            gc.drawImage(icon, p.x() - w / 2.0, p.y() - h / 2.0 + yOffset, w, h);
+        if (icon != null) {
+            com.ycom.resource.AssetManager.draw(gc, icon, p.x() - w / 2.0, p.y() - h / 2.0 + yOffset, w, h);
             return;
         }
         gc.setFill(color);
@@ -268,11 +254,11 @@ public class RenderSystem {
         gc.setTextAlign(TextAlignment.LEFT);
     }
 
-    private void drawIconOrPickup(GraphicsContext gc, Projection p, Image icon, Color color, String label) {
-        if (icon != null && icon.getWidth() > 0.0) {
+    private void drawIconOrPickup(GraphicsContext gc, Projection p, String icon, Color color, String label) {
+        if (icon != null) {
             double w = Math.max(12.0, p.width());
             double h = Math.max(12.0, p.height());
-            gc.drawImage(icon, p.x() - w / 2.0, p.y() - h / 2.0, w, h);
+            com.ycom.resource.AssetManager.draw(gc, icon, p.x() - w / 2.0, p.y() - h / 2.0, w, h);
             return;
         }
         drawPickup(gc, p, color, label);
@@ -294,12 +280,12 @@ public class RenderSystem {
     
     private static final javafx.scene.effect.PerspectiveTransform PT = new javafx.scene.effect.PerspectiveTransform();
 
-    private void drawPerspectiveImage(GraphicsContext gc, Image img, 
+    private void drawPerspectiveImage(GraphicsContext gc, String img, 
                                       double ulx, double uly, 
                                       double urx, double ury, 
                                       double lrx, double lry, 
                                       double llx, double lly) {
-        if (img == null || img.getWidth() <= 0) return;
+        if (img == null || !com.ycom.resource.AssetManager.exists(img)) return;
         
         double minX = Math.min(Math.min(ulx, urx), Math.min(llx, lrx));
         double maxX = Math.max(Math.max(ulx, urx), Math.max(llx, lrx));
@@ -309,6 +295,11 @@ public class RenderSystem {
         if (maxX < 0 || minX > Config.LOGICAL_WIDTH || maxY < 0 || minY > Config.LOGICAL_HEIGHT) {
             return;
         }
+        
+        // Near-plane hardware culling
+        if (maxX - minX > 15000.0 || maxY - minY > 15000.0) {
+            return;
+        }
 
         PT.setUlx(ulx); PT.setUly(uly);
         PT.setUrx(urx); PT.setUry(ury);
@@ -316,13 +307,16 @@ public class RenderSystem {
         PT.setLlx(llx); PT.setLly(lly);
         
         gc.setEffect(PT);
-        gc.drawImage(img, 0, 0, img.getWidth(), img.getHeight());
+        com.ycom.resource.TextureRegion r = com.ycom.resource.AssetManager.getRegion(img);
+        if (r != null) {
+            com.ycom.resource.AssetManager.draw(gc, img, 0, 0, r.sw(), r.sh());
+        }
         gc.setEffect(null);
     }
 
     private void drawTrack(GraphicsContext gc, Camera cam) {
-        Image roadTex = AssetManager.getImage("road_texture");
-        if (roadTex == null || roadTex.getWidth() <= 0) {
+        String roadTex = "road_texture";
+        if (roadTex == null || !com.ycom.resource.AssetManager.exists(roadTex)) {
             // Fallback if texture fails
             gc.setStroke(UIUtils.BORDER);
             gc.setLineWidth(5.0);
@@ -341,7 +335,7 @@ public class RenderSystem {
         // Draw back to front to avoid bleeding
         for (double z = 220.0 - zOffset; z > 1.0; z -= segmentLength) {
             double farZ = z;
-            double nearZ = Math.max(0.5, z - segmentLength);
+            double nearZ = Math.max(1.0, z - segmentLength);
             
             double farScale = Config.FOCAL_LENGTH / farZ;
             double nearScale = Config.FOCAL_LENGTH / nearZ;
@@ -380,8 +374,8 @@ public class RenderSystem {
             String keyLeft = SCENERY_KEYS[Math.abs(absZ * 7) % SCENERY_KEYS.length];
             String keyRight = SCENERY_KEYS[Math.abs(absZ * 11) % SCENERY_KEYS.length];
             
-            Image imgLeft = AssetManager.getImage(keyLeft);
-            Image imgRight = AssetManager.getImage(keyRight);
+            String imgLeft = keyLeft;
+            String imgRight = keyRight;
             
             // Keep sizes uniform for a neat row
             double wLeft = 45.0 + (Math.abs(absZ * 13) % 10);
@@ -400,14 +394,14 @@ public class RenderSystem {
         }
     }
 
-    private void drawScenerySprite(GraphicsContext gc, Image img, double bX, double bZ, double bW, double bH, Camera cam) {
+    private void drawScenerySprite(GraphicsContext gc, String img, double bX, double bZ, double bW, double bH, Camera cam) {
         if (bZ < cam.z + 1.0) return;
         Projection p = projector.project(bX, 0, bZ, bW, bH, cam);
         if (p.scale() <= 0.0) return;
         
         // Pin the bottom edge of the sprite exactly to the 3D ground level
         double groundY = horizonY - (-cam.y) * p.scale();
-        gc.drawImage(img, p.x() - p.width() / 2.0, groundY - p.height(), p.width(), p.height());
+        com.ycom.resource.AssetManager.draw(gc, img, p.x() - p.width() / 2.0, groundY - p.height(), p.width(), p.height());
     }
 
 
@@ -424,13 +418,15 @@ public class RenderSystem {
     }
 
 
-    private void drawCover(GraphicsContext gc, Image image, double x, double y, double w, double h) {
-        double scale = Math.max(w / image.getWidth(), h / image.getHeight());
+    private void drawCover(GraphicsContext gc, String image, double x, double y, double w, double h) {
+        com.ycom.resource.TextureRegion r = com.ycom.resource.AssetManager.getRegion(image);
+        if (r == null) return;
+        double scale = Math.max(w / r.sw(), h / r.sh());
         double sw = w / scale;
         double sh = h / scale;
-        double sx = (image.getWidth() - sw) / 2.0;
-        double sy = (image.getHeight() - sh) / 2.0;
-        gc.drawImage(image, sx, sy, sw, sh, x, y, w, h);
+        double sx = (r.sw() - sw) / 2.0;
+        double sy = (r.sh() - sh) / 2.0;
+        gc.drawImage(com.ycom.resource.AssetManager.ATLAS, r.sx() + sx, r.sy() + sy, sw, sh, x, y, w, h);
     }
 
     private double positiveMod(double value, double mod) {
@@ -438,4 +434,7 @@ public class RenderSystem {
         return result < 0.0 ? result + mod : result;
     }
 
+    public void setAlpha(double alpha) {
+        this.projector.setAlpha(alpha);
+    }
 }

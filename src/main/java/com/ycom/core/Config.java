@@ -5,6 +5,8 @@ public class Config {
     public static final double LOGICAL_WIDTH = 1920.0;
     // 逻辑屏幕高度，用于统一缩放比例和UI布局
     public static final double LOGICAL_HEIGHT = 1080.0;
+    // 全局开关：是否在右上角显示实时帧率
+    public static boolean SHOW_FPS = true;
 
     // 固定时间步长（秒），目前为1/60秒，即60帧每秒，保证物理和逻辑更新的稳定性
     public static final double FIXED_TIMESTEP_SECONDS = 1.0 / 60.0;

@@ -41,6 +41,10 @@ public class GameStateManager {
         return states.get(stateId);
     }
     
+    public GameState getCurrentState() {
+        return currentState;
+    }
+    
     public void update(double dt) {
         if (currentState != null) currentState.update(dt);
     }

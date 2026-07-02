@@ -17,12 +17,12 @@ public class ObstacleRenderer implements ObjectRenderer {
         this.horizonY = horizonY;
     }
 
-    public void drawPerspectiveImage(GraphicsContext gc, Image img, 
+    public void drawPerspectiveImage(GraphicsContext gc, String img, 
                                      double ulx, double uly, 
                                      double urx, double ury, 
                                      double lrx, double lry, 
                                      double llx, double lly) {
-        if (img == null || img.getWidth() <= 0) return;
+        if (img == null || !com.ycom.resource.AssetManager.exists(img)) return;
         
         double minX = Math.min(Math.min(ulx, urx), Math.min(llx, lrx));
         double maxX = Math.max(Math.max(ulx, urx), Math.max(llx, lrx));
@@ -32,6 +32,11 @@ public class ObstacleRenderer implements ObjectRenderer {
         if (maxX < 0 || minX > 1920.0 || maxY < 0 || minY > 1080.0) {
             return;
         }
+        
+        // Near-plane hardware culling: prevents 16384 texture allocation crashes
+        if (maxX - minX > 15000.0 || maxY - minY > 15000.0) {
+            return;
+        }
 
         PT.setUlx(ulx); PT.setUly(uly);
         PT.setUrx(urx); PT.setUry(ury);
@@ -39,7 +44,8 @@ public class ObstacleRenderer implements ObjectRenderer {
         PT.setLlx(llx); PT.setLly(lly);
         
         gc.setEffect(PT);
-        gc.drawImage(img, 0, 0, img.getWidth(), img.getHeight());
+        com.ycom.resource.TextureRegion r = com.ycom.resource.AssetManager.getRegion(img);
+            if (r != null) com.ycom.resource.AssetManager.draw(gc, img, 0, 0, r.sw(), r.sh());
         gc.setEffect(null);
     }
 
@@ -53,10 +59,10 @@ public class ObstacleRenderer implements ObjectRenderer {
             return;
         }
 
-        Image obstacleImage = switch (obstacle.avoidMethod()) {
-            case CHANGE_LANE -> AssetManager.getImage("obs_train");
-            case SLIDE -> AssetManager.getImage("obs_slide");
-            case JUMP -> AssetManager.getImage("obs_jump");
+        String obstacleImage = switch (obstacle.avoidMethod()) {
+            case CHANGE_LANE -> "obs_train";
+            case SLIDE -> "obs_slide";
+            case JUMP -> "obs_jump";
             default -> null;
         };
 
@@ -66,7 +72,7 @@ public class ObstacleRenderer implements ObjectRenderer {
                 drawHeight = p.height() * 2.5;
             }
             double groundY = horizonY - (-cam.y) * p.scale();
-            gc.drawImage(obstacleImage, p.x() - p.width() / 2.0, groundY - drawHeight, p.width(), drawHeight);
+            com.ycom.resource.AssetManager.draw(gc, obstacleImage, p.x() - p.width() / 2.0, groundY - drawHeight, p.width(), drawHeight);
         }
     }
 
@@ -87,7 +93,7 @@ public class ObstacleRenderer implements ObjectRenderer {
         double backTop = back.y() - back.height() * 0.48;
         double backBottom = back.y() + back.height() * 0.32;
 
-        Image topImg, sideImg, frontImg;
+        String topImg, sideImg, frontImg;
         boolean isFar = (obstacle.z() - cam.z) > 80.0;
         if (obstacle.avoidMethod() == Obstacle.AvoidMethod.CONTAINER) {
             topImg = isFar ? null : AssetManager.containerTop();
@@ -102,43 +108,34 @@ public class ObstacleRenderer implements ObjectRenderer {
         if (frontTop > backTop) {
             double[] xPoints = {frontLeft, backLeft, backRight, frontRight};
             double[] yPoints = {frontTop, backTop, backTop, frontTop};
-            if (topImg != null && topImg.getWidth() > 0) {
+            if (topImg != null) {
                 drawPerspectiveImage(gc, topImg, backLeft, backTop, backRight, backTop, frontRight, frontTop, frontLeft, frontTop);
             } else {
                 gc.setFill(Color.rgb(23, 104, 160));
                 gc.fillPolygon(xPoints, yPoints, 4);
             }
-            gc.setStroke(UIUtils.BORDER);
-            gc.setLineWidth(4.0);
-            gc.strokePolygon(xPoints, yPoints, 4);
         }
 
         if (frontLeft > backLeft) {
             double[] xPoints = {frontLeft, backLeft, backLeft, frontLeft};
             double[] yPoints = {frontTop, backTop, backBottom, frontBottom};
-            if (sideImg != null && sideImg.getWidth() > 0) {
+            if (sideImg != null) {
                 drawPerspectiveImage(gc, sideImg, backLeft, backTop, frontLeft, frontTop, frontLeft, frontBottom, backLeft, backBottom);
             } else {
                 gc.setFill(Color.rgb(31, 136, 198));
                 gc.fillPolygon(xPoints, yPoints, 4);
             }
-            gc.setStroke(UIUtils.BORDER);
-            gc.setLineWidth(4.0);
-            gc.strokePolygon(xPoints, yPoints, 4);
         }
 
         if (frontRight < backRight) {
             double[] xPoints = {frontRight, backRight, backRight, frontRight};
             double[] yPoints = {frontTop, backTop, backBottom, frontBottom};
-            if (sideImg != null && sideImg.getWidth() > 0) {
+            if (sideImg != null) {
                 drawPerspectiveImage(gc, sideImg, frontRight, frontTop, backRight, backTop, backRight, backBottom, frontRight, frontBottom);
             } else {
                 gc.setFill(Color.rgb(18, 92, 142));
                 gc.fillPolygon(xPoints, yPoints, 4);
             }
-            gc.setStroke(UIUtils.BORDER);
-            gc.setLineWidth(4.0);
-            gc.strokePolygon(xPoints, yPoints, 4);
         }
 
         if (frontBottom < backBottom) {
@@ -152,15 +149,12 @@ public class ObstacleRenderer implements ObjectRenderer {
 
         double[] frontX = {frontLeft, frontRight, frontRight, frontLeft};
         double[] frontY = {frontTop, frontTop, frontBottom, frontBottom};
-        if (frontImg != null && frontImg.getWidth() > 0) {
-            gc.drawImage(frontImg, frontLeft, frontTop, frontRight - frontLeft, frontBottom - frontTop);
+        if (frontImg != null) {
+            com.ycom.resource.AssetManager.draw(gc, frontImg, frontLeft, frontTop, frontRight - frontLeft, frontBottom - frontTop);
         } else {
             gc.setFill(Color.rgb(31, 136, 198));
             gc.fillRect(frontLeft, frontTop, frontRight - frontLeft, frontBottom - frontTop);
         }
-        gc.setStroke(UIUtils.BORDER);
-        gc.setLineWidth(5.0);
-        gc.strokePolygon(frontX, frontY, 4);
     }
 
     private void drawRamp(GraphicsContext gc, RenderSnapshot obstacle, Projection front, Camera cam) {
@@ -177,11 +171,11 @@ public class ObstacleRenderer implements ObjectRenderer {
         Projection pBackBottomRight = projector.project(obstacle.x() + obstacle.width() / 2.0, obstacle.y(), bZ, 0, 0, cam);
         
         boolean isFar = (obstacle.z() - cam.z) > 80.0;
-        Image rampTex = isFar ? null : AssetManager.getImage("obs_ramp_tex");
+        String rampTex = isFar ? null : "obs_ramp_tex";
 
         double[] slopeX = {pBackTopLeft.x(), pBackTopRight.x(), pFrontBottomRight.x(), pFrontBottomLeft.x()};
         double[] slopeY = {pBackTopLeft.y(), pBackTopRight.y(), pFrontBottomRight.y(), pFrontBottomLeft.y()};
-        if (rampTex != null && rampTex.getWidth() > 0) {
+        if (rampTex != null) {
             drawPerspectiveImage(gc, rampTex, 
                 pBackTopLeft.x(), pBackTopLeft.y(), 
                 pBackTopRight.x(), pBackTopRight.y(), 
@@ -191,14 +185,11 @@ public class ObstacleRenderer implements ObjectRenderer {
             gc.setFill(Color.rgb(150, 150, 150));
             gc.fillPolygon(slopeX, slopeY, 4);
         }
-        gc.setStroke(UIUtils.BORDER);
-        gc.setLineWidth(4.0);
-        gc.strokePolygon(slopeX, slopeY, 4);
 
         if (pFrontBottomLeft.x() > pBackBottomLeft.x()) {
             double[] leftX = {pBackTopLeft.x(), pFrontBottomLeft.x(), pBackBottomLeft.x()};
             double[] leftY = {pBackTopLeft.y(), pFrontBottomLeft.y(), pBackBottomLeft.y()};
-            if (rampTex != null && rampTex.getWidth() > 0) {
+            if (rampTex != null) {
                 gc.save();
                 gc.beginPath();
                 gc.moveTo(pBackTopLeft.x(), pBackTopLeft.y());
@@ -219,15 +210,12 @@ public class ObstacleRenderer implements ObjectRenderer {
                 gc.setFill(Color.rgb(100, 100, 100));
                 gc.fillPolygon(leftX, leftY, 3);
             }
-            gc.setStroke(UIUtils.BORDER);
-            gc.setLineWidth(4.0);
-            gc.strokePolygon(leftX, leftY, 3);
         }
         
         if (pFrontBottomRight.x() < pBackBottomRight.x()) {
             double[] rightX = {pBackTopRight.x(), pFrontBottomRight.x(), pBackBottomRight.x()};
             double[] rightY = {pBackTopRight.y(), pFrontBottomRight.y(), pBackBottomRight.y()};
-            if (rampTex != null && rampTex.getWidth() > 0) {
+            if (rampTex != null) {
                 gc.save();
                 gc.beginPath();
                 gc.moveTo(pBackTopRight.x(), pBackTopRight.y());
@@ -248,9 +236,6 @@ public class ObstacleRenderer implements ObjectRenderer {
                 gc.setFill(Color.rgb(100, 100, 100));
                 gc.fillPolygon(rightX, rightY, 3);
             }
-            gc.setStroke(UIUtils.BORDER);
-            gc.setLineWidth(4.0);
-            gc.strokePolygon(rightX, rightY, 3);
         }
     }
 }

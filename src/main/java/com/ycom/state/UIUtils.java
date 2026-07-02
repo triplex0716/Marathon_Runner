@@ -72,9 +72,9 @@ public class UIUtils {
         double W = Config.LOGICAL_WIDTH;
 
         // 1. Background
-        Image bg = AssetManager.menuBg();
-        if (bg != null) {
-            gc.drawImage(bg, 0, 0, W, H);
+        String bg = com.ycom.resource.AssetManager.menuBg();
+        if (com.ycom.resource.AssetManager.exists(bg)) {
+            com.ycom.resource.AssetManager.draw(gc, bg, 0, 0, W, H);
         } else {
             gc.setFill(Color.web("#71c5cf")); // sky blue fallback
             gc.fillRect(0, 0, W, H);
@@ -110,10 +110,10 @@ public class UIUtils {
             double speed = 180.0 + i * 35.0;
             double x = (time * speed + i * 300.0) % (W + 200) - 100;
             int frame = (int)(time * 8) % 2 + 1;
-            Image sprite = AssetManager.runnerFrame(chars[i], frame);
-            if (sprite != null) {
+            String sprite = AssetManager.runnerFrame(chars[i], frame);
+            if (com.ycom.resource.AssetManager.exists(sprite)) {
                 double sz = 75.0;
-                gc.drawImage(sprite, x, trackY + 10 + i * 18, sz, sz);
+                com.ycom.resource.AssetManager.draw(gc, sprite, x, trackY + 10 + i * 18, sz, sz);
             }
         }
 

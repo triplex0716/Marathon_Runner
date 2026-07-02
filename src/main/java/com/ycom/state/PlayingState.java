@@ -6,29 +6,14 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import com.ycom.account.Account;
 import com.ycom.account.AccountStore;
 import com.ycom.account.Session;
 import com.ycom.core.Config;
-import com.ycom.entity.GameObject;
-import com.ycom.event.BoostActivatedEvent;
-import com.ycom.event.CoinCollectedEvent;
 import com.ycom.event.EventBus;
-import com.ycom.event.GameOverEvent;
-import com.ycom.event.MagnetActivatedEvent;
-import com.ycom.event.ObstacleDestroyedEvent;
-import com.ycom.event.PlayerHitEvent;
-import com.ycom.event.RevivalCollectedEvent;
-import com.ycom.event.ScoreAddEvent;
-import com.ycom.event.ScoreMultiplierActivatedEvent;
 import com.ycom.core.TimeManager;
 import com.ycom.system.InputSystem;
 import com.ycom.world.GameWorld;
@@ -40,14 +25,14 @@ import com.ycom.system.ScoreSystem;
 import com.ycom.system.ReviveService;
 import com.ycom.system.RunEventHandlers;
 import com.ycom.resource.AudioManager;
-import com.ycom.resource.AssetManager;
-import javafx.scene.image.Image;
 import javafx.application.Platform;
 
 public class PlayingState implements GameState {
     private final GameStateManager gsm;
     private final Canvas canvas;
     private final InputSystem input;
+
+    private volatile javafx.scene.Cursor currentCursor = javafx.scene.Cursor.DEFAULT;
 
     private EventBus eventBus;
     private GameWorld world;
@@ -161,9 +146,17 @@ public class PlayingState implements GameState {
 
     @Override
     public void render() {
-        if (renderSystem != null && world != null && scoreSystem != null) {
-            renderSystem.render(world, scoreSystem, particleSystem, effectSystem);
+        com.ycom.core.PhysicsSnapshot snap = com.ycom.app.GameLoop.snapshotRef.get();
+        if (snap == null) return;
+        if (renderSystem != null) {
+            renderSystem.render(snap, particleSystem);
         }
+        
+        Scene scene = canvas.getScene();
+        if (scene != null && scene.getCursor() != currentCursor) {
+            scene.setCursor(currentCursor);
+        }
+
         if (dyingAnimation) {
             drawDeathAnimation();
         }
@@ -185,14 +178,15 @@ public class PlayingState implements GameState {
         gc.setGlobalAlpha(1.0);
 
         // 升天的张雪峰老师：从下往上飘 + 旋转 + 后段淡出
-        Image img = AssetManager.ascensionImage();
-        if (img != null && img.getWidth() > 0.0) {
+        String img = "ascension";
+        if (img != null) {
             double ease = 1.0 - Math.pow(1.0 - t, 2.0);
             double cx = W / 2.0;
             double cy = (0.72 - 0.52 * ease) * H;
             double imgScale = 1.0 - 0.25 * t;
             double drawH = H * 0.55 * imgScale;
-            double drawW = drawH * (img.getWidth() / img.getHeight());
+            com.ycom.resource.TextureRegion reg = com.ycom.resource.AssetManager.getRegion(img);
+            double drawW = drawH * (reg != null ? reg.sw() / reg.sh() : 1.0);
             double angle = t * 150.0;
             double alpha = t < 0.65 ? 1.0 : Math.max(0.0, 1.0 - (t - 0.65) / 0.35);
 
@@ -207,7 +201,7 @@ public class PlayingState implements GameState {
             gc.save();
             gc.translate(cx, cy);
             gc.rotate(angle);
-            gc.drawImage(img, -drawW / 2.0, -drawH / 2.0, drawW, drawH);
+            com.ycom.resource.AssetManager.draw(gc, img, -drawW / 2.0, -drawH / 2.0, drawW, drawH);
             gc.restore();
             gc.setGlobalAlpha(1.0);
         }
@@ -270,11 +264,7 @@ public class PlayingState implements GameState {
         boolean overCapsule = capsuleAvail && capsuleButton().contains(mx, my);
         boolean overCoin = coinAvail && coinButton().contains(mx, my);
         boolean overQuit = quitButton().contains(mx, my);
-        Scene scene = canvas.getScene();
-        if (scene != null) {
-            Cursor cursor = (overCapsule || overCoin || overQuit) ? Cursor.HAND : Cursor.DEFAULT;
-            Platform.runLater(() -> scene.setCursor(cursor));
-        }
+        currentCursor = (overCapsule || overCoin || overQuit) ? javafx.scene.Cursor.HAND : javafx.scene.Cursor.DEFAULT;
 
         if (input.isKeyJustPressed(KeyCode.Y) && capsuleAvail) {
             handleUseCapsuleRevive();
@@ -316,8 +306,7 @@ public class PlayingState implements GameState {
     }
 
     private void resetReviveCursor() {
-        Scene s = canvas.getScene();
-        if (s != null) Platform.runLater(() -> s.setCursor(Cursor.DEFAULT));
+        currentCursor = javafx.scene.Cursor.DEFAULT;
     }
 
     private static final double REVIVE_PANEL_W = 760.0;
@@ -409,12 +398,12 @@ public class PlayingState implements GameState {
                 String.valueOf(scoreSystem.getScore()), Color.web("#5DB4FF"), null, true);
         drawHudCard(gc, startX + cardW + gap, y, cardW, cardH, "Coins",
                 String.valueOf(scoreSystem.getCoins()), Color.web("#FFC73B"),
-                AssetManager.coinIcon(), false);
+                "coin", false);
     }
 
     private void drawHudCard(GraphicsContext gc, double x, double y, double w, double h,
                              String label, String value, Color valueColor,
-                             Image icon, boolean trophyFallback) {
+                             String icon, boolean trophyFallback) {
         gc.setFill(Color.rgb(20, 32, 60, 0.65));
         gc.fillRoundRect(x, y, w, h, 16, 16);
         gc.setStroke(Color.rgb(160, 200, 255, 0.45));
@@ -425,7 +414,7 @@ public class PlayingState implements GameState {
         double iconX = x + 16;
         double iconY = y + (h - iconSize) / 2.0;
         if (icon != null) {
-            gc.drawImage(icon, iconX, iconY, iconSize, iconSize);
+            com.ycom.resource.AssetManager.draw(gc, icon, iconX, iconY, iconSize, iconSize);
         } else if (trophyFallback) {
             drawTrophyIcon(gc, iconX, iconY, iconSize, valueColor);
         }
@@ -499,5 +488,32 @@ public class PlayingState implements GameState {
         boolean contains(double px, double py) {
             return px >= x && px <= x + w && py >= y && py <= y + h;
         }
+    }
+
+    public boolean isPhysicsUpdating() {
+        return !dyingAnimation && !awaitingRevival;
+    }
+
+    public void setAlpha(double alpha) {
+        if (renderSystem != null) {
+            renderSystem.setAlpha(alpha);
+        }
+    }
+
+    public com.ycom.core.PhysicsSnapshot createPhysicsSnapshot() {
+        if (world == null || scoreSystem == null || particleSystem == null || effectSystem == null) return null;
+        return new com.ycom.core.PhysicsSnapshot(
+            world.renderFrame(),
+            scoreSystem.getScore(),
+            scoreSystem.getCoins(),
+            world.getPlayer().getZ(),
+            world.getPlayer().revivalCount(),
+            com.ycom.core.TimeManager.getWorldRate(),
+            dyingAnimation,
+            awaitingRevival,
+            deathTimer,
+            particleSystem.getSnapshot(),
+            effectSystem.getSnapshot()
+        );
     }
 }

@@ -142,12 +142,12 @@ public class InstructionState implements GameState {
         gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 36.0));
         gc.fillText("ITEMS", x + 30.0, y + 50.0);
 
-        drawIconRow(gc, x + 30.0, y + 130.0, AssetManager.coinIcon(), "Coin", "+10 score");
-        drawIconRow(gc, x + 30.0, y + 230.0, AssetManager.magnetIcon(), "Magnet", "Pulls nearby coins");
-        drawIconRow(gc, x + 30.0, y + 330.0, AssetManager.spriteIcon(), "Energy Drink", "Boost speed / smash");
-        drawIconRow(gc, x + 30.0, y + 430.0, AssetManager.treadmillIcon(), "Book", "Double score");
-        drawIconRow(gc, x + 30.0, y + 530.0, AssetManager.revivalIcon(), "Capsule", "Revive once");
-        drawIconRow(gc, x + 30.0, y + 630.0, AssetManager.randomIcon(), "Random Box", "Random power-up");
+        drawIconRow(gc, x + 30.0, y + 130.0, "coin", "Coin", "+10 score");
+        drawIconRow(gc, x + 30.0, y + 230.0, "magnet", "Magnet", "Pulls nearby coins");
+        drawIconRow(gc, x + 30.0, y + 330.0, "sprite", "Energy Drink", "Boost speed / smash");
+        drawIconRow(gc, x + 30.0, y + 430.0, "treadmill", "Book", "Double score");
+        drawIconRow(gc, x + 30.0, y + 530.0, "revival", "Capsule", "Revive once");
+        drawIconRow(gc, x + 30.0, y + 630.0, "random", "Random Box", "Random power-up");
     }
 
     private void drawObstacles(GraphicsContext gc) {
@@ -159,12 +159,12 @@ public class InstructionState implements GameState {
         gc.setFont(Font.font("Arial Black", FontWeight.BOLD, 36.0));
         gc.fillText("OBSTACLES", x + 30.0, y + 50.0);
 
-        drawIconRow(gc, x + 30.0, y + 160.0, AssetManager.obstacleJumpIcon(), "Low Block", "Jump over it");
-        drawIconRow(gc, x + 30.0, y + 320.0, AssetManager.obstacleSlideIcon(), "High Block", "Slide under it");
-        drawIconRow(gc, x + 30.0, y + 480.0, AssetManager.obstacleTrainIcon(), "Train", "Dodge it");
+        drawIconRow(gc, x + 30.0, y + 160.0, "obstacle_jump", "Low Block", "Jump over it");
+        drawIconRow(gc, x + 30.0, y + 320.0, "obstacle_slide", "High Block", "Slide under it");
+        drawIconRow(gc, x + 30.0, y + 480.0, "obstacle_train", "Train", "Dodge it");
     }
 
-    private void drawIconRow(GraphicsContext gc, double x, double y, Image image, String title, String body) {
+    private void drawIconRow(GraphicsContext gc, double x, double y, String image, String title, String body) {
         gc.setFill(UIUtils.BORDER);
         gc.fillRect(x + 4, y - 50 + 4, 80, 80);
         gc.setFill(UIUtils.WHITE);
@@ -173,14 +173,12 @@ public class InstructionState implements GameState {
         gc.setLineWidth(3.0);
         gc.strokeRect(x, y - 50, 80, 80);
 
-        if (image != null && image.getWidth() > 0.0 && image.getHeight() > 0.0) {
-            double iw = image.getWidth();
-            double ih = image.getHeight();
-            double size = 60.0;
-            double scale = Math.min(size / iw, size / ih);
-            double dw = iw * scale;
-            double dh = ih * scale;
-            gc.drawImage(image, x + 40.0 - dw / 2.0, y - 10 - dh / 2.0, dw, dh);
+        if (com.ycom.resource.AssetManager.exists(image)) {
+            com.ycom.resource.TextureRegion r = com.ycom.resource.AssetManager.getRegion(image);
+            double aspect = r != null ? r.sw() / r.sh() : 1.0;
+            double dh = 60.0;
+            double dw = dh * aspect;
+            com.ycom.resource.AssetManager.draw(gc, image, x + 40.0 - dw / 2.0, y - 10 - dh / 2.0, dw, dh);
         }
 
         gc.setTextAlign(TextAlignment.LEFT);

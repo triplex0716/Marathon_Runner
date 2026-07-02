@@ -18,8 +18,20 @@ public class GameLoop extends AnimationTimer {
     private final GameStateManager stateManager;
     private final InputSystem inputSystem;
     private final Canvas canvas;
-    private final ScheduledExecutorService physicsExecutor;
     private final double fixedDt;
+    private final long fixedNanos;
+    
+    // FPS counting variables
+    private long lastNanos = 0;
+    private long fpsTimer = 0;
+    private int frameCount = 0;
+    private double currentFps = 0.0;
+    private String fpsString = "FPS: 0.0";
+    private static final javafx.scene.text.Font FPS_FONT = javafx.scene.text.Font.font("Monospaced", javafx.scene.text.FontWeight.BOLD, 20);
+    
+    // Multithreading
+    public static final java.util.concurrent.atomic.AtomicReference<com.ycom.core.PhysicsSnapshot> snapshotRef = new java.util.concurrent.atomic.AtomicReference<>();
+    private final ScheduledExecutorService physicsExecutor;
 
     public GameLoop(Canvas canvas, Scene scene) {
         this.canvas = canvas;
@@ -30,20 +42,52 @@ public class GameLoop extends AnimationTimer {
         inputSystem = new InputSystem(scene);
         stateManager = new GameStateManager(canvas, inputSystem);
         fixedDt = TimeManager.getFixedDt();
+        fixedNanos = Math.round(fixedDt * 1_000_000_000.0);
         physicsExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread thread = new Thread(r, "ycom-physics");
             thread.setDaemon(true);
             return thread;
         });
-        long periodNanos = Math.round(fixedDt * 1_000_000_000.0);
-        physicsExecutor.scheduleAtFixedRate(this::updatePhysics, 0L, periodNanos, TimeUnit.NANOSECONDS);
+        physicsExecutor.scheduleAtFixedRate(this::updatePhysics, 0L, fixedNanos, TimeUnit.NANOSECONDS);
     }
 
     @Override
     public void handle(long now) {
+        if (lastNanos == 0) {
+            lastNanos = now;
+            fpsTimer = now;
+            frameCount = 0;
+            return;
+        } 
+        
+        long elapsed = now - lastNanos;
+        lastNanos = now;
+        
+        // Prevent death spiral if game hangs
+        if (elapsed > 250_000_000L) {
+            elapsed = 250_000_000L;
+        }
+        
+        frameCount++;
+        if (now - fpsTimer >= 1_000_000_000L) {
+            currentFps = (double) frameCount * 1_000_000_000L / (now - fpsTimer);
+            fpsString = String.format("FPS: %.1f", currentFps);
+            frameCount = 0;
+            fpsTimer = now;
+        }
         GraphicsContext gc = getGraphicsContext();
         stateManager.render();
         gc.restore();
+        
+        if (Config.SHOW_FPS) {
+            GraphicsContext rootGc = canvas.getGraphicsContext2D();
+            rootGc.save();
+            rootGc.setTransform(1, 0, 0, 1, 0, 0); // Reset transform to absolute window coordinates
+            rootGc.setFill(javafx.scene.paint.Color.LIMEGREEN);
+            rootGc.setFont(FPS_FONT);
+            rootGc.fillText(fpsString, canvas.getWidth() - 140, 30);
+            rootGc.restore();
+        }
     }
 
     @Override
@@ -56,6 +100,11 @@ public class GameLoop extends AnimationTimer {
         try {
             inputSystem.update();
             stateManager.update(fixedDt);
+            if (stateManager.getState(com.ycom.state.StateId.PLAYING) instanceof com.ycom.state.PlayingState p) {
+                if (p.isPhysicsUpdating()) {
+                    snapshotRef.set(p.createPhysicsSnapshot());
+                }
+            }
         } catch (Throwable t) {
             t.printStackTrace();
         }

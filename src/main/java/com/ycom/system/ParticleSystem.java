@@ -48,11 +48,13 @@ public class ParticleSystem {
         }
     }
 
-    public void draw(GraphicsContext gc, double camX, double camY, double camZ) {
-        List<Shard> snapshot;
+    public List<Shard> getSnapshot() {
         synchronized (shards) {
-            snapshot = List.copyOf(shards);
+            return List.copyOf(shards);
         }
+    }
+
+    public void draw(GraphicsContext gc, double camX, double camY, double camZ, List<Shard> snapshot) {
         for (Shard s : snapshot) {
             double distZ = s.z - camZ;
             if (distZ < 0.5) {
@@ -77,7 +79,7 @@ public class ParticleSystem {
         }
     }
 
-    private static final class Shard {
+    public static class Shard {
         double x;
         double y;
         double z;

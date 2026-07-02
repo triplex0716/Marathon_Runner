@@ -18,4 +18,14 @@ public class Projector {
         double screenY = horizonY - (y + height / 2.0 - cam.y) * scale;
         return new Projection(screenX, screenY, width * scale, height * scale, scale);
     }
+    
+    private double alpha = 1.0;
+
+    public void setAlpha(double alpha) {
+        this.alpha = alpha;
+    }
+
+    public double getAlpha() {
+        return alpha;
+    }
 }

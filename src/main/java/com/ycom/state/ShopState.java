@@ -143,9 +143,9 @@ public class ShopState implements GameState {
     private void drawCapsuleCard(GraphicsContext gc, double x, double y) {
         drawNeoPanel(gc, x, y, 540, 360, UIUtils.YELLOW);
 
-        Image icon = AssetManager.revivalIcon();
+        String icon = AssetManager.revivalIcon();
         if (icon != null) {
-            gc.drawImage(icon, x + 200, y + 40, 140, 140);
+            com.ycom.resource.AssetManager.draw(gc, icon, x + 200, y + 40, 140, 140);
         }
 
         gc.setFill(UIUtils.BORDER);
@@ -159,12 +159,12 @@ public class ShopState implements GameState {
         UIUtils.drawNeoButton(gc, input, btnBuyCapsule());
     }
 
-    private void drawComingSoonCard(GraphicsContext gc, double x, double y, String title, Image icon, Color c) {
+    private void drawComingSoonCard(GraphicsContext gc, double x, double y, String title, String icon, Color c) {
         drawNeoPanel(gc, x, y, 540, 360, c);
 
         if (icon != null) {
             gc.setGlobalAlpha(0.4);
-            gc.drawImage(icon, x + 200, y + 40, 140, 140);
+            com.ycom.resource.AssetManager.draw(gc, icon, x + 200, y + 40, 140, 140);
             gc.setGlobalAlpha(1.0);
         }
 

@@ -66,7 +66,7 @@ public class GameWorld {
         }
         RenderFrame previous = renderFrame;
         renderFrame = new RenderFrame(
-                previous.player(1.0),
+                previous.currentPlayer(),
                 RenderSnapshot.from(player),
                 previous.currentObjects(),
                 currentObjects,

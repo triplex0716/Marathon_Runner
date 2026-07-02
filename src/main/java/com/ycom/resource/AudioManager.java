@@ -88,7 +88,7 @@ public class AudioManager {
         if (play == null) {
             return;
         }
-        runOnFxThread(() -> play.clip().play(play.volume()));
+        play.clip().play(play.volume());
     }
 
     private static SfxPlay prepareSfxPlay(String key) {

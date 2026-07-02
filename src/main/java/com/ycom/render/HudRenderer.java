@@ -23,7 +23,7 @@ public class HudRenderer {
     private static final DecimalFormat SPEED_FORMAT = new DecimalFormat("0.00x");
     private static final DecimalFormat TIMER_FORMAT = new DecimalFormat("0.0s");
 
-    public void draw(GraphicsContext gc, Player player, ScoreSystem scoreSystem, com.ycom.system.EffectSystem effectSystem) {
+    public void draw(GraphicsContext gc, com.ycom.core.PhysicsSnapshot snap) {
         gc.setTextAlign(TextAlignment.LEFT);
 
         boolean topRunVisible = Session.isLoggedIn() && Session.current().getHighScore() > 0;
@@ -43,13 +43,13 @@ public class HudRenderer {
         gc.setFill(UIUtils.BORDER);
         gc.setFont(SCORE_FONT);
         double y = startY + 50.0;
-        gc.fillText("SCORE: " + scoreSystem.getScore(), startX + 24.0, y);
+        gc.fillText("SCORE: " + snap.score(), startX + 24.0, y);
         y += 40.0;
 
         gc.setFont(HUD_FONT);
         if (topRunVisible) {
             Account acc = Session.current();
-            int gap = acc.getHighScore() - scoreSystem.getScore();
+            int gap = acc.getHighScore() - snap.score();
             if (gap > 0) {
                 gc.setFill(UIUtils.BORDER);
                 gc.fillText("TOP RUN: " + gap, startX + 24.0, y);
@@ -61,31 +61,31 @@ public class HudRenderer {
             y += 40.0;
         }
 
-        int totalCoins = Session.current() != null ? Session.current().getCoins() : scoreSystem.getCoins();
-        gc.fillText("COINS: " + scoreSystem.getRunCoinsEarned() + " (ALL: " + totalCoins + ")", startX + 24.0, y); y += 40.0;
-        gc.fillText("SPEED: " + SPEED_FORMAT.format(TimeManager.getWorldRate()), startX + 24.0, y); y += 40.0;
-        gc.fillText("CAPSULES: " + player.revivalCount(), startX + 24.0, y);
+        int totalCoins = Session.current() != null ? Session.current().getCoins() : snap.coins();
+        gc.fillText("COINS: " + snap.coins() + " (ALL: " + totalCoins + ")", startX + 24.0, y); y += 40.0;
+        gc.fillText("SPEED: " + SPEED_FORMAT.format(snap.worldRate()), startX + 24.0, y); y += 40.0;
+        gc.fillText("CAPSULES: " + snap.revivalCount(), startX + 24.0, y);
 
         double size = 84.0;
         double stride = 104.0;
         double bcx = 32.0;
         double bcy = Config.LOGICAL_HEIGHT - 32.0 - size;
 
-        for (com.ycom.system.effect.PowerUpEffect effect : effectSystem.activeEffects()) {
-            Image icon = null;
+        for (com.ycom.system.effect.PowerUpEffect effect : snap.effects()) {
+            String icon = null;
             Color color = UIUtils.WHITE;
             switch(effect.id()) {
-                case "magnet": icon = AssetManager.magnetIcon(); color = UIUtils.PINK; break;
-                case "revive": icon = AssetManager.revivalIcon(); color = Color.rgb(255, 200, 50); break;
-                case "boost": icon = AssetManager.spriteIcon(); color = UIUtils.PINK; break;
-                case "score_multiplier": icon = AssetManager.treadmillIcon(); color = UIUtils.YELLOW; break;
+                case "magnet": icon = "magnet"; color = UIUtils.PINK; break;
+                case "revive": icon = "revival"; color = Color.rgb(255, 200, 50); break;
+                case "boost": icon = "sprite"; color = UIUtils.PINK; break;
+                case "score_multiplier": icon = "treadmill"; color = UIUtils.YELLOW; break;
             }
             drawBuffTimer(gc, icon, effect.duration(), effect.maxDuration(), color, bcx, bcy, size);
             bcy -= stride;
         }
     }
 
-    private void drawBuffTimer(GraphicsContext gc, Image icon, double timer, double max, Color ringColor, double x, double y, double size) {
+    private void drawBuffTimer(GraphicsContext gc, String icon, double timer, double max, Color ringColor, double x, double y, double size) {
         gc.setFill(UIUtils.BORDER);
         gc.fillRect(x + 6, y + 6, size, size);
         gc.setFill(ringColor);
@@ -94,9 +94,9 @@ public class HudRenderer {
         gc.setLineWidth(4.0);
         gc.strokeRect(x, y, size, size);
 
-        if (icon != null && icon.getWidth() > 0.0) {
+        if (icon != null) {
             double iconSize = size * 0.66;
-            gc.drawImage(icon, x + (size - iconSize) / 2.0, y + (size - iconSize) / 2.0, iconSize, iconSize);
+            com.ycom.resource.AssetManager.draw(gc, icon, x + (size - iconSize) / 2.0, y + (size - iconSize) / 2.0, iconSize, iconSize);
         }
 
         gc.setFill(UIUtils.WHITE);
